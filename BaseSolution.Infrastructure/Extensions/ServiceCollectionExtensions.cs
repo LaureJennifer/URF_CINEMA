@@ -11,6 +11,18 @@ namespace BaseSolution.Infrastructure.Extensions
     {
         public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
+            #region App DBContext
+            services.AddDbContextPool<AppReadOnlyDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
+            });
+
+            services.AddDbContextPool<AppReadWriteDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DbConnection"));
+            });
+            #endregion
+
             services.AddDbContextPool<ExampleReadOnlyDbContext>(options =>
             {
                 // Configure your DbContext options here
