@@ -1,6 +1,6 @@
-﻿using BaseSolution.Application.ValueObjects.Common;
+﻿using BaseSolution.BlazorServer.ValueObjects.Common;
 
-namespace BaseSolution.Application.ValueObjects.Exceptions
+namespace BaseSolution.BlazorServer.ValueObjects.Exceptions
 {
     [Serializable]
     public class ExceptionBase : Exception

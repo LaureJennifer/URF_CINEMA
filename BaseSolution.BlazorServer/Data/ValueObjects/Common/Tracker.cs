@@ -1,4 +1,4 @@
-﻿namespace BaseSolution.Application.ValueObjects.Common
+﻿namespace BaseSolution.BlazorServer.ValueObjects.Common
 {
     public class Tracker
     {

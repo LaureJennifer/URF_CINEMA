@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using static BaseSolution.Application.ValueObjects.Common.QueryConstant;
+using static BaseSolution.BlazorServer.ValueObjects.Common.QueryConstant;
 
-namespace BaseSolution.Application.ValueObjects.Common;
+namespace BaseSolution.BlazorServer.ValueObjects.Common;
 
 public class SearchModel
 {

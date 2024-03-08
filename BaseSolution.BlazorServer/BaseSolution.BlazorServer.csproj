@@ -26,6 +26,23 @@
 
   <ItemGroup>
     <Folder Include="Components\" />
+    <Folder Include="Data\DataTransferObjects\Bill\Request\" />
+    <Folder Include="Data\DataTransferObjects\Booking\Request\" />
+    <Folder Include="Data\DataTransferObjects\Customer\Request\" />
+    <Folder Include="Data\DataTransferObjects\DepartmentFilm\Request\" />
+    <Folder Include="Data\DataTransferObjects\Department\Request\" />
+    <Folder Include="Data\DataTransferObjects\FilmDetail\Request\" />
+    <Folder Include="Data\DataTransferObjects\FilmScheduleRoom\Request\" />
+    <Folder Include="Data\DataTransferObjects\FilmSchedule\Request\" />
+    <Folder Include="Data\DataTransferObjects\Film\Request\" />
+    <Folder Include="Data\DataTransferObjects\PaymentMethod\Request\" />
+    <Folder Include="Data\DataTransferObjects\Role\Request\" />
+    <Folder Include="Data\DataTransferObjects\RoomLayout\Request\" />
+    <Folder Include="Data\DataTransferObjects\Room\Request\" />
+    <Folder Include="Data\DataTransferObjects\Seat\Request\" />
+    <Folder Include="Data\DataTransferObjects\Ticket\Request\" />
+    <Folder Include="Data\DataTransferObjects\Transaction\Request\" />
+    <Folder Include="Data\DataTransferObjects\User\Request\" />
     <Folder Include="Pages\Bill\" />
     <Folder Include="Pages\Customer\" />
     <Folder Include="Pages\Department\" />

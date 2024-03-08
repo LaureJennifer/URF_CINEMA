@@ -1,6 +1,7 @@
-﻿namespace BaseSolution.BlazorServer.Data.Example.Request
+﻿namespace BaseSolution.BlazorServer.Data.DataTransferObjects.Example.Request
 {
     public class ExampleCreateRequest
     {
+        public string Name { get; set; } = null!;
     }
 }

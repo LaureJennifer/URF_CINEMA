@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BaseSolution.Application.ValueObjects.Common
+namespace BaseSolution.BlazorServer.ValueObjects.Common
 {
     public class RefreshToken
     {
