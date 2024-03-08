@@ -11,19 +11,20 @@ namespace BaseSolution.Domain.Entities
     public class FilmEntity : IEntityBase
     {
         public Guid Id { get; set; }
-        public Guid SneakShowId { get; set; }
         public string Code { get; set; }
-        public string Name { get; set; }
+        public string Title { get; set; }
+        public string TrailerURL { get; set; }
         public string Description { get; set; }
-        public string Trailer { get; set; }
-        public string Director { get; set; }
+        public string PosterURL { get; set; }
+        public string DirectedBy { get; set; }
         public string Language { get; set; }
-        public DateTime LaunchDate { get; set; }
-        public DateTime PremiereDate { get; set; }
-        public string FilmTime {  get; set; }
-        public string Type { get; set; }
+        public string Actor { get; set; }
+        public DateTimeOffset ReleaseDate { get; set; }
+        public string Duration { get; set; }
+        public string Script {  get; set; }
+        public string Genres { get; set; }
         
-        public string Image { get; set; }
+        public string AgeRating { get; set; }
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
         public DateTimeOffset ModifiedTime { get; set; }
@@ -32,13 +33,8 @@ namespace BaseSolution.Domain.Entities
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public SneakShowEntity SneakShow { get; set; }
-        public BillDetailEntity BillDetail { get; set; }
-        public List<DepartmentFilmEntity> DepartmentFilm { get; set;}
-        public List<FilmScheduleEntity> filmScheduleEntities { get; set;}
-        public FilmEntity()
-        {
-            DepartmentFilm = new List<DepartmentFilmEntity>();
-        }
+        public List<DepartmentFilmEntity> DepartmentFilms { get; set;}
+        public List<FilmDetailEntity> FilmDetails{ get; set;}
+        public List<TicketEntity> Tickets { get; set;}
     }
 }

@@ -11,7 +11,7 @@ namespace BaseSolution.Domain.Entities
     {
         public Guid DepartmentId { get; set; }
         public Guid FilmId { get; set; }
-        public DepartmentEntity Department { get; set; }
-        public FilmEntity Film { get; set; }
+        public DepartmentEntity DepartmentEntity { get; set; }
+        public FilmEntity FilmEntity { get; set; }
     }
 }

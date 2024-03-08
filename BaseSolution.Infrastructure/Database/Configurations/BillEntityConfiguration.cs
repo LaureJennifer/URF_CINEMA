@@ -16,7 +16,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Bill");
             builder.HasKey(x => x.Id);
             builder.Property(x=>x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.User).WithMany(x => x.billEntities).HasForeignKey(x => x.UserId);
+            builder.HasOne(x => x.CustomerEntity).WithMany(x => x.Bills).HasForeignKey(x => x.CustomerId);
         }
     }
 }

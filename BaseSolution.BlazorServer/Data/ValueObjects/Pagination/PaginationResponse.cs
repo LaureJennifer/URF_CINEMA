@@ -1,4 +1,4 @@
-namespace BaseSolution.BlazorServer.Data.ValueObjects.Pagination;
+namespace BaseSolution.Application.ValueObjects.Pagination;
 
 public class PaginationResponse<TDataType>
 {

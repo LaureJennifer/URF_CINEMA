@@ -16,6 +16,9 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Room");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.HasOne(x => x.RoomLayoutEntity).WithMany(x => x.Rooms).HasForeignKey(x => x.RoomLayoutId);
+            builder.HasOne(x => x.DepartmentEntity).WithMany(x => x.Rooms).HasForeignKey(x => x.DepartmentId);
+            builder.Property(x => x.Capacity).IsRequired();
             builder.Property(x=>x.Code).IsRequired();
         }
     }

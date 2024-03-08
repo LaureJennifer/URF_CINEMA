@@ -21,6 +21,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.Property(x=>x.PhoneNumber).IsRequired();
             builder.Property(x=>x.Email).IsRequired();
             builder.Property(x=>x.UserName).IsRequired();
+            builder.Property(x => x.PassWord).IsRequired();
         }
     }
 }

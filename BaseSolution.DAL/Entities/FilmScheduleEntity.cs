@@ -9,9 +9,9 @@ namespace BaseSolution.Domain.Entities
     public class FilmScheduleEntity
     {
         public Guid Id { get; set; }
-        //public Guid FilmId { get; set; }
-        public DateTime ShowDate { get; set; }
-        public DateTime ShowTime { get; set; }
-        public List<FilmEntity> Film { get; set; }
+        public DateTimeOffset ShowDate { get; set; }
+        public DateTimeOffset ShowTime { get; set; }
+        public List<FilmDetailEntity> FilmDetails { get; set; }
+        public List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
     }
 }

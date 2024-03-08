@@ -22,14 +22,97 @@ namespace BaseSolution.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.BillDetailEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.BillEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BillId")
+                    b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EntityStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TicketQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Bill", (string)null);
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.BookingEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SeatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SeatStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("SeatId");
+
+                    b.ToTable("Booking", (string)null);
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.CustomerEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
@@ -46,8 +129,9 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("DeletedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<Guid>("FilmId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -55,46 +139,34 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BillId");
-
-                    b.HasIndex("FilmId")
-                        .IsUnique();
-
-                    b.ToTable("BillDetail", (string)null);
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.BillEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
+                    b.Property<string>("PassWord")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("TotalPayment")
-                        .HasColumnType("float");
-
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("Bill", (string)null);
+                    b.ToTable("Customer", (string)null);
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentEntity", b =>
@@ -105,17 +177,52 @@ namespace BaseSolution.Infrastructure.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
+                        .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AddressCodeFormat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("FacilityId")
+                    b.Property<int>("EntityStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -123,8 +230,6 @@ namespace BaseSolution.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FacilityId");
 
                     b.ToTable("DepartmentEntity", (string)null);
                 });
@@ -142,45 +247,6 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.HasIndex("FilmId");
 
                     b.ToTable("DepartmentFilm", (string)null);
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentRoomEntity", b =>
-                {
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("DeletedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("ModifiedTime")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("DepartmentId", "RoomId");
-
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("DepartmentRoom", (string)null);
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.ExampleEntity", b =>
@@ -222,20 +288,19 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.ToTable("Example", (string)null);
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.FacilityEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmDetailEntity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("FilmId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("FilmScheduleId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
+                    b.HasKey("FilmId", "FilmScheduleId");
 
-                    b.ToTable("Facility", (string)null);
+                    b.HasIndex("FilmScheduleId");
+
+                    b.ToTable("FilmDetail", (string)null);
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.FilmEntity", b =>
@@ -244,8 +309,14 @@ namespace BaseSolution.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BillDetailId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Actor")
+                        .IsRequired()
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AgeRating")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -271,16 +342,18 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Director")
+                    b.Property<string>("DirectedBy")
+                        .IsRequired()
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Duration")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FilmTime")
+                    b.Property<string>("Genres")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Image")
-                        .IsRequired()
+                        .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Language")
@@ -288,43 +361,37 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LaunchDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("ModifiedTime")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PosterURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("ReleaseDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Script")
                         .IsRequired()
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("PremiereDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("SneakShowId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<string>("Trailer")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TrailerURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
-
-                    b.HasIndex("BillDetailId");
-
-                    b.HasIndex("SneakShowId");
 
                     b.ToTable("Film", (string)null);
                 });
@@ -335,15 +402,55 @@ namespace BaseSolution.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ShowDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("ShowDate")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("ShowTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("ShowTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
                     b.ToTable("FilmSchedule", (string)null);
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmScheduleRoomEntity", b =>
+                {
+                    b.Property<Guid>("FilmScheduleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("FilmScheduleId", "RoomId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("DepartmentRoom", (string)null);
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.PaymentMethodEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("PaymentMethod", (string)null);
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoleEntity", b =>
@@ -361,7 +468,12 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Role", (string)null);
                 });
@@ -372,17 +484,39 @@ namespace BaseSolution.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Capacity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoomType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("RoomLayoutId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ScreenSize")
                         .IsRequired()
@@ -392,28 +526,32 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("RoomLayoutId");
 
                     b.ToTable("Room", (string)null);
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.RoomSeatEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.RoomLayoutEntity", b =>
                 {
-                    b.Property<Guid>("SeatId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Type")
+                    b.Property<string>("Name")
                         .IsRequired()
+                        .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SeatId", "RoomId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("RoomId");
-
-                    b.ToTable("RoomSeat", (string)null);
+                    b.ToTable("RoomLayout", (string)null);
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.SeatEntity", b =>
@@ -429,33 +567,101 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
+                    b.Property<Guid>("RoomLayoutId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("SeatPosition")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomLayoutId");
+
+                    b.ToTable("Seat", (string)null);
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.TicketEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BookingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("FilmId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Seat", (string)null);
+                    b.HasIndex("BillId");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.HasIndex("FilmId");
+
+                    b.ToTable("Ticket", (string)null);
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.SneakShowEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.TransactionEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
+                    b.Property<Guid>("BillId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<DateTimeOffset>("TransactionDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SneakShow", (string)null);
+                    b.HasIndex("BillId")
+                        .IsUnique();
+
+                    b.ToTable("Transaction", (string)null);
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.UserEntity", b =>
@@ -498,7 +704,7 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PassWord")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -518,144 +724,29 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.ToTable("User", (string)null);
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.UserRoleEntity", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole", (string)null);
-                });
-
-            modelBuilder.Entity("FilmEntityFilmScheduleEntity", b =>
-                {
-                    b.Property<Guid>("FilmId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("filmScheduleEntitiesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("FilmId", "filmScheduleEntitiesId");
-
-                    b.HasIndex("filmScheduleEntitiesId");
-
-                    b.ToTable("FilmScheduleWithFilm", (string)null);
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.BillDetailEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.BillEntity", "billEntity")
-                        .WithMany("BillDetailEntities")
-                        .HasForeignKey("BillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BaseSolution.Domain.Entities.FilmEntity", "filmEntity")
-                        .WithOne()
-                        .HasForeignKey("BaseSolution.Domain.Entities.BillDetailEntity", "FilmId");
-
-                    b.Navigation("billEntity");
-
-                    b.Navigation("filmEntity");
-                });
-
             modelBuilder.Entity("BaseSolution.Domain.Entities.BillEntity", b =>
                 {
-                    b.HasOne("BaseSolution.Domain.Entities.UserEntity", "User")
-                        .WithMany("billEntities")
-                        .HasForeignKey("UserId")
+                    b.HasOne("BaseSolution.Domain.Entities.CustomerEntity", "CustomerEntity")
+                        .WithMany("Bills")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("CustomerEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.FacilityEntity", "Facility")
-                        .WithMany("departmentEntities")
-                        .HasForeignKey("FacilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Facility");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentFilmEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.DepartmentEntity", "Department")
-                        .WithMany("DepartmentFilm")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BaseSolution.Domain.Entities.FilmEntity", "Film")
-                        .WithMany("DepartmentFilm")
-                        .HasForeignKey("FilmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Film");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentRoomEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.DepartmentEntity", "department")
-                        .WithMany("DepartmentRoomEntities")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BaseSolution.Domain.Entities.RoomEntity", "room")
-                        .WithMany("departmentRoomEntities")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("department");
-
-                    b.Navigation("room");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.BillDetailEntity", "BillDetail")
-                        .WithMany()
-                        .HasForeignKey("BillDetailId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BaseSolution.Domain.Entities.SneakShowEntity", "SneakShow")
-                        .WithMany("Films")
-                        .HasForeignKey("SneakShowId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BillDetail");
-
-                    b.Navigation("SneakShow");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.RoomSeatEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.BookingEntity", b =>
                 {
                     b.HasOne("BaseSolution.Domain.Entities.RoomEntity", "RoomEntity")
-                        .WithMany("RoomSeatEntities")
+                        .WithMany("Bookings")
                         .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("BaseSolution.Domain.Entities.SeatEntity", "SeatEntity")
-                        .WithMany("roomSeatEntities")
+                        .WithMany("Bookings")
                         .HasForeignKey("SeatId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("RoomEntity");
@@ -663,89 +754,225 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Navigation("SeatEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.UserRoleEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.CustomerEntity", b =>
                 {
                     b.HasOne("BaseSolution.Domain.Entities.RoleEntity", "RoleEntity")
-                        .WithMany("userRoleEntities")
+                        .WithMany("Customers")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BaseSolution.Domain.Entities.UserEntity", "UserEntity")
-                        .WithMany("userRoleEntities")
-                        .HasForeignKey("UserId")
+                    b.Navigation("RoleEntity");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentFilmEntity", b =>
+                {
+                    b.HasOne("BaseSolution.Domain.Entities.DepartmentEntity", "DepartmentEntity")
+                        .WithMany("DepartmentFilms")
+                        .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RoleEntity");
-
-                    b.Navigation("UserEntity");
-                });
-
-            modelBuilder.Entity("FilmEntityFilmScheduleEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.FilmEntity", null)
-                        .WithMany()
+                    b.HasOne("BaseSolution.Domain.Entities.FilmEntity", "FilmEntity")
+                        .WithMany("DepartmentFilms")
                         .HasForeignKey("FilmId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BaseSolution.Domain.Entities.FilmScheduleEntity", null)
-                        .WithMany()
-                        .HasForeignKey("filmScheduleEntitiesId")
+                    b.Navigation("DepartmentEntity");
+
+                    b.Navigation("FilmEntity");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmDetailEntity", b =>
+                {
+                    b.HasOne("BaseSolution.Domain.Entities.FilmEntity", "FilmEntity")
+                        .WithMany("FilmDetails")
+                        .HasForeignKey("FilmId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("BaseSolution.Domain.Entities.FilmScheduleEntity", "FilmScheduleEntity")
+                        .WithMany("FilmDetails")
+                        .HasForeignKey("FilmScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FilmEntity");
+
+                    b.Navigation("FilmScheduleEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.BillEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmScheduleRoomEntity", b =>
                 {
-                    b.Navigation("BillDetailEntities");
+                    b.HasOne("BaseSolution.Domain.Entities.FilmScheduleEntity", "FilmScheduleEntity")
+                        .WithMany("FilmScheduleRooms")
+                        .HasForeignKey("FilmScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseSolution.Domain.Entities.RoomEntity", "RoomEntity")
+                        .WithMany("FilmScheduleRooms")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FilmScheduleEntity");
+
+                    b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.PaymentMethodEntity", b =>
                 {
-                    b.Navigation("DepartmentFilm");
+                    b.HasOne("BaseSolution.Domain.Entities.TransactionEntity", "TransactionEntity")
+                        .WithMany("PaymentMethods")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("DepartmentRoomEntities");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.FacilityEntity", b =>
-                {
-                    b.Navigation("departmentEntities");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmEntity", b =>
-                {
-                    b.Navigation("DepartmentFilm");
+                    b.Navigation("TransactionEntity");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoleEntity", b =>
                 {
-                    b.Navigation("userRoleEntities");
+                    b.HasOne("BaseSolution.Domain.Entities.UserEntity", "UserEntity")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserEntity");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoomEntity", b =>
                 {
-                    b.Navigation("RoomSeatEntities");
+                    b.HasOne("BaseSolution.Domain.Entities.DepartmentEntity", "DepartmentEntity")
+                        .WithMany("Rooms")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("departmentRoomEntities");
+                    b.HasOne("BaseSolution.Domain.Entities.RoomLayoutEntity", "RoomLayoutEntity")
+                        .WithMany("Rooms")
+                        .HasForeignKey("RoomLayoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepartmentEntity");
+
+                    b.Navigation("RoomLayoutEntity");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.SeatEntity", b =>
                 {
-                    b.Navigation("roomSeatEntities");
+                    b.HasOne("BaseSolution.Domain.Entities.RoomLayoutEntity", "RoomLayoutEntity")
+                        .WithMany("Seats")
+                        .HasForeignKey("RoomLayoutId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoomLayoutEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.SneakShowEntity", b =>
+            modelBuilder.Entity("BaseSolution.Domain.Entities.TicketEntity", b =>
                 {
-                    b.Navigation("Films");
+                    b.HasOne("BaseSolution.Domain.Entities.BillEntity", "BillEntity")
+                        .WithMany("Tickets")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseSolution.Domain.Entities.BookingEntity", "BookingEntity")
+                        .WithOne()
+                        .HasForeignKey("BaseSolution.Domain.Entities.TicketEntity", "BookingId");
+
+                    b.HasOne("BaseSolution.Domain.Entities.FilmEntity", "FilmEntity")
+                        .WithMany("Tickets")
+                        .HasForeignKey("FilmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BillEntity");
+
+                    b.Navigation("BookingEntity");
+
+                    b.Navigation("FilmEntity");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.TransactionEntity", b =>
+                {
+                    b.HasOne("BaseSolution.Domain.Entities.BillEntity", "BillEntity")
+                        .WithOne()
+                        .HasForeignKey("BaseSolution.Domain.Entities.TransactionEntity", "BillId");
+
+                    b.Navigation("BillEntity");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.BillEntity", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.CustomerEntity", b =>
+                {
+                    b.Navigation("Bills");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentEntity", b =>
+                {
+                    b.Navigation("DepartmentFilms");
+
+                    b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmEntity", b =>
+                {
+                    b.Navigation("DepartmentFilms");
+
+                    b.Navigation("FilmDetails");
+
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.FilmScheduleEntity", b =>
+                {
+                    b.Navigation("FilmDetails");
+
+                    b.Navigation("FilmScheduleRooms");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.RoleEntity", b =>
+                {
+                    b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.RoomEntity", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("FilmScheduleRooms");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.RoomLayoutEntity", b =>
+                {
+                    b.Navigation("Rooms");
+
+                    b.Navigation("Seats");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.SeatEntity", b =>
+                {
+                    b.Navigation("Bookings");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.TransactionEntity", b =>
+                {
+                    b.Navigation("PaymentMethods");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.UserEntity", b =>
                 {
-                    b.Navigation("billEntities");
-
-                    b.Navigation("userRoleEntities");
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }
