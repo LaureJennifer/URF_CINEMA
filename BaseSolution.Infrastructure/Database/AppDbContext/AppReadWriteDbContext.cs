@@ -21,8 +21,6 @@ namespace BaseSolution.Infrastructure.Database.AppDbContext
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppReadWriteDbContext).Assembly);
-            modelBuilder.Entity<DepartmentFilmEntity>()
-            .HasNoKey();
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,20 +31,22 @@ namespace BaseSolution.Infrastructure.Database.AppDbContext
         }
         #region DBSet
         public DbSet<BillEntity> BillEntities { get; set; }
-        public DbSet<BillDetailEntity> BillDetailEntities { get; set; }
+        public DbSet<BookingEntity> BookingEntities { get; set; }
         public DbSet<DepartmentEntity> DepartmentEntities { get; set; }
         public DbSet<DepartmentFilmEntity> DepartmentFilmEntities { get; set; }
-        public DbSet<DepartmentRoomEntity> DepartmentRoomEntities { get; set; }
-        public DbSet<FacilityEntity> FacilityEntities { get; set; }
+        public DbSet<CustomerEntity> CustomerEntities { get; set; }
+        public DbSet<FilmDetailEntity> FilmDetailEntities { get; set; }
         public DbSet<FilmEntity> FilmEntities { get; set; }
         public DbSet<FilmScheduleEntity> FilmScheduleEntities { get; set; }
+        public DbSet<FilmScheduleRoomEntity> FilmScheduleRoomEntities { get; set; }
+        public DbSet<PaymentMethodEntity> PaymentMethodEntities { get; set; }
         public DbSet<RoleEntity> RoleEntities { get; set; }
         public DbSet<RoomEntity> RoomEntities { get; set; }
-        public DbSet<RoomSeatEntity> RoomSeatEntities { get; set; }
+        public DbSet<RoomLayoutEntity> RoomLayoutEntities { get; set; }
         public DbSet<SeatEntity> SeatEntities { get; set; }
-        public DbSet<SneakShowEntity> SneakShowEntities { get; set; }
+        public DbSet<TicketEntity> TicketEntities { get; set; }
         public DbSet<UserEntity> UserEntities { get; set; }
-        public DbSet<UserRoleEntity> UserRoleEntities { get; set; }
+        public DbSet<TransactionEntity> TransactionEntities { get; set; }
         #endregion
     }
 }

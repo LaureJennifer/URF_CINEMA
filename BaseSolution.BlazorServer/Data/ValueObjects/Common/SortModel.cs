@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace BaseSolution.BlazorServer.Data.ValueObjects.Common;
+namespace BaseSolution.Application.ValueObjects.Common;
 
 public class SortModel
 {

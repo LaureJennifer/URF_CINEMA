@@ -17,7 +17,7 @@ namespace BaseSolution.Domain.Entities
         public string PhoneNumber { get; set; }
         public string UserName {  get; set; }
 
-        public string Password { get; set; }
+        public string PassWord { get; set; }
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
         public DateTimeOffset ModifiedTime { get; set; }
@@ -26,7 +26,6 @@ namespace BaseSolution.Domain.Entities
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public List<UserRoleEntity> userRoleEntities { get; set; }
-        public List<BillEntity> billEntities { get; set; }
+        public List<RoleEntity> Roles { get; set; }
     }
 }

@@ -1,46 +1,39 @@
-﻿<MudNavMenu Color="Color.Primary">
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">BaseSolution.BlazorServer</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
 
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Settings" Title="System">
-            <MudNavLink Href="/system/config">System Configuration</MudNavLink>
-            <MudNavLink Href="/system/web-config">Website Configuration</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.PeopleAlt" Title="User">
-            <MudNavLink Href="/user/list">List</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Article" Title="Content">
-            <MudNavLink Href="/content/artical-list">List</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Permission">
-            <MudNavLink Href="/permission/list">Permission List</MudNavLink>
-            <MudNavLink Href="/permission/role/list">Role List</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-</MudNavMenu>
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </div>
+    </nav>
+</div>
 
 @code {
-    private MudTheme _customTheme = new()
-        {
-            Palette = new Palette()
-            {
-                Primary = "#F97E0C"
-            }
-        };
+    private bool collapseNavMenu = true;
 
-    private async Task HandleNavLinkClick()
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
     {
-        // Perform any necessary logic before navigation
-        // Prevent the default behavior
-        await Task.CompletedTask;
+        collapseNavMenu = !collapseNavMenu;
     }
 }

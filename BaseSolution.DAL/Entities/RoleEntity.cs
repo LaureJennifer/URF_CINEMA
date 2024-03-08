@@ -9,8 +9,10 @@ namespace BaseSolution.Domain.Entities
     public class RoleEntity
     {
         public Guid Id { get; set; }
+        public Guid UserId { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
-        public List<UserRoleEntity> userRoleEntities { get; set; }
+        public UserEntity UserEntity { get; set; }
+        public List<CustomerEntity> Customers { get; set; }
     }
 }

@@ -1,21 +1,44 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-	  <TargetFramework>net6.0</TargetFramework>
-	  <Nullable>enable</Nullable>
-	  <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Pages\Error.cshtml" />
-    <None Include="Pages\_Host.cshtml" />
-    <None Include="Pages\_Layout.cshtml" />
-    <None Include="Shared\MainLayout.razor" />
-    <None Include="Shared\NavMenu.razor" />
+    <Compile Remove="DataTransferObjects\**" />
+    <Content Remove="DataTransferObjects\**" />
+    <EmbeddedResource Remove="DataTransferObjects\**" />
+    <None Remove="DataTransferObjects\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="6.0.13" />
+    <PackageReference Include="MudBlazor" Version="6.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaseSolution.Application\BaseSolution.Application.csproj" />
+    <ProjectReference Include="..\BaseSolution.DAL\BaseSolution.Domain.csproj" />
+    <ProjectReference Include="..\BaseSolution.Infrastructure\BaseSolution.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\" />
+    <Folder Include="Pages\Bill\" />
+    <Folder Include="Pages\Customer\" />
+    <Folder Include="Pages\Department\" />
+    <Folder Include="Pages\Film\" />
+    <Folder Include="Pages\FilmSchedule\" />
+    <Folder Include="Pages\User\" />
+    <Folder Include="Pages\Transaction\" />
+    <Folder Include="Pages\Ticket\" />
+    <Folder Include="Pages\Seat\" />
+    <Folder Include="Pages\RoomLayout\" />
+    <Folder Include="Pages\Room\" />
+    <Folder Include="Pages\Role\" />
+    <Folder Include="Pages\PaymentMethod\" />
   </ItemGroup>
 
 </Project>

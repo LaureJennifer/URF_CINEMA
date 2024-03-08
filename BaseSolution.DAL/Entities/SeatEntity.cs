@@ -10,11 +10,12 @@ namespace BaseSolution.Domain.Entities
     public class SeatEntity
     {
         public Guid Id { get; set; }
+        public Guid RoomLayoutId { get; set; }
         public string Code {  get; set; }
         public string SeatPosition { get; set; }
-        public double Price { get; set; }
-        public EntityStatus Status { get; set; } = EntityStatus.Active;
-
-        public List<RoomSeatEntity> roomSeatEntities { get; set; }
+        public string Type { get; set; }
+        public double Price { get; set; }  
+        public RoomLayoutEntity RoomLayoutEntity { get; set; }
+        public List<BookingEntity> Bookings { get; set; }
     }
 }

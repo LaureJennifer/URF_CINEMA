@@ -16,7 +16,6 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("FilmSchedule");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasMany(x => x.Film).WithMany(x => x.filmScheduleEntities).UsingEntity(x=>x.ToTable("FilmScheduleWithFilm"));
         }
     }
 }

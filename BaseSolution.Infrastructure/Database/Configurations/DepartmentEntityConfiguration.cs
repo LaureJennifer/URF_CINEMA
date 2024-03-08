@@ -16,7 +16,10 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("DepartmentEntity");
             builder.HasKey(x => x.Id);
             builder.Property(x=>x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.Facility).WithMany(x => x.departmentEntities).HasForeignKey(x => x.FacilityId);
+            builder.Property(x => x.Code).IsRequired();
+            builder.Property(x => x.Name).IsUnicode(true).IsRequired();
+            builder.Property(x=>x.Address).IsUnicode(true).IsRequired();
+            builder.Property(x=>x.Email).IsRequired();
         }
     }
 }

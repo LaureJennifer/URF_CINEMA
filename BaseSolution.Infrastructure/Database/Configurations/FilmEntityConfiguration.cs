@@ -16,12 +16,15 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Film");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.SneakShow).WithMany(x => x.Films).HasForeignKey(x => x.SneakShowId);
-            builder.Property(x=>x.Name).IsUnicode(true).IsRequired();
-            builder.Property(x=>x.Description).IsUnicode(true).IsRequired();
-            builder.Property(x=>x.Type).IsUnicode(true).IsRequired();
+            builder.Property(x => x.Code).IsRequired();
+            builder.Property(x=>x.Title).IsUnicode(true).IsRequired();
+            builder.Property(x=>x.DirectedBy).IsUnicode(true).IsRequired();
+            builder.Property(x=>x.Actor).IsUnicode(true).IsRequired();
             builder.Property(x => x.Description).IsUnicode(true);
             builder.Property(x => x.Language).IsUnicode(true);
+            builder.Property(x=>x.Script).IsUnicode(true);
+            builder.Property(x=>x.Genres).IsUnicode(true);
+
         }
     }
 }
