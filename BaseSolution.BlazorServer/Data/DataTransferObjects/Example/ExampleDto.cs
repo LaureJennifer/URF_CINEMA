@@ -1,4 +1,4 @@
-﻿namespace BaseSolution.BlazorServer.Data.Example
+﻿namespace BaseSolution.BlazorServer.Data.DataTransferObjects.Example
 {
     public class ExampleDto
     {

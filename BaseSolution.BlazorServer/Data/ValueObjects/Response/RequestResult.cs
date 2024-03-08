@@ -1,9 +1,9 @@
-using BaseSolution.Application.ValueObjects.Common;
-using BaseSolution.Application.ValueObjects.Exceptions;
+using BaseSolution.BlazorServer.ValueObjects.Common;
+using BaseSolution.BlazorServer.ValueObjects.Exceptions;
 using MediatR;
 using System.Diagnostics.CodeAnalysis;
 
-namespace BaseSolution.Application.ValueObjects.Response
+namespace BaseSolution.BlazorServer.ValueObjects.Response
 {
     /// <summary>
     /// To generate result for all actions in this system.

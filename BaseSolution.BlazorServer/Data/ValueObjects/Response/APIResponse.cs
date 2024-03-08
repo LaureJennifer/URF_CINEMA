@@ -1,7 +1,7 @@
-﻿using BaseSolution.Application.ValueObjects.Common;
+﻿using BaseSolution.BlazorServer.ValueObjects.Common;
 using System.Text.Json.Serialization;
 
-namespace BaseSolution.Application.ValueObjects.Response
+namespace BaseSolution.BlazorServer.ValueObjects.Response
 {
     public class APIResponse
     {

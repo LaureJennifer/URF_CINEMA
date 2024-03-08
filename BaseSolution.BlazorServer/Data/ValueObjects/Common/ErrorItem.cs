@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace BaseSolution.Application.ValueObjects.Common;
+namespace BaseSolution.BlazorServer.ValueObjects.Common;
 
 [ExcludeFromCodeCoverage]
 public class ErrorItem
