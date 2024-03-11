@@ -1,6 +1,7 @@
 using BaseSolution.BlazorServer.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 
 namespace BaseSolution.BlazorServer
 {
@@ -13,7 +14,7 @@ namespace BaseSolution.BlazorServer
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            builder.Services.AddSingleton<WeatherForecastService>();
+            builder.Services.AddMudServices();
 
             var app = builder.Build();
 
