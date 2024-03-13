@@ -8,20 +8,12 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
-    public class RoleEntity : IEntityBase
+    public class RoleEntity : EntityBase
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
-    
-        public DateTimeOffset CreatedTime { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public DateTimeOffset ModifiedTime { get; set; }
-        public Guid? ModifiedBy { get; set; }
-        public bool Deleted { get; set; }
-        public Guid? DeletedBy { get; set; }
-        public DateTimeOffset DeletedTime { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public List<UserEntity> Users { get; set; }
         public List<CustomerEntity> Customers { get; set; }
