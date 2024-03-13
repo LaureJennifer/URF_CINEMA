@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BaseSolution.Infrastructure.Migrations
 {
     [DbContext(typeof(AppReadOnlyDbContext))]
-    [Migration("20240308100251_MyDbContext")]
+    [Migration("20240313025842_MyDbContext")]
     partial class MyDbContext
     {
         /// <inheritdoc />
@@ -160,6 +160,10 @@ namespace BaseSolution.Infrastructure.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("UrlImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -394,6 +398,10 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UrlImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Film", (string)null);
@@ -405,11 +413,35 @@ namespace BaseSolution.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset>("ShowDate")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<DateTimeOffset>("ShowTime")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -446,12 +478,7 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TransactionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TransactionId");
 
                     b.ToTable("PaymentMethod", (string)null);
                 });
@@ -466,17 +493,39 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Role", (string)null);
                 });
@@ -547,10 +596,34 @@ namespace BaseSolution.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -567,6 +640,27 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -576,6 +670,9 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<string>("SeatPosition")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -653,16 +750,44 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<Guid>("BillId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("DeletedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("ModifiedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("PaymentMethodId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("TransactionDate")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BillId")
-                        .IsUnique();
+                    b.HasIndex("BillId");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.ToTable("Transaction", (string)null);
                 });
@@ -715,14 +840,23 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("UrlImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("User", (string)null);
                 });
@@ -825,28 +959,6 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.PaymentMethodEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.TransactionEntity", "TransactionEntity")
-                        .WithMany("PaymentMethods")
-                        .HasForeignKey("TransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TransactionEntity");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.RoleEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.UserEntity", "UserEntity")
-                        .WithMany("Roles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserEntity");
-                });
-
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoomEntity", b =>
                 {
                     b.HasOne("BaseSolution.Domain.Entities.DepartmentEntity", "DepartmentEntity")
@@ -887,7 +999,9 @@ namespace BaseSolution.Infrastructure.Migrations
 
                     b.HasOne("BaseSolution.Domain.Entities.BookingEntity", "BookingEntity")
                         .WithOne()
-                        .HasForeignKey("BaseSolution.Domain.Entities.TicketEntity", "BookingId");
+                        .HasForeignKey("BaseSolution.Domain.Entities.TicketEntity", "BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BaseSolution.Domain.Entities.FilmEntity", "FilmEntity")
                         .WithMany("Tickets")
@@ -905,15 +1019,38 @@ namespace BaseSolution.Infrastructure.Migrations
             modelBuilder.Entity("BaseSolution.Domain.Entities.TransactionEntity", b =>
                 {
                     b.HasOne("BaseSolution.Domain.Entities.BillEntity", "BillEntity")
-                        .WithOne()
-                        .HasForeignKey("BaseSolution.Domain.Entities.TransactionEntity", "BillId");
+                        .WithMany("Transactions")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseSolution.Domain.Entities.PaymentMethodEntity", "PaymentMethodEntity")
+                        .WithMany("Transactions")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BillEntity");
+
+                    b.Navigation("PaymentMethodEntity");
+                });
+
+            modelBuilder.Entity("BaseSolution.Domain.Entities.UserEntity", b =>
+                {
+                    b.HasOne("BaseSolution.Domain.Entities.RoleEntity", "RoleEntity")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoleEntity");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.BillEntity", b =>
                 {
                     b.Navigation("Tickets");
+
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.CustomerEntity", b =>
@@ -944,9 +1081,16 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Navigation("FilmScheduleRooms");
                 });
 
+            modelBuilder.Entity("BaseSolution.Domain.Entities.PaymentMethodEntity", b =>
+                {
+                    b.Navigation("Transactions");
+                });
+
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoleEntity", b =>
                 {
                     b.Navigation("Customers");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoomEntity", b =>
@@ -966,16 +1110,6 @@ namespace BaseSolution.Infrastructure.Migrations
             modelBuilder.Entity("BaseSolution.Domain.Entities.SeatEntity", b =>
                 {
                     b.Navigation("Bookings");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.TransactionEntity", b =>
-                {
-                    b.Navigation("PaymentMethods");
-                });
-
-            modelBuilder.Entity("BaseSolution.Domain.Entities.UserEntity", b =>
-                {
-                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }
