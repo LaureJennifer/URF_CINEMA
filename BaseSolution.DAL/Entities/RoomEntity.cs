@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
-    public class RoomEntity : IEntityBase
+    public class RoomEntity : EntityBase
     {
         public Guid Id { get; set; }
         public Guid RoomLayoutId { get; set; }
@@ -17,13 +17,6 @@ namespace BaseSolution.Domain.Entities
         public string Code { get; set; }
         public string SoundSystem { get; set; }
         public string ScreenSize { get; set; }
-        public DateTimeOffset CreatedTime { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public DateTimeOffset ModifiedTime { get; set; }
-        public Guid? ModifiedBy { get; set; }
-        public bool Deleted { get; set; }
-        public Guid? DeletedBy { get; set; }
-        public DateTimeOffset DeletedTime { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public RoomLayoutEntity RoomLayoutEntity { get; set; }
         public DepartmentEntity DepartmentEntity { get; set; }
