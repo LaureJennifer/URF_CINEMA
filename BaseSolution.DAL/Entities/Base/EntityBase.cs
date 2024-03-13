@@ -1,14 +1,8 @@
-﻿using BaseSolution.Domain.Entities.Base;
-using BaseSolution.Domain.Enums;
-
-namespace BaseSolution.Domain.Entities
+﻿
+namespace BaseSolution.Domain.Entities.Base
 {
-    public class ExampleEntity : EntityBase
+    public class EntityBase : ICreatedBase, IModifiedBase, IDeletedBase
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = null!;
-        public EntityStatus Status { get; set; } = EntityStatus.Active;
-
         public DateTimeOffset CreatedTime { get; set; }
         public Guid? CreatedBy { get; set; }
         public DateTimeOffset ModifiedTime { get; set; }

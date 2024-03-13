@@ -8,19 +8,11 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
-    public class FilmScheduleEntity : IEntityBase
+    public class FilmScheduleEntity : EntityBase
     {
         public Guid Id { get; set; }
         public DateTimeOffset ShowDate { get; set; }
         public DateTimeOffset ShowTime { get; set; }
-
-        public DateTimeOffset CreatedTime { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public DateTimeOffset ModifiedTime { get; set; }
-        public Guid? ModifiedBy { get; set; }
-        public bool Deleted { get; set; }
-        public Guid? DeletedBy { get; set; }
-        public DateTimeOffset DeletedTime { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public List<FilmDetailEntity> FilmDetails { get; set; }
         public List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
