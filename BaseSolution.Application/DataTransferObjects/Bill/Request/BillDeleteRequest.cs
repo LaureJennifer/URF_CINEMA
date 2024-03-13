@@ -8,5 +8,7 @@ namespace BaseSolution.Application.DataTransferObjects.Bill.Request
 {
     public class BillDeleteRequest
     {
+        public Guid Id { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }
