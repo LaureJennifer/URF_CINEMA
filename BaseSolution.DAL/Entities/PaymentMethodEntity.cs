@@ -9,9 +9,8 @@ namespace BaseSolution.Domain.Entities
     public class PaymentMethodEntity
     {
         public Guid Id { get; set; }
-        public Guid TransactionId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public TransactionEntity TransactionEntity{ get; set; }
+        public List<TransactionEntity> Transactions{ get; set; }
     }
 }

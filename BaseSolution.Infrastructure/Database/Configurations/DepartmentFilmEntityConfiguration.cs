@@ -15,8 +15,8 @@ namespace BaseSolution.Infrastructure.Database.Configurations
         {
             builder.ToTable("DepartmentFilm");
             builder.HasKey(x => new { x.DepartmentId, x.FilmId });
-            builder.HasOne(x => x.DepartmentEntity).WithMany(x => x.DepartmentFilms).HasForeignKey(x => x.DepartmentId);
-            builder.HasOne(x => x.FilmEntity).WithMany(x => x.DepartmentFilms).HasForeignKey(x => x.FilmId);
+            builder.HasOne(x => x.DepartmentEntity).WithMany(x => x.DepartmentFilms).HasForeignKey(x => x.DepartmentId).IsRequired();
+            builder.HasOne(x => x.FilmEntity).WithMany(x => x.DepartmentFilms).HasForeignKey(x => x.FilmId).IsRequired();
         }
     }
 }

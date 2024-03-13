@@ -12,7 +12,7 @@ namespace BaseSolution.Domain.Entities
         public Guid UserId { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
-        public UserEntity UserEntity { get; set; }
+        public List<UserEntity> Users { get; set; }
         public List<CustomerEntity> Customers { get; set; }
     }
 }

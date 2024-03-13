@@ -15,7 +15,9 @@ namespace BaseSolution.Infrastructure.Database.Configurations
         {
             builder.ToTable("Transaction");
             builder.HasKey(x => x.Id);
-            builder.HasOne(x => x.BillEntity).WithOne().HasForeignKey<TransactionEntity>(x=>x.BillId).IsRequired(false);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.HasOne(x => x.BillEntity).WithMany(x=>x.Transactions).HasForeignKey(x => x.BillId).IsRequired();
+            builder.HasOne(x => x.PaymentMethodEntity).WithMany(x=>x.Transactions).HasForeignKey(x => x.PaymentMethodId).IsRequired();
         }
     }
 }

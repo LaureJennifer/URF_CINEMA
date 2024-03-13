@@ -16,7 +16,6 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Role");
             builder.HasKey(x => x.Id);
             builder.Property(x=>x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.UserEntity).WithMany(x => x.Roles).HasForeignKey(x => x.UserId);
             builder.Property(x => x.Code).IsRequired();
             builder.Property(x=>x.Description).IsUnicode(true);
         }
