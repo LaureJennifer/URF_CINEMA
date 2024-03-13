@@ -1,0 +1,41 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using BaseSolution.BlazorServer.Components.SignUp;
+@inject IDialogService DialogService
+<MudDialog>
+    <DialogContent>
+                 <center> <MudButton Variant="Variant.Filled" Color="Color.Success">Đăng nhập <MudIcon Icon="@Icons.Material.Filled.Login"></MudIcon></MudButton>
+                      <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Warning"> đăng ký </MudButton> </center>
+
+        <MudGrid>
+            <MudItem xs="10" sm="10" Class="mt-4">
+
+                    <MudForm>      
+                            <MudTextField T="string" Label="Email"/>
+                            <MudTextField T="string" Label="Password"/> 
+                                           <MudLink Href="#" Typo="Typo.body2">Quên mật khẩu ?</MudLink>
+                               <center>
+                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Đăng nhập bằng Tài khoản <MudIcon Icon="@Icons.Material.Filled.Login"></MudIcon> </MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="mt-3">Đăng nhập bằng Google <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudButton>
+                                </center>
+                    </MudForm>   
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<SignUp>("Đăng ký", closeOnEscapeKey);
+    }
+}
