@@ -26,6 +26,7 @@ namespace BaseSolution.Domain.Entities
 
         public EntityStatus EntityStatus { get; set; } = EntityStatus.Active;
         public CustomerEntity CustomerEntity { get; set; }
+        public List<TransactionEntity> Transactions { get; set; }
         public List<TicketEntity> Tickets { get; set; }
     }
 }

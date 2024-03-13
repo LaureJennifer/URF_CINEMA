@@ -16,6 +16,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("User");
             builder.HasKey(x => x.Id);
             builder.Property(x=>x.Id).ValueGeneratedOnAdd();
+            builder.HasOne(x => x.RoleEntity).WithMany(x => x.Users).HasForeignKey(x => x.RoleId).IsRequired();
             builder.Property(x=>x.Name).IsUnicode(true).IsRequired();
             builder.Property(x=>x.Code).IsRequired();
             builder.Property(x=>x.PhoneNumber).IsRequired();

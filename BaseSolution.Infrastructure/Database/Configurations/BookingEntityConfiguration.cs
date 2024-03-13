@@ -16,8 +16,8 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Booking");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.SeatEntity).WithMany(x => x.Bookings).HasForeignKey(x => x.SeatId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasOne(x => x.RoomEntity).WithMany(x=>x.Bookings).HasForeignKey(x=>x.RoomId).OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.SeatEntity).WithMany(x => x.Bookings).HasForeignKey(x => x.SeatId).IsRequired().OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.RoomEntity).WithMany(x=>x.Bookings).HasForeignKey(x=>x.RoomId).IsRequired().OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

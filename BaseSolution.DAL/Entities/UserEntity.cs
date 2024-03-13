@@ -11,6 +11,7 @@ namespace BaseSolution.Domain.Entities
     public class UserEntity : IEntityBase
     {
         public Guid Id { get; set; }
+        public Guid RoleId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -26,6 +27,6 @@ namespace BaseSolution.Domain.Entities
         public Guid? DeletedBy { get; set; }
         public DateTimeOffset DeletedTime { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public List<RoleEntity> Roles { get; set; }
+        public RoleEntity RoleEntity { get; set; }
     }
 }

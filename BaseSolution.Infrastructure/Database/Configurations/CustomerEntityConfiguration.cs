@@ -16,7 +16,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Customer");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.RoleEntity).WithMany(x => x.Customers).HasForeignKey(x => x.RoleId);
+            builder.HasOne(x => x.RoleEntity).WithMany(x => x.Customers).HasForeignKey(x => x.RoleId).IsRequired();
             builder.Property(x=>x.Name).IsUnicode(true).IsRequired();
             builder.Property(x=>x.Address).IsUnicode(true).IsRequired();
             builder.Property(x => x.Email).IsRequired();
