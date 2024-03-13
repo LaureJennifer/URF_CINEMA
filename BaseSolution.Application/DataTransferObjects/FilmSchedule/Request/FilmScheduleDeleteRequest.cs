@@ -8,5 +8,7 @@ namespace BaseSolution.Application.DataTransferObjects.FilmSchedule.Request
 {
     public class FilmScheduleDeleteRequest
     {
+        public Guid Id { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }
