@@ -1,0 +1,55 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using BaseSolution.BlazorServer.Components.Login;
+@inject IDialogService DialogService
+<MudDialog>
+    <DialogContent>
+             <center> <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success"> Đăng nhập </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Warning">Đăng ký</MudButton> </center>
+        <MudGrid>
+            <MudItem xs="10" sm="10" Class="mt-4">
+
+                    <MudForm>      
+                            <MudTextField T="string" Label="Họ tên"/>
+                            <MudTextField T="string" Label="Mật khẩu"/> 
+                             <MudDatePicker Label="ngày sinh" /> 
+                             <MudTextField T="string" Label="Số điện thoại"/> 
+                             <MudTextField T="string" Label="Email"/> 
+                             <MudTextField T="string" Label="xác nhận Mật khẩu"/> 
+                             <div class="d-flex">
+                                <MudRadioGroup T="string" Required="true" RequiredError="">
+                                    <MudRadio Option="@("Nam")">Nam</MudRadio>
+                                    <MudRadio Option="@("Nữ")">Nữ</MudRadio>
+                                </MudRadioGroup>
+                            </div>
+                            <div class="d-flex align-center justify-space-between">
+                                <MudCheckBox T="bool" Required="true" RequiredError="yêu cầu đồng ý" Label="Tôi cam kết tuấn theo chính sách bảo mật và điều khoản sử dụng Của BetaURF"  />
+
+                            </div>
+                             <center>
+                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Đăng ký </MudButton>  </center>
+                              <center>  <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="mt-3">Đăng nhập bằng Google <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudButton> </center>
+
+                    </MudForm>   
+
+            </MudItem>
+
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Login>("Đăng nhập", closeOnEscapeKey);
+    }
+}

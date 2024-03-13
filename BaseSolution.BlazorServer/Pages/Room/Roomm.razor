@@ -1,0 +1,120 @@
+﻿@page "/room"
+<center><MudText Typo="Typo.h3">Room</MudText></center>
+<MudAppBar Color="Color.Dark" Fixed="false">
+  <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
+    <MudSpacer />
+    <MudLink Href="#" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
+    <MudSpacer />
+    <MudMenu Color="Color.Success" Label="Thể loại">
+  <MudLink Href="#" Typo="Typo.body2"> <MudMenuItem>hành động</MudMenuItem></MudLink>
+   <MudLink Href="#" Typo="Typo.body2">  <MudMenuItem>Phiêu lưu</MudMenuItem></MudLink>
+    <MudLink Href="#" Typo="Typo.body2"> <MudMenuItem>bút ký</MudMenuItem></MudLink>
+</MudMenu>
+
+    <MudSpacer />
+    <MudTextField  @bind-Value="Search" Label="Tìm kiếm" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <MudSpacer />
+
+    <MudLink Href="/login" Typo="Typo.body2"><MudAvatar Color="Color.Primary">L</MudAvatar></MudLink>
+</MudAppBar>
+<MudPaper Height="1000px" Width="100%" Square="true" Class="mt-3 mud-theme-dark">
+
+    <MudContainer Fixed="true">
+    <MudCarousel Class="mud-width-full" Style="height:200px;" AutoCycle="false" TData="object">
+    <BulletTemplate Context="selected">
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Circle)" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </BulletTemplate>
+    <PreviousButtonTemplate>
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </PreviousButtonTemplate>
+    <NextButtonTemplate>
+        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+            <span class="mud-icon-button-label">
+                <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@Color.Inherit" />
+            </span>
+        </div>
+    </NextButtonTemplate>
+    <ChildContent>
+        <MudCarouselItem >
+            <div class="d-flex" style="height:100%">
+               <MudImage Src="https://insieutoc.vn/wp-content/uploads/2021/02/poster-ngang.jpg" Width="1500" Height="200" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem >
+            <div class="d-flex" style="height:100%">
+               <MudImage Src="https://static.ybox.vn/2018/4/28/b32fb676-4acf-11e8-bc42-56c566ee3692.png" Width="1500" Height="200" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem>
+            <div class="d-flex" style="height:100%">
+               <MudImage Src="https://kenh14cdn.com/thumb_w/500/2016/p9-1455516821188.gif.png" Width="1500" Height="180" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+
+            </div>
+        </MudCarouselItem>
+    </ChildContent>
+</MudCarousel>
+
+<MudGrid>
+       <MudItem xs="9">
+        <center><MudText Typo="Typo.h3">Front of cinema</MudText></center>
+    </MudItem>
+       <MudItem xs="3" Class="mt-6" >
+       <MudPaper Class="pa-2 mud-success">Your seat</MudPaper>
+       <MudPaper Class="pa-2 mud-Lighten5 mt-3">Available</MudPaper>
+       <MudPaper Class="pa-2 mud-warning mt-3">Reserved</MudPaper>
+       <MudPaper Class="pa-2 mud-error mt-3">Sold out</MudPaper>
+       <MudPaper Class="pa-2 mud-primary mt-3">Be Kept</MudPaper>
+       <MudPaper Class="pa-2 mud-info mt-6">Couple</MudPaper>
+       <MudPaper Style="background-color:#FFEE58" Class="pa-2 mt-3">Standard</MudPaper>
+       <MudPaper Style="background-color:#A1887F" Class="pa-2 mt-3">Vip</MudPaper>
+        <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Procced</MudButton> </MudText>
+
+      
+     
+    </MudItem>
+</MudGrid>
+
+ <MudGrid Class="mt-10">
+          <MudItem xs="6">
+       <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"> <MudText Typo="Typo.h5">URF CENIMAS</MudText></MudLink>
+        <MudLink  Color="Color.Tertiary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Liên hệ với chúng tôi: </b></MudText></MudLink>
+       <MudLink   Color="Color.Info" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Email: </b> Longtqph31519@fpt.edu.com</MudText></MudLink>
+      <MudLink  Color="Color.Secondary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Phone: </b> 0345263866</MudText></MudLink>
+     <MudLink  Color="Color.Error" Href="#" Typo="Typo.body2">  <MudText Align="Align.Start"><b>Địa chỉ: </b> Chương Mỹ - Thạch Thất - Chưa biết - Tí hỏi</MudText></MudLink>
+              <MudImage Src="https://banner2.cleanpng.com/20180419/tdq/kisspng-film-cinema-logo-cinema-x-chin-5ad8baa1dec9f4.9139666015241529939126.jpg" Width="450" Height="100" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+
+    </MudItem>
+    <MudItem xs="6">
+       <MudText Typo="Typo.h5">Follow Chúng tôi để nhận thông báo và những ưu đãi sớm nhất</MudText>
+
+      <MudIconButton Color="Color.Success"> <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudIconButton>
+      <MudIconButton Color="Color.Secondary"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+      <MudChip Icon="@Icons.Custom.Brands.Twitter" Label="true" Color="Color.Info" OnClose="CloseChip">New Tweets</MudChip>
+      <MudIconButton Color="Color.Info"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+      <MudText Typo="Typo.body2">nhập Email để nhận những ưu đãi  </MudText>
+      <MudForm>
+          <MudTextField T="string" Label="nhập Email"/>
+          <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Gửi</MudButton>
+      </MudForm>
+
+
+    </MudItem>
+</MudGrid>
+    </MudContainer>
+</MudPaper>
+@code {
+    public string Search { get; set; }
+    void CloseChip()
+    {
+        // Code..
+    }
+}
