@@ -1,41 +1,41 @@
-﻿@* <MudNavMenu Color="Color.Primary">
+﻿<MudNavMenu Color="Color.Primary">
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
 
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Training Facility">
-            <MudNavLink Href="@(RouteCollection.TrainingFacility.List)">List</MudNavLink>
+            <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
 
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Text Template">
-            <MudNavLink Href="@(RouteCollection.TextTemplate.List)">List</MudNavLink>
+            <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Contest">
-            <MudNavLink Href="@(RouteCollection.Contest.List)">List</MudNavLink>
+            <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Participant">
-            <MudNavLink Href="@(RouteCollection.Participant.List)">List</MudNavLink>
+            <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="Ranking">
-            <MudNavLink Href="@(RouteCollection.Ranking.Contest)">Contest</MudNavLink>
-            <MudNavLink Href="@(RouteCollection.Ranking.Contest)">Round</MudNavLink>
+            <MudNavLink Href="#">Contest</MudNavLink>
+            <MudNavLink Href="#">Round</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="Score of Participant">
-            <MudNavLink Href="@(RouteCollection.ScoreOfParticipant.Details)">List</MudNavLink>
+            <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
     <MudNavMenu>
         <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="History">
-            <MudNavLink Href="@(RouteManager.History.history)">List</MudNavLink>
+            <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
 </MudNavMenu>
@@ -56,4 +56,3 @@
         await Task.CompletedTask;
     }
 }
- *@

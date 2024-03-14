@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BaseSolution.Infrastructure.Migrations
 {
     [DbContext(typeof(AppReadOnlyDbContext))]
-    [Migration("20240313034014_MyDbContext")]
+    [Migration("20240314133239_MyDbContext")]
     partial class MyDbContext
     {
         /// <inheritdoc />
@@ -173,9 +173,6 @@ namespace BaseSolution.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -188,8 +185,6 @@ namespace BaseSolution.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
 
                     b.ToTable("Customer", (string)null);
                 });
@@ -564,9 +559,6 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.ToTable("Role", (string)null);
@@ -933,17 +925,6 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Navigation("SeatEntity");
                 });
 
-            modelBuilder.Entity("BaseSolution.Domain.Entities.CustomerEntity", b =>
-                {
-                    b.HasOne("BaseSolution.Domain.Entities.RoleEntity", "RoleEntity")
-                        .WithMany("Customers")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RoleEntity");
-                });
-
             modelBuilder.Entity("BaseSolution.Domain.Entities.DepartmentFilmEntity", b =>
                 {
                     b.HasOne("BaseSolution.Domain.Entities.DepartmentEntity", "DepartmentEntity")
@@ -1130,8 +1111,6 @@ namespace BaseSolution.Infrastructure.Migrations
 
             modelBuilder.Entity("BaseSolution.Domain.Entities.RoleEntity", b =>
                 {
-                    b.Navigation("Customers");
-
                     b.Navigation("Users");
                 });
 

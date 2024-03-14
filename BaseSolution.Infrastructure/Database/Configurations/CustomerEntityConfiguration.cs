@@ -1,11 +1,6 @@
 ﻿using BaseSolution.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Infrastructure.Database.Configurations
 {
@@ -16,7 +11,6 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Customer");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.RoleEntity).WithMany(x => x.Customers).HasForeignKey(x => x.RoleId).IsRequired();
             builder.Property(x=>x.Name).IsUnicode(true).IsRequired();
             builder.Property(x=>x.Address).IsUnicode(true).IsRequired();
             builder.Property(x => x.Email).IsRequired();
