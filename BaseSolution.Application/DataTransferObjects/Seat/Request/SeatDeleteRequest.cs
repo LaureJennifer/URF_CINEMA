@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.DataTransferObjects.Department.Request
+namespace BaseSolution.Application.DataTransferObjects.Seat.Request
 {
-    public class DepartmentDeleteRequest
+    public class SeatDeleteRequest
     {
         public Guid Id { get; set; }
         public Guid? DeletedBy { get; set; }
