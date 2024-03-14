@@ -11,11 +11,9 @@ namespace BaseSolution.Domain.Entities
     public class RoleEntity : EntityBase
     {
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
         public string Code { get; set; }
         public string Description { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public List<UserEntity> Users { get; set; }
-        public List<CustomerEntity> Customers { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace BaseSolution.Domain.Entities
     public class CustomerEntity : EntityBase 
     {
         public Guid Id { get; set; }
-        public Guid RoleId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -22,7 +21,6 @@ namespace BaseSolution.Domain.Entities
 
         public string PassWord { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public RoleEntity RoleEntity { get; set; }
         public List<BillEntity> Bills { get; set; }
     }
 }
