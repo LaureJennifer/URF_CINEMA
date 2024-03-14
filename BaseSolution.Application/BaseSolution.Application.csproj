@@ -16,15 +16,12 @@
 
 	<ItemGroup>
 		<Folder Include="DataTransferObjects\Booking\Request\" />
-		<Folder Include="DataTransferObjects\Customer\Request\" />
 		<Folder Include="DataTransferObjects\DepartmentFilm\Request\" />
 		<Folder Include="DataTransferObjects\Example\Response\" />
 		<Folder Include="DataTransferObjects\FilmDetail\Request\" />
 		<Folder Include="DataTransferObjects\FilmScheduleRoom\Request\" />
 		<Folder Include="DataTransferObjects\PaymentMethod\Request\" />
 		<Folder Include="DataTransferObjects\RoomLayout\Request\" />
-		<Folder Include="DataTransferObjects\Room\Request\" />
-		<Folder Include="DataTransferObjects\Seat\Request\" />
 		<Folder Include="DataTransferObjects\Ticket\Request\" />
 		<Folder Include="DataTransferObjects\Transaction\Request\" />
 	</ItemGroup>
