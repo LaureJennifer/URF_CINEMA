@@ -1,0 +1,92 @@
+﻿@using BaseSolution.BlazorServer.Components.AddNv;
+@inject IDialogService DialogService
+@page "/dsnv"
+@using BaseSolution.Application.DataTransferObjects.Film;
+@using BaseSolution.BlazorServer.Components.UpdateNv;
+@using BaseSolution.Domain.Entities;
+
+<MudAppBar Color="Color.Primary" Fixed="false">
+    
+    <MudSpacer />
+  <MudAvatar Color="Color.Tertiary">L</MudAvatar>
+
+</MudAppBar>
+<MudGrid>
+ <MudItem xs="8">
+        <MudText  Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+    </MudItem>
+
+ </MudGrid>
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+
+
+
+    <MudTable Items="lst">
+         <HeaderContent>
+        <MudTh>STT</MudTh>
+        <MudTh>ID</MudTh>
+        <MudTh>Họ và tên</MudTh>
+        <MudTh>Ngày sinh</MudTh>
+        <MudTh>SĐT</MudTh>
+        <MudTh>Địa chỉ</MudTh>
+        <MudTh>Giới tính</MudTh>
+        <MudTh>Email</MudTh>
+        <MudTh>Chức năng</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+     
+        <MudTd DataLabel="STT">@context.Name</MudTd>
+        <MudTd DataLabel="ID">@context.PhoneNumber</MudTd>
+        <MudTd DataLabel="Họ và Tên">@context.CreatedTime</MudTd>
+        <MudTd DataLabel="ngày sinh">@context.Email</MudTd>
+        <MudTd DataLabel="Địa chỉ">@context.Email</MudTd>
+        <MudTd DataLabel="Giới tính">@context.Email</MudTd>
+        <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd DataLabel="chức năng">@context.Email</MudTd>
+        <MudTd>
+            <MudButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"><MudIcon Icon="@Icons.Material.Filled.TipsAndUpdates"></MudIcon></MudButton>
+        </MudTd>
+        <MudTd>
+        <MudButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Error"><MudIcon Icon="@Icons.Material.Filled.Delete"></MudIcon></MudButton>
+        </MudTd>
+
+
+
+    </RowTemplate>
+
+   
+    
+    </MudTable>
+
+
+
+
+
+
+@code {
+    public string Search { get; set; }
+    List<UserEntity> lst = new List<UserEntity>()
+{
+    new UserEntity() {Name = "123", PhoneNumber="0349485127", Email = "user1@gmail.com"},
+        new UserEntity() {Name = "123",PhoneNumber="0349485127", Email = "user1@gmail.com"},
+        new UserEntity() {Name = "123",PhoneNumber="0349485127", Email = "user1@gmail.com"}
+};
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<AddNv>("Thêm mới nhân viên", closeOnEscapeKey);
+    }
+    private void OpenDialogg()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<UpdateNv>("Sửa thông tin nhân viên", closeOnEscapeKey);
+    }
+
+
+}
