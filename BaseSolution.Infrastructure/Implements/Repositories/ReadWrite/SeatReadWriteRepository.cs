@@ -61,7 +61,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 seat_.DeletedBy = request.DeletedBy;
                 seat_.DeletedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.SeatEntities.Remove(seat_);
+                _dbContext.SeatEntities.Update(seat_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
