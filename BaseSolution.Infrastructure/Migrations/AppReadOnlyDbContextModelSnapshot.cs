@@ -138,6 +138,9 @@ namespace BaseSolution.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset>("DateOfBirth")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 

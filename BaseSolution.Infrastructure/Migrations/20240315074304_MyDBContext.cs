@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BaseSolution.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class MyDbContext : Migration
+    public partial class MyDBContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,6 +24,7 @@ namespace BaseSolution.Infrastructure.Migrations
                     UrlImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PassWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),

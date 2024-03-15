@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BaseSolution.Infrastructure.Migrations
 {
     [DbContext(typeof(AppReadOnlyDbContext))]
-    [Migration("20240314133239_MyDbContext")]
-    partial class MyDbContext
+    [Migration("20240315074304_MyDBContext")]
+    partial class MyDBContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,6 +139,9 @@ namespace BaseSolution.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("DateOfBirth")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<bool>("Deleted")
