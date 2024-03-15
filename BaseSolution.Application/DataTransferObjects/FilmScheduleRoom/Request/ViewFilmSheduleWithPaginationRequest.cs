@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.DataTransferObjects.Seat.Request
+namespace BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request
 {
-    public class ViewSeatWithPaginationRequest:PaginationRequest
+    public class ViewFilmSheduleWithPaginationRequest:PaginationRequest
     {
     }
 }

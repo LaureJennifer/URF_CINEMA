@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.DataTransferObjects.Role.Request
+namespace BaseSolution.Application.DataTransferObjects.Booking.Request
 {
-    public class ViewRoleWithPaginationRequest : PaginationRequest
+    internal class ViewBookingWithPaginationRequest :PaginationRequest
     {
     }
 }

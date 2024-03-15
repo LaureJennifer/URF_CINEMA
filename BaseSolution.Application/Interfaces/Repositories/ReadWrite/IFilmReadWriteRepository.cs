@@ -13,7 +13,7 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadWrite
     public interface IFilmReadWriteRepository
     {
         Task<RequestResult<Guid>> AddFilmAsync(FilmEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<bool>> UpdateFilmAsync(FilmEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<bool>> DeleteFilmAsync(FilmDeleteRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<int>> UpdateFilmAsync(FilmEntity entity, CancellationToken cancellationToken);
+        Task<RequestResult<int>> DeleteFilmAsync(FilmDeleteRequest request, CancellationToken cancellationToken);
     }
 }
