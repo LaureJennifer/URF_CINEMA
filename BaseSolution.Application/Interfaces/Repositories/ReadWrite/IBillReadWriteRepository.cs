@@ -13,7 +13,7 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadWrite
     public interface IBillReadWriteRepository
     {
         Task<RequestResult<Guid>> AddBillAsync(BillEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<bool>> UpdateBillAsync(BillEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<bool>> DeleteBillAsync(BillDeleteRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<int>> UpdateBillAsync(BillEntity entity, CancellationToken cancellationToken);
+        Task<RequestResult<int>> DeleteBillAsync(BillDeleteRequest request, CancellationToken cancellationToken);
     }
 }

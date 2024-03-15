@@ -50,7 +50,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> DeleteUserAsync(UserDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteUserAsync(UserDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -64,11 +64,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.UserEntities.Update(user_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to delete user"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete user"], new[]
                 {
                     new ErrorItem {
                         Error = e.Message,
@@ -78,7 +78,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> UpdateUserAsync(UserEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateUserAsync(UserEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -94,25 +94,25 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.UserEntities.Update(user_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to update film"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update user"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "film"
+                        FieldName = LocalizationString.Common.FailedToUpdate + "user"
                     }
                 });
             }
         }
         private async Task<UserEntity?> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken)
         {
-            var example = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == idUser && !c.Deleted, cancellationToken);
+            var user_ = await _dbContext.UserEntities.FirstOrDefaultAsync(c => c.Id == idUser && !c.Deleted, cancellationToken);
 
-            return example;
+            return user_;
         }
     }
 }

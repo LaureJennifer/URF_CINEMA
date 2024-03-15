@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
 {
-    internal class FilmReadWriteRepository : IFilmReadWriteRepository
+    public class FilmReadWriteRepository : IFilmReadWriteRepository
     {
         private readonly ILocalizationService _localizationService;
         private readonly AppReadWriteDbContext _dbContext;
@@ -50,7 +50,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> DeleteFilmAsync(FilmDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteFilmAsync(FilmDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -64,11 +64,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.FilmEntities.Update(film_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to delete film"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete film"], new[]
                 {
                     new ErrorItem {
                         Error = e.Message,
@@ -78,7 +78,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> UpdateFilmAsync(FilmEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateFilmAsync(FilmEntity entity, CancellationToken cancellationToken)
         {
             try
             {
@@ -93,11 +93,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.FilmEntities.Update(film_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to update film"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update film"], new[]
                 {
                     new ErrorItem
                     {
@@ -109,9 +109,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<FilmEntity?> GetFilmByIdAsync(Guid idFilm, CancellationToken cancellationToken)
         {
-            var example = await _dbContext.FilmEntities.FirstOrDefaultAsync(c => c.Id == idFilm && !c.Deleted, cancellationToken);
+            var film_ = await _dbContext.FilmEntities.FirstOrDefaultAsync(c => c.Id == idFilm && !c.Deleted, cancellationToken);
 
-            return example;
+            return film_;
         }
     }
 }
