@@ -63,7 +63,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 department_.DeletedBy = request.DeletedBy;
                 department_.DeletedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.DepartmentEntities.Remove(department_);
+                _dbContext.DepartmentEntities.Update(department_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

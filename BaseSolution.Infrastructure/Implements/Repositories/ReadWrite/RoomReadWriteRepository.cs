@@ -61,7 +61,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 room_.DeletedBy = request.DeletedBy;
                 room_.DeletedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.RoomEntities.Remove(room_);
+                _dbContext.RoomEntities.Update(room_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

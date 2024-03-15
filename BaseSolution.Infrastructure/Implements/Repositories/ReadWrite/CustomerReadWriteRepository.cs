@@ -64,7 +64,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 customer_.DeletedTime = DateTimeOffset.UtcNow;
                 customer_.Status = EntityStatus.Deleted;
 
-                _dbContext.CustomerEntities.Remove(customer_);
+                _dbContext.CustomerEntities.Update(customer_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
