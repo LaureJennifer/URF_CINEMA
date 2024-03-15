@@ -1,6 +1,6 @@
 ﻿namespace BaseSolution.BlazorServer.Data.Extensions
 {
-    public class RouteCollection
+    public class RouteManager
     {
         public class Home
         {

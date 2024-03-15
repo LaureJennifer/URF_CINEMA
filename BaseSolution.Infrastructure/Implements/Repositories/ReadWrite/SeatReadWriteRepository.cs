@@ -54,14 +54,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed Seat
-                var Seat = await GetSeatByIdAsync(request.Id, cancellationToken);
+                var seat_ = await GetSeatByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed Seat
-                Seat!.Deleted = true;
-                Seat.DeletedBy = request.DeletedBy;
-                Seat.DeletedTime = DateTimeOffset.UtcNow;
+                seat_!.Deleted = true;
+                seat_.DeletedBy = request.DeletedBy;
+                seat_.DeletedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.SeatEntities.Remove(Seat);
+                _dbContext.SeatEntities.Remove(seat_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -84,19 +84,19 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed Seat
-                var Seat = await GetSeatByIdAsync(entity.Id, cancellationToken);
+                var seat_ = await GetSeatByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed Seat
-                Seat.Code = entity.Code;
-                Seat.SeatPosition = entity.SeatPosition;
-                Seat.Type = entity.Type;
-                Seat.Price = entity.Price;
-                Seat.RoomLayoutId = entity.RoomLayoutId;
-                Seat.Status = entity.Status;
-                Seat.ModifiedBy = entity.ModifiedBy;
-                Seat.ModifiedTime = DateTimeOffset.UtcNow;
+                seat_!.Code = entity.Code;
+                seat_.SeatPosition = entity.SeatPosition;
+                seat_.Type = entity.Type;
+                seat_.Price = entity.Price;
+                seat_.RoomLayoutId = entity.RoomLayoutId;
+                seat_.Status = entity.Status;
+                seat_.ModifiedBy = entity.ModifiedBy;
+                seat_.ModifiedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.SeatEntities.Update(Seat);
+                _dbContext.SeatEntities.Update(seat_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -115,9 +115,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<SeatEntity?> GetSeatByIdAsync(Guid idSeat, CancellationToken cancellationToken)
         {
-            var Seat = await _dbContext.SeatEntities.FirstOrDefaultAsync(c => c.Id == idSeat && !c.Deleted, cancellationToken);
+            var seat_ = await _dbContext.SeatEntities.FirstOrDefaultAsync(c => c.Id == idSeat && !c.Deleted, cancellationToken);
 
-            return Seat;
+            return seat_;
         }
     }
 }

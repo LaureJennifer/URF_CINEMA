@@ -56,15 +56,15 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed Customer
-                var Customer = await GetCustomerByIdAsync(request.Id, cancellationToken);
+                var customer_ = await GetCustomerByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed Customer
-                Customer!.Deleted = true;
-                Customer.DeletedBy = request.DeletedBy;
-                Customer.DeletedTime = DateTimeOffset.UtcNow;
-                Customer.Status = EntityStatus.Deleted;
+                customer_!.Deleted = true;
+                customer_.DeletedBy = request.DeletedBy;
+                customer_.DeletedTime = DateTimeOffset.UtcNow;
+                customer_.Status = EntityStatus.Deleted;
 
-                _dbContext.CustomerEntities.Remove(Customer);
+                _dbContext.CustomerEntities.Remove(customer_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -87,17 +87,17 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed Customer
-                var Customer = await GetCustomerByIdAsync(entity.Id, cancellationToken);
+                var customer_ = await GetCustomerByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed Customer
-                Customer!.Name = string.IsNullOrWhiteSpace(entity.Name) ? Customer.Name : entity.Name;
-                Customer.PhoneNumber = entity.PhoneNumber;
-                Customer.Email = string.IsNullOrWhiteSpace(entity.Email) ? Customer.Email : entity.Email;
-                Customer.Status = entity.Status;
-                Customer.ModifiedBy = entity.ModifiedBy;
-                Customer.ModifiedTime = DateTimeOffset.UtcNow;
+                customer_!.Name = string.IsNullOrWhiteSpace(entity.Name) ? customer_.Name : entity.Name;
+                customer_.PhoneNumber = entity.PhoneNumber;
+                customer_.Email = string.IsNullOrWhiteSpace(entity.Email) ? customer_.Email : entity.Email;
+                customer_.Status = entity.Status;
+                customer_.ModifiedBy = entity.ModifiedBy;
+                customer_.ModifiedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.CustomerEntities.Update(Customer);
+                _dbContext.CustomerEntities.Update(customer_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -116,9 +116,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<CustomerEntity?> GetCustomerByIdAsync(Guid idCustomer, CancellationToken cancellationToken)
         {
-            var Customer = await _dbContext.CustomerEntities.FirstOrDefaultAsync(c => c.Id == idCustomer && !c.Deleted, cancellationToken);
+            var customer_ = await _dbContext.CustomerEntities.FirstOrDefaultAsync(c => c.Id == idCustomer && !c.Deleted, cancellationToken);
 
-            return Customer;
+            return customer_;
         }
     }
 }

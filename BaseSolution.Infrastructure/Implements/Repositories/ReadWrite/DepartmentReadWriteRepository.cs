@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BaseSolution.Application.ValueObjects.Common.LocalizationString;
 
 namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
 {
@@ -55,14 +56,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed Department
-                var Department = await GetDepartmentByIdAsync(request.Id, cancellationToken);
+                var department_ = await GetDepartmentByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed Department
-                Department!.Deleted = true;
-                Department.DeletedBy = request.DeletedBy;
-                Department.DeletedTime = DateTimeOffset.UtcNow;
+                department_!.Deleted = true;
+                department_.DeletedBy = request.DeletedBy;
+                department_.DeletedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.DepartmentEntities.Remove(Department);
+                _dbContext.DepartmentEntities.Remove(department_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -85,20 +86,20 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed Department
-                var Department = await GetDepartmentByIdAsync(entity.Id, cancellationToken);
+                var department_ = await GetDepartmentByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed Department
-                Department!.Name = entity.Name;
-                Department.Code = entity.Code;
-                Department.Email = entity.Email;
-                Department.PhoneNumber = entity.PhoneNumber;
-                Department.AddressCode = entity.AddressCode;
-                Department.AddressCodeFormat = entity.AddressCodeFormat;
-                Department.Status = entity.Status;
-                Department.ModifiedBy = entity.ModifiedBy;
-                Department.ModifiedTime = DateTimeOffset.UtcNow;
+                department_!.Name = entity.Name;
+                department_.Code = entity.Code;
+                department_.Email = entity.Email;
+                department_.PhoneNumber = entity.PhoneNumber;
+                department_.AddressCode = entity.AddressCode;
+                department_.AddressCodeFormat = entity.AddressCodeFormat;
+                department_.Status = entity.Status;
+                department_.ModifiedBy = entity.ModifiedBy;
+                department_.ModifiedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.DepartmentEntities.Update(Department);
+                _dbContext.DepartmentEntities.Update(department_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -117,9 +118,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<DepartmentEntity?> GetDepartmentByIdAsync(Guid idDepartment, CancellationToken cancellationToken)
         {
-            var Department = await _dbContext.DepartmentEntities.FirstOrDefaultAsync(c => c.Id == idDepartment && !c.Deleted, cancellationToken);
+            var department_ = await _dbContext.DepartmentEntities.FirstOrDefaultAsync(c => c.Id == idDepartment && !c.Deleted, cancellationToken);
 
-            return Department;
+            return department_;
         }
     }
 }
