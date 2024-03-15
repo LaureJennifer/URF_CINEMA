@@ -1,0 +1,44 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using BaseSolution.BlazorServer.Components.SignUp;
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+           <MudForm>      
+                        <MudGrid>
+                             <MudItem xs="6">
+                            <MudTextField T="string" Label="Họ tên"/>
+
+                             <MudDatePicker Label="ngày sinh" /> 
+                              <MudTextField T="string" Label="Địa chỉ"/> 
+                             <MudTextField T="string" Label="Số điện thoại"/> 
+
+                            </MudItem>
+                             <MudItem xs="6">
+                          <MudTextField T="string" Label="Email"/> 
+                            <MudTextField T="string" Label="Căn cước công dân"/> 
+                             <div class="d-flex">
+                                <MudRadioGroup T="string" Required="true" RequiredError="">
+                                    <MudRadio Option="@("Nam")">Nam</MudRadio>
+                                    <MudRadio Option="@("Nữ")">Nữ</MudRadio>
+                                </MudRadioGroup>
+                            </div>
+
+                                <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-3">Sửa thông tin </MudButton> 
+                           </MudItem> 
+                          </MudGrid>
+                    </MudForm>   
+
+   </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}
