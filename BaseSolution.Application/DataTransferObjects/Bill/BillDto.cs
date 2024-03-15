@@ -8,5 +8,6 @@ namespace BaseSolution.Application.DataTransferObjects.Bill
 {
     public class BillDto
     {
+        public string Code { get; set; }
     }
 }
