@@ -54,14 +54,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed room
-                var Room = await GetRoomByIdAsync(request.Id, cancellationToken);
+                var room_ = await GetRoomByIdAsync(request.Id, cancellationToken);
 
                 // Update value to existed room
-                Room!.Deleted = true;
-                Room.DeletedBy = request.DeletedBy;
-                Room.DeletedTime = DateTimeOffset.UtcNow;
+                room_!.Deleted = true;
+                room_.DeletedBy = request.DeletedBy;
+                room_.DeletedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.RoomEntities.Remove(Room);
+                _dbContext.RoomEntities.Remove(room_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -84,20 +84,20 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 // Get existed room
-                var room = await GetRoomByIdAsync(entity.Id, cancellationToken);
+                var room_ = await GetRoomByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed room
-                room!.Capacity= entity.Capacity;
-                room.Code = entity.Code;
-                room.SoundSystem = entity.SoundSystem;
-                room.ScreenSize = entity.ScreenSize;
-                room.RoomLayoutId = entity.RoomLayoutId;
-                room.DepartmentId = entity.DepartmentId;
-                room.Status = entity.Status;
-                room.ModifiedBy = entity.ModifiedBy;
-                room.ModifiedTime = DateTimeOffset.UtcNow;
+                room_!.Capacity= entity.Capacity;
+                room_.Code = entity.Code;
+                room_.SoundSystem = entity.SoundSystem;
+                room_.ScreenSize = entity.ScreenSize;
+                room_.RoomLayoutId = entity.RoomLayoutId;
+                room_.DepartmentId = entity.DepartmentId;
+                room_.Status = entity.Status;
+                room_.ModifiedBy = entity.ModifiedBy;
+                room_.ModifiedTime = DateTimeOffset.UtcNow;
 
-                _dbContext.RoomEntities.Update(room);
+                _dbContext.RoomEntities.Update(room_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -116,9 +116,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<RoomEntity?> GetRoomByIdAsync(Guid idRoom, CancellationToken cancellationToken)
         {
-            var room = await _dbContext.RoomEntities.FirstOrDefaultAsync(c => c.Id == idRoom && !c.Deleted, cancellationToken);
+            var room_ = await _dbContext.RoomEntities.FirstOrDefaultAsync(c => c.Id == idRoom && !c.Deleted, cancellationToken);
 
-            return room;
+            return room_;
         }
     }
 }
