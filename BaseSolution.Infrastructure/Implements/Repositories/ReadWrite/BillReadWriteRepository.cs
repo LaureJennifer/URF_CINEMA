@@ -49,7 +49,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> DeleteBillAsync(BillDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteBillAsync(BillDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -63,11 +63,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.BillEntities.Update(bill_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to delete bill"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete bill"], new[]
                 {
                     new ErrorItem {
                         Error = e.Message,
@@ -77,12 +77,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> UpdateBillAsync(BillEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateBillAsync(BillEntity entity, CancellationToken cancellationToken)
         {
             try
             {
                 var bill_ = await GetBillByIdAsync(entity.Id, cancellationToken);
-                bill_.TotalPrice = entity.TotalPrice;
+
+                bill_!.TotalPrice = entity.TotalPrice;
                 bill_.TicketQuantity = entity.TicketQuantity;
                 bill_.Status = entity.Status;
                 bill_.ModifiedBy = entity.ModifiedBy;
@@ -91,11 +92,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.BillEntities.Update(bill_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to update bill"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update bill"], new[]
                 {
                     new ErrorItem
                     {
@@ -107,9 +108,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<BillEntity?> GetBillByIdAsync(Guid idBill, CancellationToken cancellationToken)
         {
-            var example = await _dbContext.BillEntities.FirstOrDefaultAsync(c => c.Id == idBill && !c.Deleted, cancellationToken);
+            var bill_ = await _dbContext.BillEntities.FirstOrDefaultAsync(c => c.Id == idBill && !c.Deleted, cancellationToken);
 
-            return example;
+            return bill_;
         }
     }
 }

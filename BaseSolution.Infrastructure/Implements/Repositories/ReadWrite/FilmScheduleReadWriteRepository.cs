@@ -51,7 +51,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> DeleteFilmScheduleAsync(FilmScheduleDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteFilmScheduleAsync(FilmScheduleDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -65,11 +65,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.FilmScheduleEntities.Update(filmSchedule_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to delete film schedule"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete film schedule"], new[]
                 {
                     new ErrorItem {
                         Error = e.Message,
@@ -79,13 +79,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<bool>> UpdateFilmScheduleAsync(FilmScheduleEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateFilmScheduleAsync(FilmScheduleEntity entity, CancellationToken cancellationToken)
         {
             try
             {
                 var filmSchedule_ = await GetFilmScheduleByIdAsync(entity.Id, cancellationToken);
 
-                filmSchedule_.ShowTime = entity.ShowTime;
+                filmSchedule_!.ShowTime = entity.ShowTime;
                 filmSchedule_.ShowDate = entity.ShowDate;
                 filmSchedule_.ModifiedBy = entity.ModifiedBy;
                 filmSchedule_.ModifiedTime = DateTimeOffset.UtcNow;
@@ -93,11 +93,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 _dbContext.FilmScheduleEntities.Update(filmSchedule_);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<bool>.Succeed(true);
+                return RequestResult<int>.Succeed(1);
             }
             catch (Exception e)
             {
-                return RequestResult<bool>.Fail(_localizationService["Unable to update film schedule"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update film schedule"], new[]
                 {
                     new ErrorItem
                     {
@@ -109,9 +109,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<FilmScheduleEntity?> GetFilmScheduleByIdAsync(Guid idFilmSchedule, CancellationToken cancellationToken)
         {
-            var example = await _dbContext.FilmScheduleEntities.FirstOrDefaultAsync(c => c.Id == idFilmSchedule && !c.Deleted, cancellationToken);
+            var filmSchedule_ = await _dbContext.FilmScheduleEntities.FirstOrDefaultAsync(c => c.Id == idFilmSchedule && !c.Deleted, cancellationToken);
 
-            return example;
+            return filmSchedule_;
         }
     }
 }
