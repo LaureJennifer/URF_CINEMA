@@ -1,5 +1,8 @@
-﻿﻿@using BlazorServer.Data.Extensions;
+﻿@using BaseSolution.BlazorServer.Components.Login
+@using BaseSolution.BlazorServer.Pages.Film
+﻿@using BlazorServer.Data.Extensions;
 @inherits LayoutComponentBase
+@inject IDialogService DialogService
 
 
 
@@ -12,10 +15,45 @@
         <MudNavMenu>
             <MudNavLink Href="@(RouteManager.Home.AdminHome)" Match="NavLinkMatch.All"><MudText Style="color:#fff" Typo="Typo.h6">FPLSP Analyst</MudText></MudNavLink>
         </MudNavMenu> *@
-
-        <AppMenu />
-
+    <MudAppBar Style="background-color:#261D30" Fixed="false">
+        <MudLink Color="Color.Warning" Href="/home" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
         <MudSpacer />
+        <MudLink Href="/room" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
+        <MudSpacer />
+        <MudLink Href="/FilmSchedule" Typo="Typo.body2"><h1>Lịch chiếu</h1></MudLink>
+        <MudSpacer />
+        <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <MudSpacer />
+
+        <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success"> đăng nhập </MudButton>
+    </MudAppBar>
+        
+    @* <MudGrid Class="mt-10">
+        <MudItem xs="6">
+            <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"> <MudText Typo="Typo.h5">URF CENIMAS</MudText></MudLink>
+            <MudLink Color="Color.Tertiary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Liên hệ với chúng tôi: </b></MudText></MudLink>
+            <MudLink Color="Color.Info" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Email: </b> Longtqph31519@fpt.edu.com</MudText></MudLink>
+            <MudLink Color="Color.Secondary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Phone: </b> 0345263866</MudText></MudLink>
+            <MudLink Color="Color.Error" Href="#" Typo="Typo.body2">  <MudText Align="Align.Start"><b>Địa chỉ: </b> Chương Mỹ - Thạch Thất - Chưa biết - Tí hỏi</MudText></MudLink>
+            <MudImage Src="https://banner2.cleanpng.com/20180419/tdq/kisspng-film-cinema-logo-cinema-x-chin-5ad8baa1dec9f4.9139666015241529939126.jpg" Width="450" Height="100" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+
+        </MudItem>
+        <MudItem xs="6">
+            <MudText Typo="Typo.h5">Follow Chúng tôi để nhận thông báo và những ưu đãi sớm nhất</MudText>
+
+            <MudIconButton Color="Color.Success"> <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudIconButton>
+            <MudIconButton Color="Color.Secondary"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+            <MudIconButton Color="Color.Info"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+            <MudText Typo="Typo.body2">nhập Email để nhận những ưu đãi  </MudText>
+            <MudForm>
+                <MudTextField T="string" Label="nhập Email" />
+                <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Gửi</MudButton>
+            </MudForm>
+
+
+        </MudItem>
+    </MudGrid>
+        <MudSpacer /> *@
 @*     </MudAppBar> *@
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-2 pt-8">
@@ -33,6 +71,13 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+    public string Search { get; set; }
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Login>("Đăng nhập", closeOnEscapeKey);
     }
 }
 

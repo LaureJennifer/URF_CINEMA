@@ -1,9 +1,9 @@
 ﻿@page "/room"
-<center><MudText Typo="Typo.h3">Room</MudText></center>
-<MudAppBar Color="Color.Dark" Fixed="false">
-  <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
+@* <center><MudText Typo="Typo.h3">Room</MudText></center> *@
+<MudAppBar Style="background-color:#261D30" Fixed="false">
+    <MudLink Href="/home"><MudText Style="color:white" Typo="Typo.h1">URF CENIMAS</MudText></MudLink>
     <MudSpacer />
-    <MudLink Href="#" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
+    <MudLink Href="/home" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
     <MudSpacer />
     <MudMenu Color="Color.Success" Label="Thể loại">
   <MudLink Href="#" Typo="Typo.body2"> <MudMenuItem>hành động</MudMenuItem></MudLink>
@@ -76,7 +76,7 @@
        <MudPaper Class="pa-2 mud-info mt-6">Couple</MudPaper>
        <MudPaper Style="background-color:#FFEE58" Class="pa-2 mt-3">Standard</MudPaper>
        <MudPaper Style="background-color:#A1887F" Class="pa-2 mt-3">Vip</MudPaper>
-        <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Procced</MudButton> </MudText>
+                <MudLink Href="/Payment"> <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Procced</MudButton> </MudText></MudLink>
 
       
      
