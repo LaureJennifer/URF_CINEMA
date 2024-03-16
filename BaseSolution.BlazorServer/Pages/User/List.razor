@@ -1,0 +1,83 @@
+﻿@using BaseSolution.BlazorServer.Components.User;
+@inject IDialogService DialogService
+@page "/dsnv"
+@using BaseSolution.Domain.Entities;
+<MudGrid>
+ <MudItem xs="8">
+        <MudText  Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+    </MudItem>
+
+ </MudGrid>
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+
+
+
+    <MudTable Items="@lst" Class="mt-4">
+         <HeaderContent>
+        <MudTh>Stt</MudTh>
+        <MudTh>Họ và tên</MudTh>
+        <MudTh>SĐT</MudTh>
+         <MudTh>Email</MudTh>
+        <MudTh>Mã nhân viên</MudTh>
+        <MudTh>Ảnh</MudTh>
+        <MudTh>Chức năng</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+     
+       <MudTd DataLabel="Stt">@(lst.IndexOf(context)+1)</MudTd>
+            <MudTd DataLabel="Mã nhân viên">@context.Code</MudTd>
+            <MudTd>   
+                <MudAvatar>
+            <MudImage Src="images/mony.jpg"></MudImage>
+        </MudAvatar></MudTd>
+        <MudTd DataLabel="Họ và Tên">@context.Name</MudTd>
+              <MudTd DataLabel="SĐt">@context.PhoneNumber</MudTd>
+              <MudTd DataLabel="Email">@context.Email</MudTd>
+        <MudTd>
+                <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                           <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
+        </MudTd>
+     
+    </RowTemplate>
+         <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+
+    </MudTable>
+@code {
+    public string Search { get; set; }
+    List<UserEntity> lst = new List<UserEntity>()
+{
+        new UserEntity() {Name = "Nguyễn Bá Chiến",PhoneNumber="0345263866", Email = "user1@gmail.com", Code = "NV01"},
+        new UserEntity() {Name = "Nguyễn Bá Chiến",PhoneNumber="0345263866", Email = "user1@gmail.com", Code = "NV02"},
+        new UserEntity() {Name = "Trần Đức Nhân",PhoneNumber="0345263999", Email = "user1@gmail.com", Code = "NV03"}
+};
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Create>("Thêm mới nhân viên", closeOnEscapeKey);
+    }
+    private void OpenDialogg()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Update>("Sửa thông tin nhân viên", closeOnEscapeKey);
+    }
+
+    private void DeleteUser()
+    {
+        var parameters = new DialogParameters<Delete>();
+        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
+        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.Color, Color.Error);
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<Delete>("Delete", parameters, options);
+    }
+
+
+}

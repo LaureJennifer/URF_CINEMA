@@ -1,0 +1,34 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+            
+                       <MudForm>      
+                      <MudDatePicker Label="Ngày Chiếu" Editable="true" @bind-Date="date" Placeholder="Select Date" />
+                            <MudTimePicker Label="Thời Gian Chiếu" AmPm="true" @bind-Time="time" />
+                            <MudGrid>
+                                <MudItem xs="8">
+                                </MudItem>
+                             <MudItem xs="4">
+                               <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-3">Sửa</MudButton> 
+                                </MudItem>
+                                      </MudGrid>
+                    </MudForm>   
+                   
+
+   </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+    TimeSpan? time = new TimeSpan(00, 45, 00);
+    DateTime? date = DateTime.Today;
+}
