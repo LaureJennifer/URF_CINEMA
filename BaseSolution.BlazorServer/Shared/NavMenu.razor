@@ -1,35 +1,24 @@
-﻿<MudNavMenu Color="Color.Primary">
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Training Facility">
-            <MudNavLink Href="#">List</MudNavLink>
-        </MudNavGroup>
+﻿<MudNavMenu Color="Color.Warning">
+            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="dsnv">Danh sách nhân viên</MudNavLink>
+       
     </MudNavMenu>
 
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Text Template">
-            <MudNavLink Href="#">List</MudNavLink>
-        </MudNavGroup>
+    <MudNavMenu  Color="Color.Surface">
+        @*<MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Quản lý rạp">*@
+            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="listrap">Danh sách rạp</MudNavLink>
+        @*</MudNavGroup>*@
     </MudNavMenu>
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Contest">
-            <MudNavLink Href="#">List</MudNavLink>
-        </MudNavGroup>
+    <MudNavMenu  Color="Color.Error">
+            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="listlichfilm">Danh Sách Lịch Chiếu</MudNavLink>
     </MudNavMenu>
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Participant">
-            <MudNavLink Href="#">List</MudNavLink>
-        </MudNavGroup>
+    <MudNavMenu  Color="Color.Secondary">
+            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="phongchieu">Danh sách phòng chiếu</MudNavLink>
     </MudNavMenu>
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="Ranking">
-            <MudNavLink Href="#">Contest</MudNavLink>
-            <MudNavLink Href="#">Round</MudNavLink>
-        </MudNavGroup>
+    <MudNavMenu  Color="Color.Info">
+            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="film">Danh Sách phim</MudNavLink>
     </MudNavMenu>
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="Score of Participant">
+   @* <MudNavMenu>*@
+    @*  <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="Score of Participant">
             <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
@@ -37,8 +26,8 @@
         <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="History">
             <MudNavLink Href="#">List</MudNavLink>
         </MudNavGroup>
-    </MudNavMenu>
-</MudNavMenu>
+    </MudNavMenu>*@
+@*</MudNavMenu>*@
 
 @code {
     private MudTheme _customTheme = new()

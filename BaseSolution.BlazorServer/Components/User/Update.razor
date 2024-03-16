@@ -1,6 +1,5 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
-@using BaseSolution.BlazorServer.Components.SignUp;
 @inject IDialogService DialogService
 
 <MudDialog>
@@ -24,6 +23,15 @@
                                     <MudRadio Option="@("Nữ")">Nữ</MudRadio>
                                 </MudRadioGroup>
                             </div>
+                                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                                    <ButtonTemplate>
+                                        <MudButton HtmlTag="label"
+                                                   Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                                   for="@context"> Ảnh </MudButton>
+                                    </ButtonTemplate>
+                                </MudFileUpload>
 
                                 <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-3">Sửa thông tin </MudButton> 
                            </MudItem> 
@@ -41,4 +49,10 @@
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void UploadFiles(IBrowserFile file)
+    {
+        files.Add(file);
+        //TODO upload the files to the server
+    }
 }
