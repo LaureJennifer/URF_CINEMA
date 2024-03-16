@@ -40,12 +40,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create Department"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create department"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "Department"
+                        FieldName = LocalizationString.Common.FailedToCreate + "department"
                     }
                 });
             }
@@ -70,12 +70,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete Department"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete department"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "Department"
+                        FieldName = LocalizationString.Common.FailedToDelete + "department"
                     }
                 });
             }
@@ -106,12 +106,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update Department"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update department"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "Department"
+                        FieldName = LocalizationString.Common.FailedToUpdate + "department"
                     }
                 });
             }

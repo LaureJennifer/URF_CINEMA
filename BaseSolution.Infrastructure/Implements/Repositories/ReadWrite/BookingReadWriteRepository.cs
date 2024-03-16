@@ -26,9 +26,28 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             _dbContext = dbContext;
         }
 
-        public Task<RequestResult<Guid>> AddBookingAsync(BookingEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<Guid>> AddBookingAsync(BookingEntity entity, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                entity.CreatedTime = DateTimeOffset.UtcNow;
+
+                await _dbContext.BookingEntities.AddAsync(entity);
+                await _dbContext.SaveChangesAsync();
+
+                return RequestResult<Guid>.Succeed(entity.Id);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create booking"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "booking"
+                    }
+                });
+            }
         }
 
         public async Task<RequestResult<int>> DeleteBookingAsync(BookingDeleteRequest request, CancellationToken cancellationToken)
@@ -40,7 +59,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 booking_!.Deleted = true;
                 booking_.DeletedBy = request.DeletedBy;
                 booking_.DeletedTime = DateTimeOffset.UtcNow;
-                booking_.SeatStatus = EntityStatus.Available;
+                booking_.SeatStatus = EntityStatus.Deleted;
 
                 _dbContext.BookingEntities.Update(booking_);
                 await _dbContext.SaveChangesAsync();
@@ -59,9 +78,32 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public Task<RequestResult<int>> UpdateBookingAsync(BookingEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateBookingAsync(BookingEntity entity, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var booking_ = await GetBookingByIdAsync(entity.Id, cancellationToken);
+
+                booking_!.SeatStatus = entity.SeatStatus;
+                booking_.ModifiedBy = entity.ModifiedBy;
+                booking_.ModifiedTime = DateTimeOffset.UtcNow;
+
+                _dbContext.BookingEntities.Update(booking_);
+                await _dbContext.SaveChangesAsync();
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update booking"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "booking"
+                    }
+                });
+            }
         }
         private async Task<BookingEntity?> GetBookingByIdAsync(Guid idBill, CancellationToken cancellationToken)
         {

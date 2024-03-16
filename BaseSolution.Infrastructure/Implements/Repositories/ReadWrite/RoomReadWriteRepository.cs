@@ -38,12 +38,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create Room"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create room"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "Room"
+                        FieldName = LocalizationString.Common.FailedToCreate + "room"
                     }
                 });
             }
@@ -68,12 +68,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete Room"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete room"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "Room"
+                        FieldName = LocalizationString.Common.FailedToDelete + "room"
                     }
                 });
             }
@@ -91,8 +91,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 room_.Code = entity.Code;
                 room_.SoundSystem = entity.SoundSystem;
                 room_.ScreenSize = entity.ScreenSize;
-                room_.RoomLayoutId = entity.RoomLayoutId;
-                room_.DepartmentId = entity.DepartmentId;
                 room_.Status = entity.Status;
                 room_.ModifiedBy = entity.ModifiedBy;
                 room_.ModifiedTime = DateTimeOffset.UtcNow;
@@ -104,12 +102,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update Room"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update room"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "Room"
+                        FieldName = LocalizationString.Common.FailedToUpdate + "room"
                     }
                 });
             }

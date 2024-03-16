@@ -38,12 +38,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<Guid>.Fail(_localizationService["Unable to create Seat"], new[]
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create seat"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToCreate + "Seat"
+                        FieldName = LocalizationString.Common.FailedToCreate + "seat"
                     }
                 });
             }
@@ -68,12 +68,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete Seat"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete seat"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "Seat"
+                        FieldName = LocalizationString.Common.FailedToDelete + "seat"
                     }
                 });
             }
@@ -91,7 +91,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 seat_.SeatPosition = entity.SeatPosition;
                 seat_.Type = entity.Type;
                 seat_.Price = entity.Price;
-                seat_.RoomLayoutId = entity.RoomLayoutId;
                 seat_.Status = entity.Status;
                 seat_.ModifiedBy = entity.ModifiedBy;
                 seat_.ModifiedTime = DateTimeOffset.UtcNow;
@@ -103,12 +102,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update Seat"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update seat"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "Seat"
+                        FieldName = LocalizationString.Common.FailedToUpdate + "seat"
                     }
                 });
             }

@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.DataTransferObjects.Booking.Request
+namespace BaseSolution.Application.DataTransferObjects.PaymentMethod.Request
 {
-    public class ViewBookingWithPaginationRequest :PaginationRequest
+    public class ViewPaymentMethodWithPaginationRequest : PaginationRequest
     {
-        public string? SearchString { get; set; }
     }
 }

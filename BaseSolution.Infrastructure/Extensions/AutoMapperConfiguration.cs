@@ -7,7 +7,7 @@ namespace BaseSolution.Infrastructure.Extensions;
 
 public static class AutoMapperConfiguration
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddAutoMapper(this IServiceCollection services)
     {
         using (var serviceProvider = services.BuildServiceProvider())
         {
