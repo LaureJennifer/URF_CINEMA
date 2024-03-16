@@ -71,12 +71,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to delete Customer"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to delete customer"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToDelete + "Customer"
+                        FieldName = LocalizationString.Common.FailedToDelete + "customer"
                     }
                 });
             }
@@ -104,12 +104,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
             catch (Exception e)
             {
-                return RequestResult<int>.Fail(_localizationService["Unable to update Customer"], new[]
+                return RequestResult<int>.Fail(_localizationService["Unable to update customer"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToUpdate + "Customer"
+                        FieldName = LocalizationString.Common.FailedToUpdate + "customer"
                     }
                 });
             }

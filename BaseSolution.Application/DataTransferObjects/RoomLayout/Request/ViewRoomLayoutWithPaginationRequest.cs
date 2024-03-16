@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.DataTransferObjects.Booking.Request
+namespace BaseSolution.Application.DataTransferObjects.RoomLayout.Request
 {
-    public class ViewBookingWithPaginationRequest :PaginationRequest
+    public class ViewRoomLayoutWithPaginationRequest : PaginationRequest
     {
-        public string? SearchString { get; set; }
     }
 }
