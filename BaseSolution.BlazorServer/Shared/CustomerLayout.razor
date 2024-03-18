@@ -11,10 +11,6 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-@*     <MudAppBar Style="background-image: linear-gradient( 135deg, #FFB74D 10%, #FF9800 100%)" Elevation="0">
-        <MudNavMenu>
-            <MudNavLink Href="@(RouteManager.Home.AdminHome)" Match="NavLinkMatch.All"><MudText Style="color:#fff" Typo="Typo.h6">FPLSP Analyst</MudText></MudNavLink>
-        </MudNavMenu> *@
     <MudAppBar Style="background-color:#261D30" Fixed="false">
         <MudLink Color="Color.Warning" Href="/home" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
         <MudSpacer />
@@ -24,11 +20,10 @@
         <MudSpacer />
         <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
         <MudSpacer />
-
         <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success"> đăng nhập </MudButton>
     </MudAppBar>
-        
-    @* <MudGrid Class="mt-10">
+       <Home/>
+    <MudGrid Class="mt-10">
         <MudItem xs="6">
             <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"> <MudText Typo="Typo.h5">URF CENIMAS</MudText></MudLink>
             <MudLink Color="Color.Tertiary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Liên hệ với chúng tôi: </b></MudText></MudLink>
@@ -53,8 +48,8 @@
 
         </MudItem>
     </MudGrid>
-        <MudSpacer /> *@
-@*     </MudAppBar> *@
+        <MudSpacer />
+@*    </MudAppBar> *@
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-2 pt-8">
             @Body

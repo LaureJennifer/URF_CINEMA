@@ -12,7 +12,7 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadWrite
     public interface IRoleReadWriteRepository
     {
         Task<RequestResult<Guid>> AddRoleAsync(RoleEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<bool>> UpdateRoleAsync(RoleEntity entity, CancellationToken cancellationToken);
-        Task<RequestResult<bool>> DeleteRoleAsync(RoleDeleteRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<int>> UpdateRoleAsync(RoleEntity entity, CancellationToken cancellationToken);
+        Task<RequestResult<int>> DeleteRoleAsync(RoleDeleteRequest request, CancellationToken cancellationToken);
     }
 }
