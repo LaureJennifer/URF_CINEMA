@@ -2,7 +2,6 @@
 @using BaseSolution.BlazorServer.Components.Room;
 @using BaseSolution.Domain.Entities;
 @inject IDialogService DialogService
-
 <MudGrid>
  <MudItem xs="8">
         <MudText  Class="mt-3" Typo="Typo.h4">Danh sách phòng chiếu</MudText>
@@ -10,68 +9,56 @@
     <MudItem xs="4">
         <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
     </MudItem>
-
  </MudGrid>
-
-<MudButton  @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
-
+<MudButton  @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
  <MudTable Items="@lst" Class="mt-4">
          <HeaderContent>
         <MudTh>STT</MudTh>
         <MudTh>Mã phòng</MudTh>
         <MudTh>Sức chứa</MudTh>
-         <MudTh>Âm thanh</MudTh>
+        <MudTh>Âm thanh</MudTh>
         <MudTh>Kích Thước màn hình</MudTh>
         <MudTh>Chức năng</MudTh>
     </HeaderContent>
     <RowTemplate>
-
         <MudTd DataLabel="Stt">@(lst.IndexOf(context) + 1)</MudTd>
                 <MudTd DataLabel="Mã phòng">@context.Code</MudTd>
                       <MudTd DataLabel="Sức chứa">@context.Capacity</MudTd>
                       <MudTd DataLabel="Âm thanh">@context.SoundSystem</MudTd>
                 <MudTd DataLabel="Kích thước màn hình">@context.ScreenSize</MudTd>
-
                 <MudTd>
-                        <MudButton  @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"><MudIcon Icon="@Icons.Material.Filled.TipsAndUpdates"></MudIcon></MudButton>
-
-                           <MudButton  @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
+                          <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                          <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
                 </MudTd>
-
             </RowTemplate>
                  <PagerContent>
                     <MudTablePager />
                 </PagerContent>
         </MudTable>
-
     @code {
     public string Search { get; set; }
     List<RoomEntity> lst = new List<RoomEntity>()
     {
         new RoomEntity() { Capacity = 120, Code = "Room01", SoundSystem = "JBL partyboox - HarmanKadon x4" , ScreenSize = "Imax 76Feed 22M" },
         new RoomEntity() { Capacity = 150, Code = "Room02", SoundSystem = "JBL partyboox - HarmanKadon x4" , ScreenSize = "Imax 88Feed 27M" }
-
- 
 };
     private void OpenDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        DialogService.Show<Create>("Thêm mới phòng Chiếu", closeOnEscapeKey);
+        DialogService.Show<Create>("Thêm Mới Phòng Chiếu", closeOnEscapeKey);
     }
     private void OpenDialogg()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        DialogService.Show<Update>("Sửa thông tin phòng chiếu", closeOnEscapeKey);
+        DialogService.Show<Update>("Sửa Thông Tin Phòng Chiếu", closeOnEscapeKey);
     }
     private void DeleteUser()
     {
         var parameters = new DialogParameters<Delete>();
         parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Delete", parameters, options);
+        DialogService.Show<Delete>("Xóa Phòng Chiếu", parameters, options);
     }
 }

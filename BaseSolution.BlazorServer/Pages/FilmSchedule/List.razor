@@ -2,74 +2,64 @@
 @using BaseSolution.BlazorServer.Components.Filmschedule;
 @using BaseSolution.Domain.Entities;
 @inject IDialogService DialogService
-
-
-
 <MudGrid>
- <MudItem xs="8">
-        <MudText  Class="mt-3" Typo="Typo.h4">Danh sách Lịch Chiếu</MudText>
-    </MudItem>
-    <MudItem xs="4">
-        <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-    </MudItem>
-
+         <MudItem xs="8">
+                <MudText  Class="mt-3" Typo="Typo.h4">Danh sách Lịch Chiếu</MudText>
+         </MudItem>
+         <MudItem xs="4">
+                <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+         </MudItem>
  </MudGrid>
-
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
-
-
-
-    <MudTable Items="@lst" Class="mt-4">
-         <HeaderContent>
-        <MudTh>STT</MudTh>
-        <MudTh>Tên phim</MudTh>
-        <MudTh>Ngày Chiếu</MudTh>
-         <MudTh>Thời gian chiếu</MudTh>
-        <MudTh>Chức năng</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="STT">@(lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Tên phim">@context.Id</MudTd>
-                <MudTd DataLabel="Ngày Chiếu">@context.ShowDate</MudTd>
-                  <MudTd DataLabel="Thời gian chiếu">@context.ShowTime</MudTd>
-                  @*<MudTd DataLabel="Email">@context.Status</MudTd>*@
-            <MudTd>
-                        <MudButton  @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"><MudIcon Icon="@Icons.Material.Filled.TipsAndUpdates"></MudIcon></MudButton>
-              
-                       <MudButton  @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
-            </MudTd>
-        </RowTemplate>
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+        <MudTable Items="@lst" Class="mt-4">
+                    <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Tên phim</MudTh>
+                    <MudTh>Ngày Chiếu</MudTh>
+                     <MudTh>Thời gian chiếu</MudTh>
+                    <MudTh>Chức năng</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="STT">@(lst.IndexOf(context) + 1)</MudTd>
+                            <MudTd DataLabel="Tên phim">@context.Id</MudTd>
+                            <MudTd DataLabel="Ngày Chiếu">@context.ShowDate</MudTd>
+                            <MudTd DataLabel="Thời gian chiếu">@context.ShowTime</MudTd>
+                        <MudTd>
+                                        <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
+                        </MudTd>
+                    </RowTemplate>
                              <PagerContent>
-                                <MudTablePager />
-                            </PagerContent>
-        </MudTable>
+                                    <MudTablePager />
+                             </PagerContent>
+            </MudTable>
 @code {
     public string Search { get; set; }
     List<FilmScheduleEntity> lst = new List<FilmScheduleEntity>()
 {
-    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 16, 10, 30, 0, new TimeSpan(2, 0, 0)) },
-    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 17, 15, 0, 0, new TimeSpan(-5, 0, 0)) },
-    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 18, 20, 45, 0, new TimeSpan(0, 8, 0)) }
+    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 16, 10, 30, 0, new TimeSpan(2, 0, 0)), ShowTime = new DateTimeOffset(2024, 4, 18, 17, 26, 0, new TimeSpan(4, 0, 0))  },
+    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 17, 15, 0, 0, new TimeSpan(-5, 0, 0)), ShowTime = new DateTimeOffset(2024, 5, 14, 8, 24, 0, new TimeSpan(6, 0, 0)) },
+    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 18, 20, 45, 0, new TimeSpan(0, 8, 0)), ShowTime = new DateTimeOffset(2024, 4, 12, 9, 26, 0, new TimeSpan(5, 0, 0)) }
 };
     private void OpenDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Create>("Thêm mới Lịch Fiml", closeOnEscapeKey);
+        DialogService.Show<Create>("Thêm Mới Lịch Phim", closeOnEscapeKey);
     }
     private void OpenDialogg()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Update>("Sửa thông tin Lịch Chiếu", closeOnEscapeKey);
+        DialogService.Show<Update>("Sửa Thông Tin Lịch Phim", closeOnEscapeKey);
     }
     private void DeleteUser()
     {
         var parameters = new DialogParameters<Delete>();
         parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Delete", parameters, options);
+        DialogService.Show<Delete>("Xóa Lịch Phim", parameters, options);
     }
 }

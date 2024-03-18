@@ -1,31 +1,21 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @inject IDialogService DialogService
-<MudDialog>
-    <DialogContent>
-      
+<MudDialog  Style="width:1000px" >
+    <DialogContent >
          <MudForm>      
-               <MudGrid>
-                       <MudItem xs="6">
                             <MudTextField T="string" Label="Mã Rạp"/>
                             <MudTextField T="string" Label="Tên Rạp"/>
                             <MudTextField T="string" Label="Địa chỉ"/>
                              <MudTextField T="string" Label="Số điện thoại"/> 
-                             </MudItem>
-                       <MudItem xs="6">
-
                              <MudTextField T="string" Label="Email"/> 
                               <MudTextField T="string" Label="Loại Rạp"/> 
-                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Thêm mới </MudButton> 
-                             </MudItem>
-
-                        </MudGrid>
                     </MudForm> 
                   
          </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="Cancel">Quay Lại</MudButton>
+        <MudButton Color="Color.Success" OnClick="Submit">Thêm mới</MudButton>
     </DialogActions>
 </MudDialog>
 

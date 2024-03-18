@@ -5,16 +5,11 @@
 <MudDialog Style="width: 1000px" >
     <DialogContent>
                     <MudForm  >      
-                      @*  <MudGrid>*@
-                           @*  <MudItem xs="6">*@
                             <MudTextField T="string" Label="Họ tên"/>
                              <MudDatePicker Label="ngày sinh" /> 
                               <MudTextField T="string" Label="Địa chỉ"/> 
                              <MudTextField T="string" Label="Số điện thoại"/> 
-                          @*  </MudItem>*@
-                           @*  <MudItem xs="6">*@
                           <MudTextField T="string" Label="Email"/> 
-                            <MudTextField T="string" Label="Căn cước công dân"/> 
                              <div class="d-flex">
                                 <MudRadioGroup T="string" Required="true" RequiredError="">
                                     <MudRadio Option="@("Nam")">Nam</MudRadio>
@@ -30,16 +25,11 @@
                                                    for="@context"> Ảnh </MudButton>
                                     </ButtonTemplate>
                                 </MudFileUpload>
-                            
-                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Thêm mới </MudButton> 
-                          @* </MudItem> 
-                          </MudGrid>*@
                     </MudForm>   
-
    </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="Cancel">Quay lại</MudButton>
+        <MudButton Color="Color.Success" OnClick="Submit">Thêm</MudButton>
     </DialogActions>
 </MudDialog>
 
