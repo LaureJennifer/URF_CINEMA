@@ -1,49 +1,154 @@
 ﻿@page "/home"
 @using BaseSolution.BlazorServer.Components.Login;
 @inject IDialogService DialogService
+<h1>Trang chủ Phim</h1>
+<MudAppBar Color="Color.Dark" Fixed="false">
+    <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
+    <MudSpacer />
+    <MudLink Href="#" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
+    <MudSpacer />
+    <MudLink Href="#" Typo="Typo.body2"><h1>Phim sắp chiếu</h1></MudLink>
+    <MudSpacer />
+    <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+    <MudSpacer />
 
-@* <MudAppBar Style="background-color:#261D30" Fixed="false">
-    <MudLink Color="Color.Warning" Href="/home" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
-    <MudSpacer />
-    <MudLink Href="/room" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
-    <MudSpacer />
-      <MudLink Href="/FilmSchedule" Typo="Typo.body2"><h1>Lịch chiếu</h1></MudLink>
-    <MudSpacer />
-    <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-        <MudSpacer />
-    <MudItem xs="3" Class="mh-100 mw-100">
-        <MudImage Src="https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/9/6/1089731/03_TIEU-VY-01.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
-     <MudText Align="Align.Start">Tên Phim: <b>Kẻ Hủy Diệt</b></MudText>
-     <MudText Align="Align.Start">Thời gian :<b> 120 phút </b></MudText>
-     <MudText Align="Align.Start">Ngày chiếu :<b>26/3/2024 </b></MudText>
-     <MudText Align="Align.Start">Thể lọai :<b> Khoa học viễn tưởng </b></MudText>
-     <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
-    </MudItem>
-    <MudItem xs="3">
-              <MudImage Src="https://arena.fpt.edu.vn/wp-content/uploads/2021/04/phong-cach-thiet-ke-doc-dao.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>     
-     <MudText Align="Align.Start">Tên Phim: <b>Thần sấm</b></MudText>
-     <MudText Align="Align.Start">Thời gian :<b>220 phút</b></MudText>
-     <MudText Align="Align.Start">Ngày chiếu :<b>22/6/2020</b></MudText>
-     <MudText Align="Align.Start">Thể lọai :<b>Khoa học viễn tưởng</b></MudText>
-  <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
-    </MudItem>
-    <MudItem xs="3">
-              <MudImage Src="https://ss-images.saostar.vn/wp700/2019/05/19/5227233/2.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
-     <MudText Align="Align.Start">Tên Phim: <b>Anh yêu em</b></MudText>
-     <MudText Align="Align.Start">Thời gian :<b>80 phút</b></MudText>
-     <MudText Align="Align.Start">Ngày chiếu :<b>01/05/2018</b></MudText>
-     <MudText Align="Align.Start">Thể lọai :<b>Tình cảm </b></MudText>
-    <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
-    </MudItem>
-    <MudItem xs="3">
-              <MudImage Src="https://genk.mediacdn.vn/2017/photo-1-1496042071517.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
-     <MudText Align="Align.Start">Tên Phim: <b>Alibabaa</b></MudText>
-     <MudText Align="Align.Start">Thời gian :<b>150 phút</b></MudText>
-     <MudText Align="Align.Start">Ngày chiếu :<b>15/04/2019</b></MudText>
-     <MudText Align="Align.Start">Thể lọai :<b>Phiêu Lưu</b></MudText>
-   <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
-    </MudItem>
-</MudGrid> 
+    <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success"> đăng nhập </MudButton>
+</MudAppBar>
+<MudPaper Height="1050px" Width="100%" Square="true" Class="mt-3 mud-theme-dark">
+
+    <MudContainer Fixed="true">
+        <MudCarousel Class="mud-width-full" Style="height:200px;" AutoCycle="false" TData="object">
+            <BulletTemplate Context="selected">
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Circle)" Color="@Color.Inherit" />
+                    </span>
+                </div>
+            </BulletTemplate>
+            <PreviousButtonTemplate>
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@Color.Inherit" />
+                    </span>
+                </div>
+            </PreviousButtonTemplate>
+            <NextButtonTemplate>
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@Color.Inherit" />
+                    </span>
+                </div>
+            </NextButtonTemplate>
+            <ChildContent>
+                <MudCarouselItem>
+                    <div class="d-flex" style="height:100%">
+                        <MudImage Src="https://insieutoc.vn/wp-content/uploads/2021/02/poster-ngang.jpg" Width="1500" Height="200" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                    </div>
+                </MudCarouselItem>
+                <MudCarouselItem>
+                    <div class="d-flex" style="height:100%">
+                        <MudImage Src="https://static.ybox.vn/2018/4/28/b32fb676-4acf-11e8-bc42-56c566ee3692.png" Width="1500" Height="200" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+
+                    </div>
+                </MudCarouselItem>
+                <MudCarouselItem>
+                    <div class="d-flex" style="height:100%">
+                        <MudImage Src="https://kenh14cdn.com/thumb_w/500/2016/p9-1455516821188.gif.png" Width="1500" Height="180" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+
+                    </div>
+                </MudCarouselItem>
+            </ChildContent>
+        </MudCarousel>
+        <center><MudText Typo="Typo.h3">Coming Soon</MudText></center>
+        <MudGrid Class="mt-4">
+            <MudItem xs="3" Class="mh-100 mw-100">
+                <MudImage Src="https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2022/9/6/1089731/03_TIEU-VY-01.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                <MudText Align="Align.Start">Tên Phim: <b>Kẻ Hủy Diệt</b></MudText>
+                <MudText Align="Align.Start">Thời gian :<b> 120 phút </b></MudText>
+                <MudText Align="Align.Start">Ngày chiếu :<b>26/3/2024 </b></MudText>
+                <MudText Align="Align.Start">Thể lọai :<b> Khoa học viễn tưởng </b></MudText>
+                <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
+
+            </MudItem>
+            <MudItem xs="3">
+                <MudImage Src="https://arena.fpt.edu.vn/wp-content/uploads/2021/04/phong-cach-thiet-ke-doc-dao.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                <MudText Align="Align.Start">Tên Phim: <b>Thần sấm</b></MudText>
+                <MudText Align="Align.Start">Thời gian :<b>220 phút</b></MudText>
+                <MudText Align="Align.Start">Ngày chiếu :<b>22/6/2020</b></MudText>
+                <MudText Align="Align.Start">Thể lọai :<b>Khoa học viễn tưởng</b></MudText>
+                <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
+            </MudItem>
+            <MudItem xs="3">
+                <MudImage Src="https://ss-images.saostar.vn/wp700/2019/05/19/5227233/2.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                <MudText Align="Align.Start">Tên Phim: <b>Anh yêu em</b></MudText>
+                <MudText Align="Align.Start">Thời gian :<b>80 phút</b></MudText>
+                <MudText Align="Align.Start">Ngày chiếu :<b>01/05/2018</b></MudText>
+                <MudText Align="Align.Start">Thể lọai :<b>Tình cảm </b></MudText>
+                <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
+            </MudItem>
+            <MudItem xs="3">
+                <MudImage Src="https://genk.mediacdn.vn/2017/photo-1-1496042071517.jpg" Width="250" Height="250" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                <MudText Align="Align.Start">Tên Phim: <b>Alibabaa</b></MudText>
+                <MudText Align="Align.Start">Thời gian :<b>150 phút</b></MudText>
+                <MudText Align="Align.Start">Ngày chiếu :<b>15/04/2019</b></MudText>
+                <MudText Align="Align.Start">Thể lọai :<b>Phiêu Lưu</b></MudText>
+                <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="mt-10">
+            <MudItem xs="6">
+                <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"> <MudText Typo="Typo.h5">URF CENIMAS</MudText></MudLink>
+                <MudLink Color="Color.Tertiary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Liên hệ với chúng tôi: </b></MudText></MudLink>
+                <MudLink Color="Color.Info" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Email: </b> Longtqph31519@fpt.edu.com</MudText></MudLink>
+                <MudLink Color="Color.Secondary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Phone: </b> 0345263866</MudText></MudLink>
+                <MudLink Color="Color.Error" Href="#" Typo="Typo.body2">  <MudText Align="Align.Start"><b>Địa chỉ: </b> Chương Mỹ - Thạch Thất - Chưa biết - Tí hỏi</MudText></MudLink>
+                <MudImage Src="https://banner2.cleanpng.com/20180419/tdq/kisspng-film-cinema-logo-cinema-x-chin-5ad8baa1dec9f4.9139666015241529939126.jpg" Width="450" Height="100" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+
+            </MudItem>
+            <MudItem xs="6">
+                <MudText Typo="Typo.h5">Follow Chúng tôi để nhận thông báo và những ưu đãi sớm nhất</MudText>
+
+                <MudIconButton Color="Color.Success"> <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudIconButton>
+                <MudIconButton Color="Color.Secondary"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+                <MudIconButton Color="Color.Info"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+                <MudText Typo="Typo.body2">nhập Email để nhận những ưu đãi  </MudText>
+                <MudForm>
+                    <MudTextField T="string" Label="nhập Email" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Gửi</MudButton>
+                </MudForm>
+
+
+            </MudItem>
+        </MudGrid>
+        @*  </MudContainer>
+        </MudPaper>
+        <MudPaper Height="300px" Width="100%" Class="mt-3 mud-theme-dark">
+        <MudContainer Fixed="true">
+        <MudGrid Class="mt-3">
+        <MudItem xs="6">
+        <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"> <MudText Typo="Typo.h5">URF CENIMAS</MudText></MudLink>
+        <MudLink  Color="Color.Tertiary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Liên hệ với chúng tôi: </b></MudText></MudLink>
+        <MudLink   Color="Color.Info" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Email: </b> Longtqph31519@fpt.edu.com</MudText></MudLink>
+        <MudLink  Color="Color.Secondary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Phone: </b> 0345263866</MudText></MudLink>
+        <MudLink  Color="Color.Error" Href="#" Typo="Typo.body2">  <MudText Align="Align.Start"><b>Địa chỉ: </b> Chương Mỹ - Thạch Thất - Chưa biết - Tí hỏi</MudText></MudLink>
+        <MudImage Src="https://banner2.cleanpng.com/20180419/tdq/kisspng-film-cinema-logo-cinema-x-chin-5ad8baa1dec9f4.9139666015241529939126.jpg" Width="450" Height="100" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
+        </MudItem>
+        <MudItem xs="6">
+        <MudText Typo="Typo.h5">Follow Chúng tôi để nhận thông báo và những ưu đãi sớm nhất</MudText>
+        <MudIconButton Color="Color.Success"> <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudIconButton>
+        <MudIconButton Color="Color.Secondary"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+        <MudIconButton Color="Color.Info"> <MudIcon Icon="@Icons.Material.Filled.AttachEmail"></MudIcon> </MudIconButton>
+        <MudText Typo="Typo.body2">nhập Email để nhận những ưu đãi  </MudText>
+        <MudForm>
+        <MudTextField T="string" Label="nhập Email"/>
+        <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Gửi</MudButton>
+        </MudForm>
+        </MudItem>
+        </MudGrid>*@
+    </MudContainer>
+</MudPaper>
+
+
 @code {
     public string Search { get; set; }
     private void OpenDialog()
