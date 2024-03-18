@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Application.DataTransferObjects.Booking.Request
 {
-    internal class ViewBookingWithPaginationRequest :PaginationRequest
+    public class ViewBookingWithPaginationRequest :PaginationRequest
     {
+        public string? SearchString { get; set; }
     }
 }
