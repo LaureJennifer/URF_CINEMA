@@ -2,19 +2,13 @@
 @using System.ComponentModel.DataAnnotations
 @inject IDialogService DialogService
 
-<MudDialog>
+<MudDialog Style="width:1000px">
     <DialogContent>
-
                     <MudForm>      
-                        <MudGrid>
-                             <MudItem xs="6">
                             <MudTextField T="string" Label="Mã Film"/>
                             <MudTextField T="string" Label="Tên film"/>
                               <MudTextField T="string" Label="Đạo Diễn"/> 
                              <MudTextField T="string" Label="Ngôn Ngữ"/> 
-
-                            </MudItem>
-                             <MudItem xs="6">
                           <MudTextField T="string" Label="Thể loại "/> 
                             <MudTextField T="string" Label="Độ tuổi"/> 
                                   <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
@@ -26,16 +20,11 @@
                                                    for="@context"> Ảnh </MudButton>
                                     </ButtonTemplate>
                                 </MudFileUpload>
-
-                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Thêm mới </MudButton> 
-                           </MudItem> 
-                          </MudGrid>
                     </MudForm>   
-
    </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton OnClick="Cancel">Quay Lại</MudButton>
+        <MudButton Color="Color.Success" OnClick="Submit">Thêm Mới</MudButton>
     </DialogActions>
 </MudDialog>
 
