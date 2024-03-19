@@ -14,7 +14,8 @@ namespace BaseSolution.Infrastructure.Database.Configurations
         public void Configure(EntityTypeBuilder<DepartmentFilmEntity> builder)
         {
             builder.ToTable("DepartmentFilm");
-            builder.HasKey(x => new { x.DepartmentId, x.FilmId });
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.HasOne(x => x.DepartmentEntity).WithMany(x => x.DepartmentFilms).HasForeignKey(x => x.DepartmentId).IsRequired();
             builder.HasOne(x => x.FilmEntity).WithMany(x => x.DepartmentFilms).HasForeignKey(x => x.FilmId).IsRequired();
         }
