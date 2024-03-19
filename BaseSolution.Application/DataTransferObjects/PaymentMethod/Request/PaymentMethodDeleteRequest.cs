@@ -8,5 +8,7 @@ namespace BaseSolution.Application.DataTransferObjects.PaymentMethod.Request
 {
     public class PaymentMethodDeleteRequest
     {
+        public Guid Id { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }

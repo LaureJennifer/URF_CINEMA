@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 {
-    internal class DepartmentCreateRequest
+    public class DepartmentFilmDeleteRequest
     {
+        public Guid DepartmentId { get; set; }
+        public Guid FilmId { get; set; }
     }
 }
