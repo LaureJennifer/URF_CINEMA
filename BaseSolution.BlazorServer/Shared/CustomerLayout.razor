@@ -3,28 +3,36 @@
 ﻿@using BlazorServer.Data.Extensions;
 @inherits LayoutComponentBase
 @inject IDialogService DialogService
-
-
-
 <MudThemeProvider/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar Style="background-color:#261D30" Fixed="false">
-        <MudLink Color="Color.Warning" Href="/home" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
+        <MudText Color="Color.Warning"  Typo="Typo.h4">URF CENIMAS</MudText>
         <MudSpacer />
-        <MudLink Href="/room" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
+        <MudLink Href="home" Typo="Typo.body2"><h1>Phim</h1></MudLink>
         <MudSpacer />
         <MudLink Href="/FilmSchedule" Typo="Typo.body2"><h1>Lịch chiếu</h1></MudLink>
         <MudSpacer />
-        <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <MudSelect Dense="true" T="string" Label="Rạp URF" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" AdornmentColor="Color.Success" Style="background-color:#EEEEEE; border-radius:8px" FullWidth>
+                    <MudSelectItem Value="@("URF Cầu Giấy")" />
+                    <MudSelectItem Value="@("URF Thanh Xuân")" />
+                    <MudSelectItem Value="@("URF Hoàng Mai")" />
+        </MudSelect>
         <MudSpacer />
-        <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success"> đăng nhập </MudButton>
+          <MudIconButton @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Color="Color.Info"></MudIconButton>
     </MudAppBar>
-       <Home/>
-    <MudGrid Class="mt-10">
-        <MudItem xs="6">
+  
+            @Body
+    <MudScrollToTop>
+        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+    </MudScrollToTop>
+    <MudGrid Class="mt-3 mud-theme-dark">
+        <MudItem xs="1">
+
+        </MudItem>
+        <MudItem xs="6" Class="mt-10">
             <MudLink Color="Color.Warning" Href="#" Typo="Typo.body2"> <MudText Typo="Typo.h5">URF CENIMAS</MudText></MudLink>
             <MudLink Color="Color.Tertiary" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Liên hệ với chúng tôi: </b></MudText></MudLink>
             <MudLink Color="Color.Info" Href="#" Typo="Typo.body2"> <MudText Align="Align.Start"><b>Email: </b> Longtqph31519@fpt.edu.com</MudText></MudLink>
@@ -33,7 +41,7 @@
             <MudImage Src="https://banner2.cleanpng.com/20180419/tdq/kisspng-film-cinema-logo-cinema-x-chin-5ad8baa1dec9f4.9139666015241529939126.jpg" Width="450" Height="100" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
 
         </MudItem>
-        <MudItem xs="6">
+        <MudItem xs="5" Class="mt-10">
             <MudText Typo="Typo.h5">Follow Chúng tôi để nhận thông báo và những ưu đãi sớm nhất</MudText>
 
             <MudIconButton Color="Color.Success"> <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudIconButton>
@@ -50,14 +58,7 @@
     </MudGrid>
         <MudSpacer />
 @*    </MudAppBar> *@
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large" Class="my-2 pt-8">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-    <MudScrollToTop>
-        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
-    </MudScrollToTop>
+  
 </MudLayout>
 
 @code {
