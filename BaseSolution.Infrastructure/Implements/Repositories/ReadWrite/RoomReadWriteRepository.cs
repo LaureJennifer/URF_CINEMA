@@ -5,6 +5,7 @@ using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -60,6 +61,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 room_!.Deleted = true;
                 room_.DeletedBy = request.DeletedBy;
                 room_.DeletedTime = DateTimeOffset.UtcNow;
+                room_.Status = EntityStatus.Deleted;
 
                 _dbContext.RoomEntities.Update(room_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -88,7 +90,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
 
                 // Update value to existed room
                 room_!.Capacity= entity.Capacity;
-                room_.Code = entity.Code;
+                room_.Code = string.IsNullOrWhiteSpace(entity.Code) ? room_.Code : entity.Code;
                 room_.SoundSystem = entity.SoundSystem;
                 room_.ScreenSize = entity.ScreenSize;
                 room_.Status = entity.Status;

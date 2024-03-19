@@ -5,6 +5,7 @@ using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -61,6 +62,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 paymentMethod_!.Deleted = true;
                 paymentMethod_.DeletedBy = request.DeletedBy;
                 paymentMethod_.DeletedTime = DateTimeOffset.UtcNow;
+                paymentMethod_.Status = EntityStatus.Deleted;
 
                 _dbContext.PaymentMethodEntities.Update(paymentMethod_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -88,7 +90,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var paymentMethod_ = await GetPaymentMethodByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed Seat
-                paymentMethod_!.Name = entity.Name;
+                paymentMethod_!.Name = string.IsNullOrWhiteSpace(entity.Name) ? paymentMethod_.Name : entity.Name;
                 paymentMethod_.Description = entity.Description;
                 paymentMethod_.Status = entity.Status;
                 paymentMethod_.ModifiedBy = entity.ModifiedBy;

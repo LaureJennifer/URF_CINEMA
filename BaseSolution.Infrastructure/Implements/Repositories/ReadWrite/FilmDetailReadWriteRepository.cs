@@ -31,27 +31,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var filmDetail_ = await GetFilmDetailByIdAsync(entity.FilmId, entity.FilmScheduleId, cancellationToken);
-                if (filmDetail_ != null)
-                {
-                    var idRoomDetail = entity..Select(x => x.RoomDetailId).FirstOrDefault();
-                    if (idRoomDetail != null)
-                    {
-                        var roomRetail = _appReadWriteDbContext.RoomDetails.Find(idRoomDetail);
-                        if (roomRetail != null)
-                        {
-                            roomRetail.Status = RoomStatus.Reserved;
-                            _appReadWriteDbContext.Update(roomRetail);
-                            await _appReadWriteDbContext.SaveChangesAsync(cancellationToken);
-                        }
-                    }
-                }
                 entity.CreatedTime = DateTimeOffset.UtcNow;
 
                 await _dbContext.FilmDetailEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync();
 
-                return RequestResult<Guid>.Succeed(filmDetail_.FilmId);
+                return RequestResult<Guid>.Succeed(entity.Id);
             }
             catch (Exception e)
             {
@@ -70,7 +55,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var filmDetail_ = await GetFilmDetailByIdAsync(request.FilmId,request.FilmScheduleId, cancellationToken);
+                var filmDetail_ = await GetFilmDetailByIdAsync(request.Id, cancellationToken);
 
                 filmDetail_!.Deleted = true;
                 filmDetail_.DeletedTime = DateTimeOffset.UtcNow;
@@ -93,11 +78,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> UpdateFilmDetailByIdAsync(FilmDetailEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateFilmDetailAsync(FilmDetailEntity entity, CancellationToken cancellationToken)
         {
             try
             {
-                var filmDetail_ = await GetFilmDetailByIdAsync(entity.FilmId,entity.FilmScheduleId, cancellationToken);
+                var filmDetail_ = await GetFilmDetailByIdAsync(entity.Id,cancellationToken);
 
                 filmDetail_!.FilmId = entity.FilmId;
                 filmDetail_.FilmScheduleId = entity.FilmScheduleId;
@@ -122,11 +107,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 });
             }
         }
-        private async Task<FilmDetailEntity?> GetFilmDetailByIdAsync(Guid idFilm, Guid idFilmSchedule, CancellationToken cancellationToken)
+        private async Task<FilmDetailEntity?> GetFilmDetailByIdAsync(Guid idFilmDetail, CancellationToken cancellationToken)
         {
-            var film_ = await _dbContext.FilmDetailEntities.FirstOrDefaultAsync(c => c.FilmId == idFilm && c.FilmScheduleId == idFilmSchedule && !c.Deleted, cancellationToken);
+            var filmDetail_ = await _dbContext.FilmDetailEntities.FirstOrDefaultAsync(c => c.Id == idFilmDetail && !c.Deleted, cancellationToken);
 
-            return film_;
+            return filmDetail_;
         }
     }
 }

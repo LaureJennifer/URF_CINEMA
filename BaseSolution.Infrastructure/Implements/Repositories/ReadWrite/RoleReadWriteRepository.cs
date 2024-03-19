@@ -54,13 +54,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var role = await GetRoleByIdAsync(request.Id, cancellationToken);
+                var role_ = await GetRoleByIdAsync(request.Id, cancellationToken);
 
-                role!.Deleted = true;
-                role.DeletedTime = DateTimeOffset.Now;
-                role.Status = EntityStatus.Deleted;
+                role_!.Deleted = true;
+                role_.DeletedTime = DateTimeOffset.Now;
+                role_.Status = EntityStatus.Deleted;
 
-                _dbContext.RoleEntities.Update(role);
+                _dbContext.RoleEntities.Update(role_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -83,14 +83,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var role = await GetRoleByIdAsync(entity.Id, cancellationToken);
+                var role_ = await GetRoleByIdAsync(entity.Id, cancellationToken);
 
-                role!.Code = string.IsNullOrEmpty(entity.Code) ? role.Code : entity.Code;
-                role!.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
-                role.ModifiedBy = entity.ModifiedBy;
-                role.ModifiedTime = DateTimeOffset.Now;
+                role_!.Code = string.IsNullOrEmpty(entity.Code) ? role_.Code : entity.Code;
+                role_!.Status = entity.Status == EntityStatus.Active ? EntityStatus.Active : EntityStatus.InActive;
+                role_.ModifiedBy = entity.ModifiedBy;
+                role_.ModifiedTime = DateTimeOffset.Now;
 
-                _dbContext.RoleEntities.Update(role);
+                _dbContext.RoleEntities.Update(role_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);

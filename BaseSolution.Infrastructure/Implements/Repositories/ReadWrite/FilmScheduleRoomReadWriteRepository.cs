@@ -1,9 +1,12 @@
 ﻿using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,19 +26,92 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             _dbContext = dbContext;
         }
 
-        public Task<RequestResult<Guid>> AddFilmScheduleRoomAsync(FilmScheduleRoomEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<Guid>> AddFilmScheduleRoomAsync(FilmScheduleRoomEntity entity, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                entity.CreatedTime = DateTimeOffset.UtcNow;
+
+                await _dbContext.FilmScheduleRoomEntities.AddAsync(entity);
+                await _dbContext.SaveChangesAsync();
+
+                return RequestResult<Guid>.Succeed(entity.Id);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<Guid>.Fail(_localizationService["Unable to create film schedule room"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "film schedule room"
+                    }
+                });
+            }
         }
 
-        public Task<RequestResult<int>> DeleteFilmScheduleRoomAsync(FilmSheduleRoomDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteFilmScheduleRoomAsync(FilmSheduleRoomDeleteRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var filmScheduleRoom_ = await GetFilmScheduleRoomByIdAsync(request.Id, cancellationToken);
+
+                filmScheduleRoom_!.Deleted = true;
+                filmScheduleRoom_.DeletedBy = request.DeletedBy;
+                filmScheduleRoom_.DeletedTime = DateTimeOffset.UtcNow;
+                filmScheduleRoom_.Status = EntityStatus.Deleted;
+
+                _dbContext.FilmScheduleRoomEntities.Update(filmScheduleRoom_);
+                await _dbContext.SaveChangesAsync();
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to delete film schedule room"], new[]
+                {
+                    new ErrorItem {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToDelete + "film schedule room"
+                    }
+                });
+            }
         }
 
-        public Task<RequestResult<int>> UpdateFilmScheduleRoomAsync(FilmScheduleRoomEntity entity, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> UpdateFilmScheduleRoomAsync(FilmScheduleRoomEntity entity, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var filmScheduleRoom_ = await GetFilmScheduleRoomByIdAsync(entity.Id, cancellationToken);
+
+                filmScheduleRoom_!.FilmScheduleId = entity.FilmScheduleId;
+                filmScheduleRoom_.RoomId = entity.RoomId;
+                filmScheduleRoom_.Status = entity.Status;
+                filmScheduleRoom_.ModifiedBy = entity.ModifiedBy;
+                filmScheduleRoom_.ModifiedTime = DateTimeOffset.UtcNow;
+
+                _dbContext.FilmScheduleRoomEntities.Update(filmScheduleRoom_);
+                await _dbContext.SaveChangesAsync();
+
+                return RequestResult<int>.Succeed(1);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<int>.Fail(_localizationService["Unable to update film schedule room"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToUpdate + "film schedule room"
+                    }
+                });
+            }
+        }
+        private async Task<FilmScheduleRoomEntity?> GetFilmScheduleRoomByIdAsync(Guid idFilmScheduleRoom, CancellationToken cancellationToken)
+        {
+            var filmScheduleRoom_ = await _dbContext.FilmScheduleRoomEntities.FirstOrDefaultAsync(c => c.Id == idFilmScheduleRoom && !c.Deleted, cancellationToken);
+
+            return filmScheduleRoom_;
         }
     }
 }

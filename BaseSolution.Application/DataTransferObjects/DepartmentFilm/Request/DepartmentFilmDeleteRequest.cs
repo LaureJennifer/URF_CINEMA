@@ -8,7 +8,7 @@ namespace BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 {
     public class DepartmentFilmDeleteRequest
     {
-        public Guid DepartmentId { get; set; }
-        public Guid FilmId { get; set; }
+        public Guid Id { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }

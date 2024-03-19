@@ -4,6 +4,7 @@ using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Implements.Services;
 using Microsoft.EntityFrameworkCore;
@@ -62,6 +63,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 department_!.Deleted = true;
                 department_.DeletedBy = request.DeletedBy;
                 department_.DeletedTime = DateTimeOffset.UtcNow;
+                department_.Status = EntityStatus.Deleted;
 
                 _dbContext.DepartmentEntities.Update(department_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -89,10 +91,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var department_ = await GetDepartmentByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed Department
-                department_!.Name = entity.Name;
-                department_.Code = entity.Code;
-                department_.Email = entity.Email;
-                department_.PhoneNumber = entity.PhoneNumber;
+                department_!.Name = string.IsNullOrWhiteSpace(entity.Name) ? department_.Name : entity.Name;
+                department_.Code = string.IsNullOrWhiteSpace(entity.Code) ? department_.Code : entity.Code;
+                department_.Email = string.IsNullOrWhiteSpace(entity.Email) ? department_.Email : entity.Email;
+                department_.PhoneNumber = string.IsNullOrWhiteSpace(entity.PhoneNumber) ? department_.PhoneNumber : entity.PhoneNumber;
                 department_.AddressCode = entity.AddressCode;
                 department_.AddressCodeFormat = entity.AddressCodeFormat;
                 department_.Status = entity.Status;
