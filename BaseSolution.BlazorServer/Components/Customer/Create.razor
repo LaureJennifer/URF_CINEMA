@@ -1,0 +1,39 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+
+        <MudForm>
+            <MudTextField T="string" Label="Mã Khách hàng" />
+            <MudTextField T="string" Label="Tên Khách Hàng" />
+            <MudTextField T="string" Label="Ngày sinh" />
+            <MudTextField T="string" Label="Email" />
+            <MudTextField T="string" Label="SĐT" />
+            <MudTextField T="string" Label="Địa chỉ" />
+            <MudTextField T="string" Label="UserName" />
+            <MudTextField T="string" Label="PassWord" />
+
+            <MudGrid>
+                <MudItem xs="7">
+                </MudItem>
+                <MudItem xs="5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Thêm </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}
