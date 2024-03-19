@@ -1,0 +1,82 @@
+﻿@page "/ticket"
+@using BaseSolution.BlazorServer.Components.Ticket;
+@using BaseSolution.Domain.Entities;
+@inject IDialogService DialogService
+
+
+
+<MudGrid>
+    <MudItem xs="8">
+        <MudText Class="mt-3" Typo="Typo.h4">Danh sách Film</MudText>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+    </MudItem>
+
+</MudGrid>
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+
+
+
+<MudTable Items="@lst" Class="mt-4">
+    <HeaderContent>
+        <MudTh>STT</MudTh>
+        <MudTh>Mã Vé</MudTh>
+        <MudTh>Trạng Thái</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+
+        <MudTd DataLabel="Stt">@(lst.IndexOf(context) + 1)</MudTd>
+        <MudTd DataLabel="Mã Vé">@context.Code</MudTd>
+        <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
+        <MudTd>
+            <MudButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"><MudIcon Icon="@Icons.Material.Filled.TipsAndUpdates"></MudIcon></MudButton>
+
+            <MudButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
+        </MudTd>
+
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+
+</MudTable>
+
+@code {
+    public string Search { get; set; }
+    List<TicketEntity> lst = new List<TicketEntity>()
+{
+        new TicketEntity() { Code = "V001", }
+        //new FilmEntity() { Code = "F001", Title = "Cuộc đời của Mun", DirectedBy = "Trịnh Duy Long", Language = "Tiếng Việt", Duration = "150 phút", AgeRating = "12+"},
+        //new FilmEntity() { Code = "F001", Title = "Cuộc đời của Mun", DirectedBy = "Trịnh Duy Long", Language = "Tiếng Việt", Duration = "150 phút", AgeRating = "12+"}
+
+
+};
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Create>("Thêm mới vé", closeOnEscapeKey);
+    }
+    private void OpenDialogg()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Update>("Sửa thông tin vé", closeOnEscapeKey);
+    }
+    private void DeleteUser()
+    {
+        var parameters = new DialogParameters<Delete>();
+        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
+        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.Color, Color.Error);
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+        DialogService.Show<Delete>("Delete", parameters, options);
+    }
+}
+
+
+@code {
+
+}
