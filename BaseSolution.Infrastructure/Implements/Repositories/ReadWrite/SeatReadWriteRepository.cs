@@ -4,6 +4,7 @@ using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Implements.Services;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +61,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 seat_!.Deleted = true;
                 seat_.DeletedBy = request.DeletedBy;
                 seat_.DeletedTime = DateTimeOffset.UtcNow;
+                seat_.Status = EntityStatus.Deleted;
 
                 _dbContext.SeatEntities.Update(seat_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -87,7 +89,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var seat_ = await GetSeatByIdAsync(entity.Id, cancellationToken);
 
                 // Update value to existed Seat
-                seat_!.Code = entity.Code;
+                seat_!.Code = string.IsNullOrWhiteSpace(entity.Code) ? seat_.Code : entity.Code;
                 seat_.SeatPosition = entity.SeatPosition;
                 seat_.Type = entity.Type;
                 seat_.Price = entity.Price;

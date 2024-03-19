@@ -8,5 +8,7 @@ namespace BaseSolution.Application.DataTransferObjects.Ticket.Request
 {
     public class TicketDeleteRequest
     {
+        public Guid Id { get; set; }
+        public Guid? DeletedBy { get; set; }
     }
 }

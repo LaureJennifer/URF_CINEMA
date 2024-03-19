@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BaseSolution.Application.ValueObjects.Common.LocalizationString;
 
 namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
 {
@@ -83,7 +84,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var roomLayout_ = await GetRoomLayoutByIdAsync(entity.Id, cancellationToken);
 
-                roomLayout_!.Name = entity.Name;
+                roomLayout_!.Name = string.IsNullOrEmpty(entity.Name) ? roomLayout_.Name : entity.Name;
                 roomLayout_.Status = entity.Status;
                 roomLayout_.ModifiedBy = entity.ModifiedBy;
                 roomLayout_.ModifiedTime = DateTimeOffset.UtcNow;
