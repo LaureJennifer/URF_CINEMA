@@ -1,40 +1,6 @@
 ﻿@page "/FilmSchedule"
 @using MudBlazor
 
-
-
-@* <MudAppBar Style="background-color:#261D30" Fixed="false">
-    <MudLink Style="color:white" Href="/home" Typo="Typo.body2"><h1>URF CENIMAS</h1></MudLink>
-    <MudSpacer />
-    <MudLink Href="/home" Typo="Typo.body2"><h1>Phim đang chiếu</h1></MudLink>
-    <MudSpacer />
-    <MudLink Href="/FilmSchedule" Typo="Typo.body2"><h1>Lịch chiếu</h1></MudLink>
-    <MudSpacer />
-    <MudPaper>
-        <MudSelect Dense="true" T="string" Label="Rạp URF" Variant="Variant.Outlined" Style="color:white" FullWidth>
-            <MudSelectItem Value="@("URF Cầu Giấy")" />
-            <MudSelectItem Value="@("URF Thanh Xuân")" />
-            <MudSelectItem Value="@("URF Hoàng Mai")" />
-        </MudSelect>
-    </MudPaper>
-    <MudSpacer/>
-    <MudLink Href="/myaccount">
-        <MudIcon Icon="@Icons.Material.Filled.PersonOutline" Style="color:white" />
-    </MudLink>
-</MudAppBar> *@
-@* <MudAppBar Style="background-color:#261D30" Fixed="false" Elevation="0">
-    <MudLink Href="/home" Style="color:white">URF CINEMAS</MudLink>
-    <MudLink Href="#" Style="color:white">Phim</MudLink>
-    <MudLink Href="/FilmSchedule" Style="color:white">Lịch Chiếu</MudLink>
-    <MudPaper Height="40px" Width="100%">
-        <MudSelect Dense="true" T="string" Label="Rạp URF" Variant="Variant.Outlined" Style="color:white" FullWidth>
-            <MudSelectItem Value="@("URF Cầu Giấy")" />
-            <MudSelectItem Value="@("URF Thanh Xuân")" />
-            <MudSelectItem Value="@("URF Hoàng Mai")" />
-        </MudSelect>
-    </MudPaper>
-    <MudIcon Icon="@Icons.Material.Filled.PersonOutline" Style="color:white" />
-</MudAppBar> *@
 <MudPaper Style="background-color:#180F20">
     <MudContainer Fixed="true">
         <MudPaper  Square="true">
@@ -300,41 +266,6 @@
     </MudContainer>
 </MudPaper>
 <MudDivider/>
-<MudPaper Height="180px" Width="100%" Style="background-color:#261D30">
-    <MudContainer Fixed="true">
-        <MudPaper Height="0px" Width="100%" Square="true">
-            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 100%; background-color:#261D30;" Outlined="true">
-                <MudPaper Class="pa-3" Elevation="6" Style="background-color:#261D30">
-                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 380px; background-color:#261D30" Outlined="true">
-                        <MudText Align="Align.Left" Style="color:white" Typo="Typo.h6">URF CINEMAS</MudText>
-                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
-                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
-                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
-                    </MudGrid>
-                </MudPaper>
-                <MudSpacer />
-                <MudPaper Class="pa-3" Elevation="6">
-                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 150px; background-color:#261D30" Outlined="true">
-                        <MudText Style="color:white" Typo="Typo.h6">FOLLOW US</MudText>
-                        <MudText Style="color:white">
-                            <MudIcon Icon="@Icons.Custom.Brands.Facebook"
-                                     Style="color:white" />
-                        </MudText>
-                    </MudGrid>
-                </MudPaper>
-                <MudSpacer />
-                <MudPaper Class="pa-3" Elevation="6">
-                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 380px; background-color:#261D30" Outlined="true">
-                        <MudText Style="color:white" Typo="Typo.body1" Align="Align.Right">HOTLINE : 0349485127, 0349485127</MudText>
-                        <MudText Style="color:white">Email : trangdkph46130@gmail.com</MudText>
-                    </MudGrid>
-                </MudPaper>
-            </MudPaper>
-        </MudPaper>
-    </MudContainer>
-</MudPaper>
-
-
 @code {
 
 
