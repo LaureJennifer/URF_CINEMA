@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BaseSolution.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class MyDBContext : Migration
+    public partial class MyDbContext : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -234,12 +234,21 @@ namespace BaseSolution.Infrastructure.Migrations
                 name: "DepartmentFilm",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FilmId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FilmId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DepartmentFilm", x => new { x.DepartmentId, x.FilmId });
+                    table.PrimaryKey("PK_DepartmentFilm", x => x.Id);
                     table.ForeignKey(
                         name: "FK_DepartmentFilm_DepartmentEntity_DepartmentId",
                         column: x => x.DepartmentId,
@@ -258,12 +267,21 @@ namespace BaseSolution.Infrastructure.Migrations
                 name: "FilmDetail",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FilmId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FilmScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FilmScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FilmDetail", x => new { x.FilmId, x.FilmScheduleId });
+                    table.PrimaryKey("PK_FilmDetail", x => x.Id);
                     table.ForeignKey(
                         name: "FK_FilmDetail_FilmSchedule_FilmScheduleId",
                         column: x => x.FilmScheduleId,
@@ -417,12 +435,21 @@ namespace BaseSolution.Infrastructure.Migrations
                 name: "DepartmentRoom",
                 columns: table => new
                 {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FilmScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletedTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DepartmentRoom", x => new { x.FilmScheduleId, x.RoomId });
+                    table.PrimaryKey("PK_DepartmentRoom", x => x.Id);
                     table.ForeignKey(
                         name: "FK_DepartmentRoom_FilmSchedule_FilmScheduleId",
                         column: x => x.FilmScheduleId,
@@ -527,14 +554,29 @@ namespace BaseSolution.Infrastructure.Migrations
                 column: "SeatId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DepartmentFilm_DepartmentId",
+                table: "DepartmentFilm",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DepartmentFilm_FilmId",
                 table: "DepartmentFilm",
                 column: "FilmId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DepartmentRoom_FilmScheduleId",
+                table: "DepartmentRoom",
+                column: "FilmScheduleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DepartmentRoom_RoomId",
                 table: "DepartmentRoom",
                 column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FilmDetail_FilmId",
+                table: "FilmDetail",
+                column: "FilmId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FilmDetail_FilmScheduleId",
