@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
+namespace BaseSolution.Application.DataTransferObjects.FilmDetail.Request
 {
-    internal class ViewDepartmentWithPaginationRequest
+    public class ViewFilmDetailWithPaginationRequest
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 {
-    internal class DepartmentDeleteRequest
+    internal class ViewDepartmentFilmWithPaginationRequest
     {
     }
 }
