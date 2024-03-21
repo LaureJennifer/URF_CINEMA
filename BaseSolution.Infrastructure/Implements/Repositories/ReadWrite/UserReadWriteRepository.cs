@@ -85,6 +85,8 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var user_ = await GetUserByIdAsync(entity.Id, cancellationToken);
 
                 user_!.Email = string.IsNullOrWhiteSpace(entity.Email) ? user_.Email : entity.Email;
+                user_.Name = string.IsNullOrWhiteSpace(entity.Name) ? user_.Name : entity.Name;
+                user_.PassWord = string.IsNullOrWhiteSpace(entity.PassWord) ? user_.PassWord : entity.PassWord;
                 user_.UrlImage = string.IsNullOrWhiteSpace(entity.UrlImage) ? user_.UrlImage : entity.UrlImage;
                 user_.PhoneNumber= string.IsNullOrWhiteSpace(entity.PhoneNumber) ? user_.PhoneNumber : entity.PhoneNumber;
                 user_.Status = entity.Status;

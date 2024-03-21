@@ -18,13 +18,13 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
 {
     public class CustomerDeleteViewModel : ViewModelBase<CustomerDeleteRequest>
     {
-        private readonly ICustomerReadWriteRepository _CustomerReadWriteRepository;
+        private readonly ICustomerReadWriteRepository _customerReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public CustomerDeleteViewModel(ICustomerReadWriteRepository CustomerReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+        public CustomerDeleteViewModel(ICustomerReadWriteRepository customerReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
-            _CustomerReadWriteRepository = CustomerReadWriteRepository;
+            _customerReadWriteRepository = customerReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
@@ -33,7 +33,7 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
         {
             try
             {
-                var result = await _CustomerReadWriteRepository.DeleteCustomerAsync(request, cancellationToken);
+                var result = await _customerReadWriteRepository.DeleteCustomerAsync(request, cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;

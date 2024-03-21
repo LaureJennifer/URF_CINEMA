@@ -1,36 +1,31 @@
-﻿using BaseSolution.Application.DataTransferObjects.Customer.Request;
-using BaseSolution.Application.DataTransferObjects.User.Request;
-using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
+﻿using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
-using BaseSolution.Application.ValueObjects.Pagination;
 using BaseSolution.Application.ViewModels;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BaseSolution.Infrastructure.ViewModels.Customer
 {
-    public class CustomerListWithPaginationViewModel :  ViewModelBase<ViewCustomerWithPaginationRequest>
+    public class CustomerViewModel : ViewModelBase<Guid>
     {
         private readonly ICustomerReadOnlyRepository _customerReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
 
-        public CustomerListWithPaginationViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ILocalizationService localizationService)
+        public CustomerViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ILocalizationService localizationService)
         {
             _customerReadOnlyRepository = customerReadOnlyRepository;
             _localizationService = localizationService;
         }
-
-        public async override Task HandleAsync(ViewCustomerWithPaginationRequest request, CancellationToken cancellationToken)
+        public async override Task HandleAsync(Guid idUser, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _customerReadOnlyRepository.GetCustomerWithPaginationByAdminAsync(request, cancellationToken);
-
+                var result = await _customerReadOnlyRepository.GetCustomerByIdAsync(idUser, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;
@@ -45,11 +40,12 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
                 {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the list of user"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of user")
+                        Error = _localizationService["Error occurred while getting the user"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "user")
                     }
                 };
             }
         }
+
     }
 }

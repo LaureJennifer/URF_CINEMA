@@ -29,30 +29,30 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewCustomerWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    CustomerListWithPaginationViewModel vm = new(_customerReadOnlyRepository, _localizationService);
+        
+        [HttpGet]
+        public async Task<IActionResult> GetListCustomerByAdmin([FromQuery] ViewCustomerWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            CustomerListWithPaginationViewModel vm = new(_customerReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+            await vm.HandleAsync(request, cancellationToken);
 
-        //    return Ok(vm);
-        //}
+            return Ok(vm);
+        }
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    CustomerViewModel vm = new(_customerReadOnlyRepository, _localizationService);
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCustomerById(Guid id, CancellationToken cancellationToken)
+        {
+            CustomerViewModel vm = new(_customerReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(id, cancellationToken);
+            await vm.HandleAsync(id, cancellationToken);
 
-        //    return Ok(vm);
-        //}
+            return Ok(vm);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(CustomerCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateCustomer(CustomerCreateRequest request, CancellationToken cancellationToken)
         {
             CustomerCreateViewModel vm = new(_customerReadOnlyRepository, _customerReadWriteRepository, _localizationService, _mapper);
 
@@ -62,7 +62,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(CustomerUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateCustomer(CustomerUpdateRequest request, CancellationToken cancellationToken)
         {
             CustomerUpdateViewModel vm = new(_customerReadWriteRepository, _localizationService, _mapper);
 
@@ -72,7 +72,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(CustomerDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteCustomer(CustomerDeleteRequest request, CancellationToken cancellationToken)
         {
             CustomerDeleteViewModel vm = new(_customerReadWriteRepository, _localizationService, _mapper);
 
