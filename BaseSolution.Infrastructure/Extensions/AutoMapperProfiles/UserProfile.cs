@@ -14,6 +14,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<UserEntity, UserDto>();
             CreateMap<UserCreateRequest, UserEntity>();
             CreateMap<UserUpdateRequest, UserEntity>();
+            CreateMap<UserDeleteRequest, UserEntity>();
         }
     }
 }

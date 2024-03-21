@@ -17,6 +17,6 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
         Task<RequestResult<UserDto?>> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<UserDto>>> GetUserWithPaginationByAdminAsync(
             ViewUserWithPaginationRequest request, CancellationToken cancellationToken);
-        Task<RequestResult<UserDto?>> GetUserByEmailAsync(string Email, CancellationToken cancellationToken);
+        Task<RequestResult<UserDto>> GetUserByUserNameAsync(string userName, CancellationToken cancellationToken);
     }
 }
