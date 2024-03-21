@@ -60,8 +60,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Department
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the Department"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Department")
+                        Error = _localizationService["Error occurred while getting the department"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "department")
                     }
                 };
             }

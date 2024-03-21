@@ -10,6 +10,7 @@ using BaseSolution.Infrastructure.Implements.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,9 +96,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 department_.Code = string.IsNullOrWhiteSpace(entity.Code) ? department_.Code : entity.Code;
                 department_.Email = string.IsNullOrWhiteSpace(entity.Email) ? department_.Email : entity.Email;
                 department_.PhoneNumber = string.IsNullOrWhiteSpace(entity.PhoneNumber) ? department_.PhoneNumber : entity.PhoneNumber;
-                department_.AddressCode = entity.AddressCode;
-                department_.AddressCodeFormat = entity.AddressCodeFormat;
-                department_.Status = entity.Status;
+                department_.Address = string.IsNullOrWhiteSpace(entity.Address) ? department_.Address : entity.Address;
+                department_.AddressCode = string.IsNullOrWhiteSpace(entity.AddressCode) ? department_.AddressCode : entity.AddressCode;
+                department_.AddressCodeFormat = string.IsNullOrWhiteSpace(entity.AddressCodeFormat) ? department_.AddressCodeFormat : entity.AddressCodeFormat;
+                department_.Status = entity.Status == EntityStatus.InActive ? EntityStatus.InActive : entity.Status;
                 department_.ModifiedBy = entity.ModifiedBy;
                 department_.ModifiedTime = DateTimeOffset.UtcNow;
 
