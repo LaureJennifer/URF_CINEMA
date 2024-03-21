@@ -47,8 +47,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while updating the Customer"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "Customer")
+                        Error = _localizationService["Error occurred while updating the customer"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "customer")
                     }
                 };
             }

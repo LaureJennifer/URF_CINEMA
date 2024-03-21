@@ -17,6 +17,8 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<FilmEntity, FilmDto>();
             CreateMap<FilmCreateRequest, FilmEntity>();
             CreateMap<FilmUpdateRequest, FilmEntity>();
+            CreateMap<FilmDeleteRequest, FilmEntity>();
+
         }
     }
 }

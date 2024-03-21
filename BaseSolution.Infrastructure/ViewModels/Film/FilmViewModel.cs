@@ -2,30 +2,30 @@
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ViewModels;
-using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Infrastructure.ViewModels.Customer
+namespace BaseSolution.Infrastructure.ViewModels.Film
 {
-    public class CustomerViewModel : ViewModelBase<Guid>
+    public class FilmViewModel : ViewModelBase<Guid>
     {
-        private readonly ICustomerReadOnlyRepository _customerReadOnlyRepository;
+        private readonly IFilmReadOnlyRepository _filmReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
 
-        public CustomerViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ILocalizationService localizationService)
+        public FilmViewModel(IFilmReadOnlyRepository filmReadOnlyRepository, ILocalizationService localizationService)
         {
-            _customerReadOnlyRepository = customerReadOnlyRepository;
+            _filmReadOnlyRepository = filmReadOnlyRepository;
             _localizationService = localizationService;
         }
-        public async override Task HandleAsync(Guid idCustomer, CancellationToken cancellationToken)
+
+        public async override Task HandleAsync(Guid idFilm, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _customerReadOnlyRepository.GetCustomerByIdAsync(idCustomer, cancellationToken);
+                var result = await _filmReadOnlyRepository.GetFilmByIdAsync(idFilm, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;
@@ -40,12 +40,11 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
                 {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the customer"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "customer")
+                        Error = _localizationService["Error occurred while getting the film"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "film")
                     }
                 };
             }
         }
-
     }
 }

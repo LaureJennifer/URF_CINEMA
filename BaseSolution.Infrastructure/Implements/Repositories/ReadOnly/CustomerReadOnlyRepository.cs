@@ -38,10 +38,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var Customer = await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(c => c.Email == Email && !c.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
+                var customer = await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(c => c.Email == Email && !c.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
-                return RequestResult<CustomerDto?>.Succeed(Customer);
+                return RequestResult<CustomerDto?>.Succeed(customer);
             }
             catch (Exception e)
             {
@@ -60,10 +60,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var Customer = await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(c => c.Id == idCustomer && !c.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
+                var customer = await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(c => c.Id == idCustomer && !c.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
-                return RequestResult<CustomerDto?>.Succeed(Customer);
+                return RequestResult<CustomerDto?>.Succeed(customer);
             }
             catch (Exception e)
             {
@@ -100,12 +100,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             }
             catch (Exception e)
             {
-                return RequestResult<PaginationResponse<CustomerDto>>.Fail(_localizationService["List of Customer are not found"], new[]
+                return RequestResult<PaginationResponse<CustomerDto>>.Fail(_localizationService["List of customer are not found"], new[]
                 {
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of Customer"
+                        FieldName = LocalizationString.Common.FailedToGet + "list of customer"
                     }
                 });
             }

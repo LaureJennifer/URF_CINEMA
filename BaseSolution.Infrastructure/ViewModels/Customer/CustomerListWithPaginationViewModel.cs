@@ -45,8 +45,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
                 {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the list of user"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of user")
+                        Error = _localizationService["Error occurred while getting the list of customer"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "list of customer")
                     }
                 };
             }
