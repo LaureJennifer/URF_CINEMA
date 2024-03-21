@@ -27,9 +27,9 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
+        
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] UserViewWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetListUserByAdmin([FromQuery] ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
         {
             UserListWithPaginationViewModel vm = new(_UserReadOnlyRepository, _localizationService);
 
@@ -38,9 +38,9 @@ namespace BaseSolution.API.Controllers
             return Ok(vm);
         }
 
-        // GET api/<ExampleController>/5
+        
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
         {
             UserViewModel vm = new(_UserReadOnlyRepository, _localizationService);
 
@@ -49,9 +49,8 @@ namespace BaseSolution.API.Controllers
             return Ok(vm);
         }
 
-
         [HttpPost]
-        public async Task<IActionResult> Post(UserCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateUser(UserCreateRequest request, CancellationToken cancellationToken)
         {
             UserCreateViewModel vm = new(_UserReadOnlyRepository, _UserReadWriteRepository, _localizationService, _mapper);
 
@@ -61,7 +60,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(UserUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateUser(UserUpdateRequest request, CancellationToken cancellationToken)
         {
             UserUpdateViewModel vm = new(_UserReadWriteRepository, _localizationService, _mapper);
 
@@ -71,7 +70,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(UserDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteUser(UserDeleteRequest request, CancellationToken cancellationToken)
         {
             UserDeleteViewModel vm = new(_UserReadWriteRepository, _localizationService, _mapper);
 
