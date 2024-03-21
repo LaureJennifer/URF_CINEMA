@@ -9,5 +9,7 @@ namespace BaseSolution.Application.DataTransferObjects.Role.Request
 {
     public class ViewRoleWithPaginationRequest : PaginationRequest
     {
+        public string? Code { get; set; }
+
     }
 }
