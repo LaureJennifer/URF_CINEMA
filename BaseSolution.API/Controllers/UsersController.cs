@@ -15,23 +15,23 @@ namespace BaseSolution.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserReadOnlyRepository _UserReadOnlyRepository;
-        private readonly IUserReadWriteRepository _UserReadWriteRepository;
+        private readonly IUserReadOnlyRepository _userReadOnlyRepository;
+        private readonly IUserReadWriteRepository _userReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public UsersController(IUserReadOnlyRepository IUserReadOnlyRepository, IUserReadWriteRepository IUserReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+        public UsersController(IUserReadOnlyRepository userReadOnlyRepository, IUserReadWriteRepository userReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
-            _UserReadOnlyRepository = IUserReadOnlyRepository;
-            _UserReadWriteRepository = IUserReadWriteRepository;
+            _userReadOnlyRepository = userReadOnlyRepository;
+            _userReadWriteRepository = userReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> GetListUserByAdmin([FromQuery] ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
         {
-            UserListWithPaginationViewModel vm = new(_UserReadOnlyRepository, _localizationService);
+            UserListWithPaginationViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
 
@@ -42,7 +42,7 @@ namespace BaseSolution.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
         {
-            UserViewModel vm = new(_UserReadOnlyRepository, _localizationService);
+            UserViewModel vm = new(_userReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(id, cancellationToken);
 
@@ -52,7 +52,7 @@ namespace BaseSolution.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(UserCreateRequest request, CancellationToken cancellationToken)
         {
-            UserCreateViewModel vm = new(_UserReadOnlyRepository, _UserReadWriteRepository, _localizationService, _mapper);
+            UserCreateViewModel vm = new(_userReadOnlyRepository, _userReadWriteRepository, _localizationService, _mapper);
 
             await vm.HandleAsync(request, cancellationToken);
 
@@ -62,7 +62,7 @@ namespace BaseSolution.API.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser(UserUpdateRequest request, CancellationToken cancellationToken)
         {
-            UserUpdateViewModel vm = new(_UserReadWriteRepository, _localizationService, _mapper);
+            UserUpdateViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
 
             await vm.HandleAsync(request, cancellationToken);
 
@@ -72,7 +72,7 @@ namespace BaseSolution.API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUser(UserDeleteRequest request, CancellationToken cancellationToken)
         {
-            UserDeleteViewModel vm = new(_UserReadWriteRepository, _localizationService, _mapper);
+            UserDeleteViewModel vm = new(_userReadWriteRepository, _localizationService, _mapper);
 
             await vm.HandleAsync(request, cancellationToken);
 

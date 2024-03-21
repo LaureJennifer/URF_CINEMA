@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BaseSolution.Application.DataTransferObjects.Role.Request;
 using BaseSolution.Application.DataTransferObjects.User.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
@@ -10,25 +11,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Infrastructure.ViewModels.User
+namespace BaseSolution.Infrastructure.ViewModels.Role
 {
-    public class UserDeleteViewModel: ViewModelBase<UserDeleteRequest>
+    public class RoleDeleteViewModel : ViewModelBase<RoleDeleteRequest>
     {
-        public readonly IUserReadWriteRepository _userReadWriteRepository;
+        public readonly IRoleReadWriteRepository _roleReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public UserDeleteViewModel(IUserReadWriteRepository userReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+
+        public RoleDeleteViewModel(IRoleReadWriteRepository roleReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
-            _userReadWriteRepository = userReadWriteRepository;
+            _roleReadWriteRepository = roleReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
 
-        public async override Task HandleAsync(UserDeleteRequest request, CancellationToken cancellationToken)
+        public async override Task HandleAsync(RoleDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _userReadWriteRepository.DeleteUserAsync(request, cancellationToken);
+                var result = await _roleReadWriteRepository.DeleteRoleAsync(request, cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;
@@ -42,8 +44,8 @@ namespace BaseSolution.Infrastructure.ViewModels.User
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while updating the user"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "user")
+                        Error = _localizationService["Error occurred while updating the role"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "role")
                     }
                 };
             }

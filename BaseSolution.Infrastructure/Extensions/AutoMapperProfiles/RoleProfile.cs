@@ -14,6 +14,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<RoleEntity, RoleDto>();
             CreateMap<RoleCreateRequest, RoleEntity>();
             CreateMap<RoleUpdateRequest, RoleEntity>();
+            CreateMap<RoleDeleteRequest, RoleEntity>();
         }
     }
 }
