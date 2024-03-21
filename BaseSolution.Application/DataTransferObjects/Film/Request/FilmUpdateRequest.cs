@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseSolution.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,13 @@ namespace BaseSolution.Application.DataTransferObjects.Film.Request
 {
     public class FilmUpdateRequest
     {
+        public Guid Id { get; set; }
+        public string? Code { get; set; }
+        public string? Title { get; set; }
+        public string? TrailerURL { get; set; }
+        public string? PosterURL { get; set; }
+        public string? UrlImage { get; set; }
+        public string? AgeRating { get; set; }
+        public EntityStatus? Status { get; set; }
     }
 }

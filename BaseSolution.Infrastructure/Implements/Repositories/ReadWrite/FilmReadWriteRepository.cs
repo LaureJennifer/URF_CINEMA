@@ -85,6 +85,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var film_ = await GetFilmByIdAsync(entity.Id, cancellationToken);
 
                 film_!.Title = string.IsNullOrWhiteSpace(entity.Title) ? film_.Title : entity.Title;
+                film_!.Code = string.IsNullOrWhiteSpace(entity.Code) ? film_.Code : entity.Code;
+                film_.TrailerURL = string.IsNullOrWhiteSpace(entity.TrailerURL) ? film_.TrailerURL : entity.TrailerURL;
+                film_.PosterURL = string.IsNullOrWhiteSpace(entity.PosterURL) ? film_.PosterURL : entity.PosterURL;
+                film_.AgeRating = string.IsNullOrWhiteSpace(entity.AgeRating) ? film_.AgeRating : entity.AgeRating;
                 film_.UrlImage = string.IsNullOrWhiteSpace(entity.UrlImage) ? film_.UrlImage : entity.UrlImage;
                 film_.Status = entity.Status;
                 film_.ModifiedBy = entity.ModifiedBy;

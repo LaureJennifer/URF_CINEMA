@@ -9,6 +9,17 @@ namespace BaseSolution.Application.DataTransferObjects.Film
 {
     public class FilmDto
     {
-       
+        public string Code { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string UrlImage { get; set; }
+        public string DirectedBy { get; set; }
+        public string Language { get; set; }
+        public string Actor { get; set; }
+        public DateTimeOffset ReleaseDate { get; set; }
+        public string Duration { get; set; }
+        public string Script { get; set; }
+        public string Genres { get; set; }
+        public string AgeRating { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using BaseSolution.Application.DataTransferObjects.User.Request;
+using BaseSolution.Application.DataTransferObjects.Customer.Request;
+using BaseSolution.Application.DataTransferObjects.Film.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
@@ -10,25 +11,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Infrastructure.ViewModels.User
+namespace BaseSolution.Infrastructure.ViewModels.Film
 {
-    public class UserDeleteViewModel: ViewModelBase<UserDeleteRequest>
+    public class FilmDeleteViewModel : ViewModelBase<FilmDeleteRequest>
     {
-        public readonly IUserReadWriteRepository _UserReadWriteRepository;
+        private readonly IFilmReadWriteRepository _filmReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        public UserDeleteViewModel(IUserReadWriteRepository UserReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+
+        public FilmDeleteViewModel(IFilmReadWriteRepository filmReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
-            _UserReadWriteRepository = UserReadWriteRepository;
+            _filmReadWriteRepository = filmReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
 
-        public async override Task HandleAsync(UserDeleteRequest request, CancellationToken cancellationToken)
+        public override async Task HandleAsync(FilmDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _UserReadWriteRepository.DeleteUserAsync(request, cancellationToken);
+                var result = await _filmReadWriteRepository.DeleteFilmAsync(request, cancellationToken);
 
                 Success = result.Success;
                 ErrorItems = result.Errors;
@@ -42,8 +44,8 @@ namespace BaseSolution.Infrastructure.ViewModels.User
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while updating the user"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "user")
+                        Error = _localizationService["Error occurred while updating the film"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "film")
                     }
                 };
             }

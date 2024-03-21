@@ -44,6 +44,8 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
             services.AddTransient<ICustomerReadWriteRepository, CustomerReadWriteRepository>();
             services.AddTransient<ICustomerReadOnlyRepository, CustomerReadOnlyRepository>();
+            services.AddTransient<IFilmReadWriteRepository, FilmReadWriteRepository>();
+            services.AddTransient<IFilmReadOnlyRepository, FilmReadOnlyRepository>();
             return services;
         }
     }

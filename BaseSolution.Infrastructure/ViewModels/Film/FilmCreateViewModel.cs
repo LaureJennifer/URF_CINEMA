@@ -1,45 +1,45 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
+using BaseSolution.Application.DataTransferObjects.Film.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ViewModels;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
-using BaseSolution.Infrastructure.Implements.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Infrastructure.ViewModels.Customer
+namespace BaseSolution.Infrastructure.ViewModels.Film
 {
-    public class CustomerCreateViewModel : ViewModelBase<CustomerCreateRequest>
+    public class FilmCreateViewModel : ViewModelBase<FilmCreateRequest>
     {
-        private readonly ICustomerReadOnlyRepository _customerReadOnlyRepository;
-        private readonly ICustomerReadWriteRepository _customerReadWriteRepository;
+        private readonly IFilmReadOnlyRepository _filmReadOnlyRepository;
+        private readonly IFilmReadWriteRepository _filmReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public CustomerCreateViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ICustomerReadWriteRepository customerReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+        public FilmCreateViewModel(IFilmReadOnlyRepository filmReadOnlyRepository, IFilmReadWriteRepository filmReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
-            _customerReadOnlyRepository = customerReadOnlyRepository;
-            _customerReadWriteRepository = customerReadWriteRepository;
+            _filmReadOnlyRepository = filmReadOnlyRepository;
+            _filmReadWriteRepository = filmReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        public override async Task HandleAsync(CustomerCreateRequest request, CancellationToken cancellationToken)
+        public override async Task HandleAsync(FilmCreateRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var createResult = await _customerReadWriteRepository.AddCustomerAsync(_mapper.Map<CustomerEntity>(request), cancellationToken);
+                var createResult = await _filmReadWriteRepository.AddFilmAsync(_mapper.Map<FilmEntity>(request), cancellationToken);
 
                 if (createResult.Success)
                 {
-                    var result = await _customerReadOnlyRepository.GetCustomerByIdAsync(createResult.Data, cancellationToken);
+                    var result = await _filmReadOnlyRepository.GetFilmByIdAsync(createResult.Data, cancellationToken);
 
                     Data = createResult;
                     Success = result.Success;
@@ -59,8 +59,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the customer"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "customer")
+                        Error = _localizationService["Error occurred while getting the film"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "film")
                     }
                 };
             }

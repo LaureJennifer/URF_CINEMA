@@ -9,5 +9,7 @@ namespace BaseSolution.Application.DataTransferObjects.Film.Request
 {
     public class ViewFilmWithPaginationRequest : PaginationRequest
     {
+        public string? Title { get; set; }
+        public string? Code { get; set;}
     }
 }

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using BaseSolution.Application.DataTransferObjects.Film.Request;
 using BaseSolution.Application.DataTransferObjects.Seat.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
+using BaseSolution.Infrastructure.ViewModels.Film;
 using BaseSolution.Infrastructure.ViewModels.Seat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,30 +29,30 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewFilmWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    FilmListWithPaginationViewModel vm = new(_filmReadOnlyRepository, _localizationService);
+        
+        [HttpGet]
+        public async Task<IActionResult> GetListFilmByAdmin([FromQuery]ViewFilmWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            FilmListWithPaginationViewModel vm = new(_filmReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+            await vm.HandleAsync(request, cancellationToken);
 
-        //    return Ok(vm);
-        //}
+            return Ok(vm);
+        }
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    FilmViewModel vm = new(_filmReadOnlyRepository, _localizationService);
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFilmById(Guid id, CancellationToken cancellationToken)
+        {
+            FilmViewModel vm = new(_filmReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(id, cancellationToken);
+            await vm.HandleAsync(id, cancellationToken);
 
-        //    return Ok(vm);
-        //}
+            return Ok(vm);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(SeatCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateFilm(FilmCreateRequest request, CancellationToken cancellationToken)
         {
             FilmCreateViewModel vm = new(_filmReadOnlyRepository, _filmReadWriteRepository, _localizationService, _mapper);
 
@@ -60,7 +62,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(SeatUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateFilm(FilmUpdateRequest request, CancellationToken cancellationToken)
         {
             FilmUpdateViewModel vm = new(_filmReadWriteRepository, _localizationService, _mapper);
 
@@ -70,7 +72,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(SeatDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteFilm(FilmDeleteRequest request, CancellationToken cancellationToken)
         {
             FilmDeleteViewModel vm = new(_filmReadWriteRepository, _localizationService, _mapper);
 
