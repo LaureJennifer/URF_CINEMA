@@ -45,8 +45,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Department
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while updating the Department"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "Department")
+                        Error = _localizationService["Error occurred while updating the department"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "department")
                     }
                 };
             }

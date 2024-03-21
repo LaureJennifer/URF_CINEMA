@@ -29,30 +29,29 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewDepartmentWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    DepartmentListWithPaginationViewModel vm = new(_departmentReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+        [HttpGet]
+        public async Task<IActionResult> GetListDepartmentByAdmin([FromQuery] ViewDepartmentWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            DepartmentListWithPaginationViewModel vm = new(_departmentReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(request, cancellationToken);
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    DepartmentViewModel vm = new(_departmentReadOnlyRepository, _localizationService);
+            return Ok(vm);
+        }
 
-        //    await vm.HandleAsync(id, cancellationToken);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetDepartmentById(Guid id, CancellationToken cancellationToken)
+        {
+            DepartmentViewModel vm = new(_departmentReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(DepartmentCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateDepartment(DepartmentCreateRequest request, CancellationToken cancellationToken)
         {
             DepartmentCreateViewModel vm = new(_departmentReadOnlyRepository, _departmentReadWriteRepository, _localizationService, _mapper);
 
@@ -62,7 +61,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(DepartmentUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateDepartment(DepartmentUpdateRequest request, CancellationToken cancellationToken)
         {
             DepartmentUpdateViewModel vm = new(_departmentReadWriteRepository, _localizationService, _mapper);
 
@@ -72,7 +71,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(DepartmentDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteDepartment(DepartmentDeleteRequest request, CancellationToken cancellationToken)
         {
             DepartmentDeleteViewModel vm = new(_departmentReadWriteRepository, _localizationService, _mapper);
 
