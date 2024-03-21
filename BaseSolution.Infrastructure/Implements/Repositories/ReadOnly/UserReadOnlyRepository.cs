@@ -1,12 +1,18 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BaseSolution.Application.DataTransferObjects.User;
 using BaseSolution.Application.DataTransferObjects.User.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Pagination;
 using BaseSolution.Application.ValueObjects.Response;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
+using BaseSolution.Infrastructure.Migrations;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,19 +32,85 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public Task<RequestResult<UserDto?>> GetUserByEmailAsync(string Email, CancellationToken cancellationToken)
+
+        public async Task<RequestResult<UserDto?>> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Id == idUser).ProjectTo<UserDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<UserDto?>.Succeed(user);
+
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<UserDto?>.Fail(_localizationService["User is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "user"
+                    }
+                });
+            }
         }
 
-        public Task<RequestResult<UserDto?>> GetUserByIdAsync(Guid idUser, CancellationToken cancellationToken)
+        public async Task<RequestResult<UserDto>> GetUserByUserNameAsync(string userName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.UserName == userName).ProjectTo<UserDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<UserDto>.Succeed(user);
+
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<UserDto>.Fail(_localizationService["User is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "user"
+                    }
+                });
+            }
         }
 
-        public Task<RequestResult<PaginationResponse<UserDto>>> GetUserWithPaginationByAdminAsync(ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<UserDto>>> GetUserWithPaginationByAdminAsync(ViewUserWithPaginationRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<UserDto>(_mapper.ConfigurationProvider);
+                if (!string.IsNullOrWhiteSpace(request.Name))
+                {
+                    user = user.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                }
+                if (request.RoleId != null)
+                {
+                    user = user.Where(x => x.RoleId == request.RoleId);
+                }
+                var result = await user.PaginateAsync(request, cancellationToken);
+                return RequestResult<PaginationResponse<UserDto>>.Succeed(new PaginationResponse<UserDto>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<UserDto>>.Fail(_localizationService["List of user are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of user"
+                    }
+                });
+            }
         }
     }
 }

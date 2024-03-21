@@ -42,7 +42,8 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddTransient<IUserReadOnlyRepository, UserReadOnlyRepository>();
             services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
-
+            services.AddTransient<ICustomerReadWriteRepository, CustomerReadWriteRepository>();
+            services.AddTransient<ICustomerReadOnlyRepository, CustomerReadOnlyRepository>();
             return services;
         }
     }

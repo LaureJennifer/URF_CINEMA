@@ -2,6 +2,7 @@
 using AutoMapper.QueryableExtensions;
 using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
+using BaseSolution.Application.DataTransferObjects.User;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
@@ -81,13 +82,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                IQueryable<CustomerEntity> queryable = _appReadOnlyDbContext.CustomerEntities.AsNoTracking().AsQueryable().Where(x => x.Status != EntityStatus.Deleted);
+                var customer = _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Name))
                 {
-                    queryable = queryable.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                    customer = customer.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
                 }
-                var result = await queryable.AsNoTracking()
-                    .PaginateAsync<CustomerEntity, CustomerDto>(request, _mapper, cancellationToken);
+               
+                var result = await customer.PaginateAsync(request, cancellationToken);
 
                 return RequestResult<PaginationResponse<CustomerDto>>.Succeed(new PaginationResponse<CustomerDto>()
                 {

@@ -19,15 +19,15 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
 {
     public class CustomerCreateViewModel : ViewModelBase<CustomerCreateRequest>
     {
-        private readonly ICustomerReadOnlyRepository _CustomerReadOnlyRepository;
-        private readonly ICustomerReadWriteRepository _CustomerReadWriteRepository;
+        private readonly ICustomerReadOnlyRepository _customerReadOnlyRepository;
+        private readonly ICustomerReadWriteRepository _customerReadWriteRepository;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
 
-        public CustomerCreateViewModel(ICustomerReadOnlyRepository CustomerReadOnlyRepository, ICustomerReadWriteRepository CustomerReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
+        public CustomerCreateViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ICustomerReadWriteRepository customerReadWriteRepository, ILocalizationService localizationService, IMapper mapper)
         {
-            _CustomerReadOnlyRepository = CustomerReadOnlyRepository;
-            _CustomerReadWriteRepository = CustomerReadWriteRepository;
+            _customerReadOnlyRepository = customerReadOnlyRepository;
+            _customerReadWriteRepository = customerReadWriteRepository;
             _localizationService = localizationService;
             _mapper = mapper;
         }
@@ -35,11 +35,11 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
         {
             try
             {
-                var createResult = await _CustomerReadWriteRepository.AddCustomerAsync(_mapper.Map<CustomerEntity>(request), cancellationToken);
+                var createResult = await _customerReadWriteRepository.AddCustomerAsync(_mapper.Map<CustomerEntity>(request), cancellationToken);
 
                 if (createResult.Success)
                 {
-                    var result = await _CustomerReadOnlyRepository.GetCustomerByIdAsync(createResult.Data, cancellationToken);
+                    var result = await _customerReadOnlyRepository.GetCustomerByIdAsync(createResult.Data, cancellationToken);
 
                     Data = createResult;
                     Success = result.Success;
