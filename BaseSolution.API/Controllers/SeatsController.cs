@@ -29,27 +29,26 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewSeatWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    SeatListWithPaginationViewModel vm = new(_seatReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] ViewSeatWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            SeatListWithPaginationViewModel vm = new(_seatReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(request, cancellationToken);
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    SeatViewModel vm = new(_seatReadOnlyRepository, _localizationService);
+            return Ok(vm);
+        }
 
-        //    await vm.HandleAsync(id, cancellationToken);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        {
+            SeatViewModel vm = new(_seatReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post(SeatCreateRequest request, CancellationToken cancellationToken)

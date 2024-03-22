@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseSolution.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,12 @@ namespace BaseSolution.Application.DataTransferObjects.Seat
 {
     public class SeatDto
     {
+        public Guid RoomLayoutId { get; set; }
+        public string RoomLayoutName { get; set; }
+        public string Code { get; set; }
+        public string SeatPosition { get; set; }
+        public string Type { get; set; }
+        public double Price { get; set; }
+        public EntityStatus Status { get; set; }
     }
 }
