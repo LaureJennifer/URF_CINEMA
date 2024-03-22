@@ -16,7 +16,9 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
     {
         public SeatProfile()
         {
-            CreateMap<SeatEntity, SeatDto>();
+            CreateMap<SeatEntity, SeatDto>()
+                .ForMember(des => des.RoomLayoutName, opt => opt.MapFrom(src => src.RoomLayoutEntity.Name)); 
+
             CreateMap<SeatCreateRequest, SeatEntity>();
             CreateMap<SeatUpdateRequest, SeatEntity>();
         }

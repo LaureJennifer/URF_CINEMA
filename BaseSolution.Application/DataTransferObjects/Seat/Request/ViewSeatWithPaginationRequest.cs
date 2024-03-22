@@ -1,4 +1,5 @@
 ﻿using BaseSolution.Application.ValueObjects.Pagination;
+using BaseSolution.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,9 @@ namespace BaseSolution.Application.DataTransferObjects.Seat.Request
 {
     public class ViewSeatWithPaginationRequest:PaginationRequest
     {
+        public string? RoomLayoutName { get; set; }
+        public string? Code { get; set; }
+        public string? Type { get; set; }
+        public double? Price { get; set; }
     }
 }
