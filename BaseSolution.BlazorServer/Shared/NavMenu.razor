@@ -1,33 +1,31 @@
-﻿<MudNavMenu Color="Color.Warning">
-            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="dsnv">Danh sách nhân viên</MudNavLink>
-       
-    </MudNavMenu>
+﻿@using BaseSolution.BlazorServer.Data.Extensions
+<MudNavMenu Color="Color.Warning">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.User.List">Danh sách nhân viên</MudNavLink>
 
-    <MudNavMenu  Color="Color.Surface">
-        @*<MudNavGroup Icon="@Icons.Material.Filled.Security" Title="Quản lý rạp">*@
-            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="listrap">Danh sách rạp</MudNavLink>
-        @*</MudNavGroup>*@
-    </MudNavMenu>
-    <MudNavMenu  Color="Color.Error">
-            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="listlichfilm">Danh Sách Lịch Chiếu</MudNavLink>
-    </MudNavMenu>
-    <MudNavMenu  Color="Color.Secondary">
-            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="phongchieu">Danh sách phòng chiếu</MudNavLink>
-    </MudNavMenu>
-    <MudNavMenu  Color="Color.Info">
-            <MudNavLink Icon="@Icons.Material.Filled.Security" Href="film">Danh Sách phim</MudNavLink>
-    </MudNavMenu>
-   @* <MudNavMenu>*@
-    @*  <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="Score of Participant">
-            <MudNavLink Href="#">List</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-    <MudNavMenu>
-        <MudNavGroup Icon="@Icons.Material.Filled.EmojiEvents" Title="History">
-            <MudNavLink Href="#">List</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>*@
-@*</MudNavMenu>*@
+</MudNavMenu>
+
+<MudNavMenu Color="Color.Surface">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.Department.List">Danh sách rạp</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Error">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.FilmSchematic.List">Danh Sách Lịch Chiếu</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Secondary">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.Room.List">Danh sách phòng chiếu</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Info">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.Customer.List">Danh Sách khách hàng</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Info">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.Ticket.List">Danh Sách vé</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Info">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.Bill.List">Danh Sách hóa đơn</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Info">
+    <MudNavLink Icon="@Icons.Material.Filled.Security" Href="@RouteManager.Film.List">Danh Sách Film</MudNavLink>
+</MudNavMenu>
+
 
 @code {
     private MudTheme _customTheme = new()
