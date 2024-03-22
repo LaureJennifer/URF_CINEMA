@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using BaseSolution.Application.DataTransferObjects.FilmSchedule.Request;
 using BaseSolution.Application.DataTransferObjects.Seat.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
+using BaseSolution.Infrastructure.ViewModels.FilmSchedule;
 using BaseSolution.Infrastructure.ViewModels.Seat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -26,30 +28,29 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewFilmScheduleWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    FilmScheduleListWithPaginationViewModel vm = new(_filmScheduleReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+        [HttpGet]
+        public async Task<IActionResult> GetListFilmScheduleByAdmin([FromQuery] ViewFilmScheduleWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            FilmScheduleListWithPaginationViewModel vm = new(_filmScheduleReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(request, cancellationToken);
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    FilmScheduleViewModel vm = new(_filmScheduleReadOnlyRepository, _localizationService);
+            return Ok(vm);
+        }
 
-        //    await vm.HandleAsync(id, cancellationToken);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFilmScheduleById(Guid id, CancellationToken cancellationToken)
+        {
+            FilmScheduleViewModel vm = new(_filmScheduleReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(SeatCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateFilmSchedule(FilmScheduleCreateRequest request, CancellationToken cancellationToken)
         {
             FilmScheduleCreateViewModel vm = new(_filmScheduleReadOnlyRepository, _filmScheduleReadWriteRepository, _localizationService, _mapper);
 
@@ -59,7 +60,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(SeatUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateFilmSchedule(FilmScheduleUpdateRequest request, CancellationToken cancellationToken)
         {
             FilmScheduleUpdateViewModel vm = new(_filmScheduleReadWriteRepository, _localizationService, _mapper);
 
@@ -69,7 +70,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(SeatDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteFilmSchedule(FilmScheduleDeleteRequest request, CancellationToken cancellationToken)
         {
             FilmScheduleDeleteViewModel vm = new(_filmScheduleReadWriteRepository, _localizationService, _mapper);
 
