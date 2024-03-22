@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseSolution.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,10 @@ namespace BaseSolution.Application.DataTransferObjects.RoomLayout.Request
 {
     public class RoomLayoutUpdateRequest
     {
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
+
+        public DateTimeOffset? CreatedTime { get; set; }
+        public EntityStatus? Status { get; set; }
     }
 }

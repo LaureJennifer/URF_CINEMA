@@ -4,6 +4,7 @@ using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -59,6 +60,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 roomLayout_!.Deleted = true;
                 roomLayout_.DeletedBy = request.DeletedBy;
                 roomLayout_.DeletedTime = DateTimeOffset.UtcNow;
+                roomLayout_.Status = EntityStatus.Deleted;
 
                 _dbContext.RoomLayoutEntities.Update(roomLayout_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -85,6 +87,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var roomLayout_ = await GetRoomLayoutByIdAsync(entity.Id, cancellationToken);
 
                 roomLayout_!.Name = string.IsNullOrEmpty(entity.Name) ? roomLayout_.Name : entity.Name;
+                roomLayout_.CreatedTime = entity.CreatedTime;
                 roomLayout_.Status = entity.Status;
                 roomLayout_.ModifiedBy = entity.ModifiedBy;
                 roomLayout_.ModifiedTime = DateTimeOffset.UtcNow;

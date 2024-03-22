@@ -19,6 +19,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<RoomLayoutEntity, RoomLayoutDto>();
             CreateMap<RoomLayoutCreateRequest, RoomLayoutEntity>();
             CreateMap<RoomLayoutUpdateRequest, RoomLayoutEntity>();
+            CreateMap<RoomLayoutDeleteRequest, RoomLayoutEntity>();
         }
     }
 }
