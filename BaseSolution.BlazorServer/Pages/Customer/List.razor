@@ -1,14 +1,12 @@
-﻿@page "/customer"
+﻿@page "/lstcustomer"
 @using BaseSolution.BlazorServer.Components.Customer
 @using BaseSolution.BlazorServer.Pages.Customer;
 @using BaseSolution.Domain.Entities;
 @inject IDialogService DialogService
 
-
-
 <MudGrid>
     <MudItem xs="8">
-        <MudText Class="mt-3" Typo="Typo.h4">Danh sách Film</MudText>
+        <MudText Class="mt-3" Typo="Typo.h4">Danh sách khách hàng</MudText>
     </MudItem>
     <MudItem xs="4">
         <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
@@ -17,8 +15,6 @@
 </MudGrid>
 
 <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
-
-
 
 <MudTable Items="@lst" Class="mt-4">
     <HeaderContent>
@@ -40,9 +36,9 @@
         <MudTd DataLabel="SĐT">@context.PhoneNumber</MudTd>
         <MudTd DataLabel="Địa chỉ">@context.Address</MudTd>
         <MudTd>
-            <MudButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"><MudIcon Icon="@Icons.Material.Filled.TipsAndUpdates"></MudIcon></MudButton>
+            <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
 
-            <MudButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
         </MudTd>
 
     </RowTemplate>
@@ -57,10 +53,7 @@
     List<CustomerEntity> lst = new List<CustomerEntity>()
 {
         new CustomerEntity() { Code = "F001", Name = "Nguyễn Thị A" , DateOfBirth = DateTime.Now, Email = "nguyenthia1456@gmail.com", PhoneNumber = "0357834869" , Address = "Thanh Xuân - Hà Nội"}
-        //new FilmEntity() { Code = "F001", Title = "Cuộc đời của Mun", DirectedBy = "Trịnh Duy Long", Language = "Tiếng Việt", Duration = "150 phút", AgeRating = "12+"},
-        //new FilmEntity() { Code = "F001", Title = "Cuộc đời của Mun", DirectedBy = "Trịnh Duy Long", Language = "Tiếng Việt", Duration = "150 phút", AgeRating = "12+"}
-
-
+ 
 };
     private void OpenDialog()
     {
@@ -81,11 +74,6 @@
         parameters.Add(x => x.ButtonText, "Delete");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Delete", parameters, options);
+        DialogService.Show<Delete>("Xóa phim", parameters, options);
     }
-}
-
-
-@code {
-
 }

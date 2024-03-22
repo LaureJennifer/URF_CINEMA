@@ -1,4 +1,4 @@
-﻿@page "/listrap"
+﻿@page "/listdepartment"
 @using BaseSolution.BlazorServer.Components.Department;
 @using BaseSolution.Domain.Entities;
 @inject IDialogService DialogService
@@ -64,6 +64,6 @@
         parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa Nhân Viên", parameters, options);
+        DialogService.Show<Delete>("Xóa Rạp", parameters, options);
     }
 }

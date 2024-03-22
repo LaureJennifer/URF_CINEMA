@@ -1,38 +1,60 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Domain.Entities
+@using BaseSolution.Domain.Enums
+@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
+@inject ISnackbar _snackbar
 
-<MudDialog Style="width: 1000px" >
-    <DialogContent>
-           <MudForm>      
-                            <MudTextField T="string" Label="Họ tên"/>
-                             <MudDatePicker Label="ngày sinh" /> 
-                              <MudTextField T="string" Label="Địa chỉ"/> 
-                             <MudTextField T="string" Label="Số điện thoại"/> 
-                          <MudTextField T="string" Label="Email"/> 
-                             <div class="d-flex">
-                                <MudRadioGroup T="string" Required="true" RequiredError="">
-                                    <MudRadio Option="@("Nam")">Nam</MudRadio>
-                                    <MudRadio Option="@("Nữ")">Nữ</MudRadio>
-                                </MudRadioGroup>
-                            </div>
-                                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                                    <ButtonTemplate>
-                                        <MudButton HtmlTag="label"
-                                                   Variant="Variant.Filled"
-                                                   Color="Color.Primary"
-                                                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                                                   for="@context"> Ảnh </MudButton>
-                                    </ButtonTemplate>
-                                </MudFileUpload>
-                    </MudForm>   
-   </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Quay lại</MudButton>
-        <MudButton Color="Color.Warning" OnClick="Submit">Sửa thông tin</MudButton>
-    </DialogActions>
-</MudDialog>
+<MudCard >
+    <MudForm Model="@user" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
+        <MudCardContent >
+            <MudTextField @bind-Value="user.Code"
+                          For="@(() => user.Code)"
+                          Immediate="true"
+                          Label="Mã nhân viên" />
+
+            <MudTextField @bind-Value="user.Name"
+                          For="@(() => user.Name)"
+                          Immediate="true"
+                          Label="Tên nhân viên" />
+
+            <MudTextField @bind-Value="user.PhoneNumber"
+                          For="@(() => user.PhoneNumber)"
+                          Immediate="true"
+                          Label="Số điện thoại" />
+
+            <MudTextField @bind-Value="user.Email"
+                          For="@(() => user.Email)"
+                          Immediate="true"
+                          Label="Email" />
+
+            <MudTextField @bind-Value="user.UrlImage"
+                          For="@(() => user.UrlImage)"
+                          Immediate="true"
+                          Label="Ảnh" />
+
+            <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context"> Ảnh </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </MudCardContent>   
+        <DialogActions>
+            <MudButton OnClick="Cancel">Quay Lại</MudButton>
+            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        </DialogActions>
+   </MudForm>
+</MudCard>
+
 @code {
+
+    [Inject] private IDialogService _dialogService { get; set; } = null!;
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
@@ -41,6 +63,37 @@
     private void UploadFiles(IBrowserFile file)
     {
         files.Add(file);
-        //TODO upload the files to the server
     }
+    [Inject] private IDialogService dialogService { get; set; }
+    private async void OnButtonClicked()
+    {
+        bool? result = await _dialogService.ShowMessageBox(
+        "Xác nhận",
+        "Bạn có chắc thêm mới?",
+        yesText: "Xác nhận", cancelText: "Hủy");
+        if (result == true)
+        {
+            _snackbar.Add("Thêm mới thành công!", Severity.Success);
+            await Task.Delay(60);
+            MudDialog.Close(DialogResult.Ok(true));
+            StateHasChanged();
+        }
+        else
+        {
+            _snackbar.Add("Thêm mới thất bại!", Severity.Error);
+        }
+    }
+    
+    MudForm from;
+    UserModel user = new UserModel();
+
+    public class UserModel
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+        public string UrlImage { get; set; }
+    }
+
 }
