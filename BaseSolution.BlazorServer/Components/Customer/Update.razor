@@ -1,98 +1,44 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
-@using BaseSolution.Domain.Entities
-@using BaseSolution.Domain.Enums
-@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
-@inject ISnackbar _snackbar
+<MudDialog>
+    <DialogContent>
 
-
-<MudCard>
-    <MudForm Model="@cus" @ref="@from" ValidationDelay="0" Style="width:550px; height: 450px;padding:15px;">
-        <MudTextField @bind-Value="cus.Code"
-                      For="@(() => cus.Code)"
-                      Immediate="true" 
-                      Label="Mã Khách hàng" />
-
-        <MudTextField @bind-Value="cus.Name"
-                      For="@(() => cus.Name)"
-                      Immediate="true" 
-                      Label="Tên Khách Hàng" />
-
-        <MudTextField @bind-Value="cus.DateOfBirth"
-                      For="@(() => cus.DateOfBirth)"
-                      Immediate="true" 
-                      Label="Ngày sinh" />
-
-        <MudTextField @bind-Value="cus.Email"
-                      For="@(() => cus.Email)"
-                      Immediate="true" 
-                      Label="Email" />
-
-        <MudTextField @bind-Value="cus.PhoneNumber"
-                      For="@(() => cus.PhoneNumber)"
-                      Immediate="true" 
-                      Label="SĐT" />
-
-        <MudTextField @bind-Value="cus.Address"
-                      For="@(() => cus.Address)"
-                      Immediate="true" 
-                      Label="Địa chỉ" />
-
-        <DialogActions>
-            <MudButton OnClick="Cancel">Quay Lại</MudButton>
-            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
-        </DialogActions>
+        <MudForm>
+            <MudTextField T="string" Label="Mã Khách hàng" />
+            <MudTextField T="string" Label="Tên Khách Hàng" />
+            <MudTextField T="string" Label="Ngày sinh" />
+            <MudTextField T="string" Label="Email" />
+            <MudTextField T="string" Label="SĐT" />
+            <MudTextField T="string" Label="Địa chỉ" />
+            <MudTextField T="string" Label="UserName" />
+            <MudTextField T="string" Label="PassWord" />
+            <MudGrid>
+                <MudItem xs="7">
+                </MudItem>
+                <MudItem xs="5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-3">Sửa </MudButton>
+                </MudItem>
+            </MudGrid>
         </MudForm>
-
+    </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
         <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
-    {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc chắn sửa?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
-        {
-            _snackbar.Add("Sửa khách hàng thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Sửa khách hàng thất bại!", Severity.Error);
-        }
-    }
-    MudForm from;
-    CusModel cus = new CusModel();
+}
+@code {
 
-    public class CusModel
-    {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public DateTimeOffset DateOfBirth { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Address { get; set; }
-        
-    }
+}
+
+
+@code {
+
 }

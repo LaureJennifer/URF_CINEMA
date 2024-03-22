@@ -1,75 +1,24 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
-@using BaseSolution.Domain.Entities
-@using BaseSolution.Domain.Enums
-@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
-@inject ISnackbar _snackbar
-
-<MudCard >
-    <MudForm Model="@lsfilm" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
-        <MudTextField @bind-Value="lsfilm.FilmDetails"
-                      For="@(() => lsfilm.FilmDetails)"
-                      Immediate="true"
-                      Label="Tên phim" />
-
-        <MudDatePicker @bind-Value="lsfilm.ShowDate"
-                       
-                       Immediate="true"
-                       Label="Ngày chiếu" />
-
-        <MudTextField @bind-Value="lsfilm.ShowTime"
-                      For="@(() => lsfilm.ShowTime)"
-                      Immediate="true"
-                      Label="Thời gian chiếu" />
-
-    </MudForm>
+<MudDialog Style="width: 1000px">
+    <DialogContent>
+                       <MudForm>      
+                      <MudTextField T="string" Label="Tên phim"/>
+                      <MudDatePicker Label="Ngày chiếu" /> 
+                      <MudTextField T="string" Label="Thời gian chiếu"/>
+                    </MudForm>   
+   </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Quay Lại</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Warning" OnClick="Submit">Sửa Thông Tin</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
-    {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc chắn sửa?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
-        {
-            _snackbar.Add("Sửa lịch chiếu thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Sửa lịch chiếu thất bại!", Severity.Error);
-        }
-    }
-    MudForm from;
-    LichFilmModel lsfilm = new LichFilmModel();
-
-    public class LichFilmModel
-    {
-        public List<FilmDetailEntity> FilmDetails { get; set; }
-        public DateTimeOffset ShowDate { get; set; }
-        public DateTimeOffset ShowTime { get; set; }
-    }
+    //TimeSpan? time = new TimeSpan(00, 45, 00);
+    //DateTime? date = DateTime.Today;
 }
-
-
-

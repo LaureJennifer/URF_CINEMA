@@ -18,11 +18,11 @@
     <MudTable Items="@lst" Class="mt-4">
          <HeaderContent>
         <MudTh>Stt</MudTh>
-        <MudTh>Mã nhân viên</MudTh>
-        <MudTh>Ảnh</MudTh>
         <MudTh>Họ và tên</MudTh>
         <MudTh>SĐT</MudTh>
          <MudTh>Email</MudTh>
+        <MudTh>Mã nhân viên</MudTh>
+        <MudTh>Ảnh</MudTh>
         <MudTh>Chức năng</MudTh>
     </HeaderContent>
     <RowTemplate>
@@ -38,7 +38,7 @@
               <MudTd DataLabel="Email">@context.Email</MudTd>
         <MudTd>
                 <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
+                           <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
         </MudTd>
      
     </RowTemplate>
@@ -51,9 +51,9 @@
     public string Search { get; set; }
     List<UserEntity> lst = new List<UserEntity>()
 {
-        new UserEntity() {Code = "NV01", Name = "Nguyễn Bá Chiến",PhoneNumber="0345263866", Email = "user1@gmail.com"},
-        new UserEntity() { Code = "NV02", Name = "Nguyễn Bá Chiến",PhoneNumber="0345263866", Email = "user1@gmail.com"},
-        new UserEntity() {Code = "NV03", Name = "Trần Đức Nhân",PhoneNumber="0345263999", Email = "user1@gmail.com"}
+        new UserEntity() {Name = "Nguyễn Bá Chiến",PhoneNumber="0345263866", Email = "user1@gmail.com", Code = "NV01"},
+        new UserEntity() {Name = "Nguyễn Bá Chiến",PhoneNumber="0345263866", Email = "user1@gmail.com", Code = "NV02"},
+        new UserEntity() {Name = "Trần Đức Nhân",PhoneNumber="0345263999", Email = "user1@gmail.com", Code = "NV03"}
 };
     private void OpenDialog()
     {
@@ -75,7 +75,7 @@
         parameters.Add(x => x.ButtonText, "Delete");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa thông tin nhân viên", parameters, options);
+        DialogService.Show<Delete>("Delete", parameters, options);
     }
 
 

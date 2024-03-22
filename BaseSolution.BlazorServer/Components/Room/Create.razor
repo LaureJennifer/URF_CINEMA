@@ -1,82 +1,25 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
-@using BaseSolution.Domain.Entities
-@using BaseSolution.Domain.Enums
-@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
-@inject ISnackbar _snackbar
 
-
-<MudCard>
-    <MudForm Model="@room" @ref="@from" ValidationDelay="0" Style="width:500px; height: 450px;padding:15px;">
-        <MudCardContent>
-            <MudTextField @bind-Value="room.Code"
-                          For="@(() => room.Code)"
-                          Immediate="true"
-                          Label="Mã Phòng" />
-
-            <MudTextField @bind-Value="room.Capacity"
-                          For="@(() => room.Capacity)"
-                          Immediate="true"
-                          Label="Sức Chứa" />
-
-            <MudTextField @bind-Value="room.SoundSystem"
-                          For="@(() => room.SoundSystem)"
-                          Immediate="true"
-                          Label="Âm thanh" />
-
-            <MudTextField @bind-Value="room.ScreenSize"
-                          For="@(() => room.ScreenSize)"
-                          Immediate="true"
-                          Label="Kích Thước màn hình" />
-
-        </MudCardContent> 
-        <DialogActions>
-            <MudButton OnClick="Cancel">Quay Lại</MudButton>
-            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
-        </DialogActions>
-    </MudForm>
-</MudCard>
+<MudDialog Style="width:1000px">
+    <DialogContent>
+                <MudForm>      
+                            <MudTextField T="string" Label="Mã Phòng"/>
+                            <MudTextField T="string" Label="Sức Chứa"/>
+                            <MudTextField T="string" Label="Âm thanh"/>
+                             <MudTextField T="string" Label="Kích Thước màn hình"/> 
+                    </MudForm> 
+               </DialogContent>
+                <DialogActions>
+                    <MudButton OnClick="Cancel">Quay Lại</MudButton>
+                    <MudButton Color="Color.Success" OnClick="Submit">Thêm mới</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
-    {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc chắn thêm mới?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
-        {
-            _snackbar.Add("Thêm mới phòng chiếu thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Thêm mới phòng chiếu thất bại!", Severity.Error);
-        }
-    }
-    MudForm from;
-    RoomModel room = new RoomModel();
-
-    public class RoomModel
-    {
-        public string Code { get; set; }
-        public int Capacity { get; set; }
-        public string SoundSystem { get; set; }
-        public string ScreenSize { get; set; }
-    }
 }

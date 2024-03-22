@@ -1,70 +1,38 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
-@using BaseSolution.Domain.Entities
-@using BaseSolution.Domain.Enums
-@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
-@inject ISnackbar _snackbar
+<MudDialog>
+    <DialogContent>
 
-<MudCard>
-    <MudForm Model="@ticket" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
-        <MudCardContent>
-            <MudTextField @bind-Value="ticket.Code"
-                          For="@(() => ticket.Code)"
-                          Immediate="true"
-                          Label="Mã Vé" />
-
-            <MudTextField @bind-Value="ticket.Status"
-                          For="@(() => ticket.Status)"
-                          Immediate="true"
-                          Label="Trạng Thái" />
-            
-        </MudCardContent>
-
-    </MudForm>
+        <MudForm>
+            <MudTextField T="string" Label="Mã Vé" />
+            <MudTextField T="string" Label="Trạng Thái" />
+            <MudGrid>
+                <MudItem xs="7">
+                </MudItem>
+                <MudItem xs="5">
+                    <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-3">Sửa </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Quay Lại</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
-    {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc chắn sửa?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
-        {
-            _snackbar.Add("Sửa vé thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Sửa vé thất bại!", Severity.Error);
-        }
-    }
-    MudForm from;
-    TicketModel ticket = new TicketModel();
+}
+@code {
 
-    public class TicketModel
-    {
-        public string Code { get; set; }
-        public EntityStatus Status { get; set; } = EntityStatus.Active;
-    }
+}
+
+
+@code {
+
 }

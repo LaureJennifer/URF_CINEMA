@@ -7,7 +7,7 @@
 
 <MudGrid>
     <MudItem xs="8">
-        <MudText Class="mt-3" Typo="Typo.h4">Danh sách Vé</MudText>
+        <MudText Class="mt-3" Typo="Typo.h4">Danh sách Film</MudText>
     </MudItem>
     <MudItem xs="4">
         <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
@@ -16,6 +16,8 @@
 </MudGrid>
 
 <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+
+
 
 <MudTable Items="@lst" Class="mt-4">
     <HeaderContent>
@@ -29,9 +31,9 @@
         <MudTd DataLabel="Mã Vé">@context.Code</MudTd>
         <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
         <MudTd>
-            <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
+            <MudButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"><MudIcon Icon="@Icons.Material.Filled.TipsAndUpdates"></MudIcon></MudButton>
 
+            <MudButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete</MudButton>
         </MudTd>
 
     </RowTemplate>
@@ -70,7 +72,7 @@
         parameters.Add(x => x.ButtonText, "Delete");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa vé", parameters, options);
+        DialogService.Show<Delete>("Delete", parameters, options);
     }
 }
 

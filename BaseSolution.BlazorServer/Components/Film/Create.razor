@@ -1,66 +1,34 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
-@using BaseSolution.Domain.Entities
-@using BaseSolution.Domain.Enums
-@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
-@inject ISnackbar _snackbar
 
-<MudCard>
-    <MudForm Model="@film" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
-        <MudCardContent>
-            <MudTextField @bind-Value="film.Code"
-                          For="@(() => film.Code)"
-                          Immediate="true"
-                          Label="Mã Film" />
-
-            <MudTextField @bind-Value="film.Title"
-                          For="@(() => film.Title)"
-                          Immediate="true"
-                          Label="Tên film" />
-
-            <MudTextField @bind-Value="film.DirectedBy"
-                          For="@(() => film.DirectedBy)"
-                          Immediate="true" 
-                          Label="Đạo diễn" />
-
-            <MudTextField @bind-Value="film.Language"
-                          For="@(() => film.Language)"
-                          Immediate="true" 
-                          Label="Ngôn ngữ" />
-            <MudTextField @bind-Value="film.Genres"
-                          For="@(() => film.Genres)"
-                          Immediate="true"
-                          Label="Thể loại" />
-            <MudTextField @bind-Value="film.Duration"
-                          For="@(() => film.Duration)"
-                          Immediate="true"
-                          Label="Thời lượng" />
-            <MudTextField @bind-Value="film.AgeRating"
-                          For="@(() => film.AgeRating)"
-                          Immediate="true"
-                          Label="Độ tuổi" />
-                            <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                                <ButtonTemplate>
-                                    <MudButton HtmlTag="label"
-                                               Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                                               for="@context"> Ảnh </MudButton>
-                                </ButtonTemplate>
-                            </MudFileUpload>
-        </MudCardContent>
-               </MudForm>   
-   
+<MudDialog Style="width:1000px">
+    <DialogContent>
+                    <MudForm>      
+                            <MudTextField T="string" Label="Mã Film"/>
+                            <MudTextField T="string" Label="Tên film"/>
+                              <MudTextField T="string" Label="Đạo Diễn"/> 
+                             <MudTextField T="string" Label="Ngôn Ngữ"/> 
+                          <MudTextField T="string" Label="Thể loại "/> 
+                            <MudTextField T="string" Label="Độ tuổi"/> 
+                                  <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                                    <ButtonTemplate>
+                                        <MudButton HtmlTag="label"
+                                                   Variant="Variant.Filled"
+                                                   Color="Color.Primary"
+                                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                                   for="@context"> Ảnh </MudButton>
+                                    </ButtonTemplate>
+                                </MudFileUpload>
+                    </MudForm>   
+   </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Quay Lại</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm Mới</MudButton>
+        <MudButton Color="Color.Success" OnClick="Submit">Thêm Mới</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
-
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
@@ -69,37 +37,6 @@
     private void UploadFiles(IBrowserFile file)
     {
         files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc ch thêm mới?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
-        {
-            _snackbar.Add("Thêm mới phim thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Thêm mới phim thất bại!", Severity.Error);
-        }
-    }
-    MudForm from;
-    FilmModel film = new FilmModel();
-
-    public class FilmModel
-    {
-        public string Code { get; set; }
-        public string Title { get; set; }
-        public string DirectedBy { get; set; }
-        public string Language { get; set; }
-        public string Genres { get; set; }
-        public string Duration { get; set; }
-        public string AgeRating { get; set; }
+        //TODO upload the files to the server
     }
 }
