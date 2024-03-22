@@ -1,41 +1,82 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Domain.Entities
+@using BaseSolution.Domain.Enums
+@using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
-<MudDialog>
-    <DialogContent>
+@inject ISnackbar _snackbar
 
-        <MudForm>
-            <MudTextField T="string" Label="Mã Khách hàng" />
-            <MudTextField T="string" Label="Số lượng vé" />
-            <MudTextField T="string" Label="Mô tả" />
-            <MudTextField T="string" Label="Tổng tiền" />
-            <MudTextField T="string" Label="Trạng Thái" />
-            <MudGrid>
-                <MudItem xs="7">
-                </MudItem>
-                <MudItem xs="5">
-                    <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-3">Sửa </MudButton>
-                </MudItem>
-            </MudGrid>
+<MudCard>
+    <MudForm Model="@bill" @ref="@from" ValidationDelay="0" Style="width:500px; height: 450px;padding:15px;">
+            <MudCardContent>
+                <MudTextField @bind-Value="bill.CustomerId" 
+                              For="@(() => bill.CustomerId)"
+                              Immediate="true"
+                              Label="Mã Khách hàng" />
+                <MudTextField @bind-Value="bill.TicketQuantity"
+                              For="@(() => bill.TicketQuantity)"
+                              Immediate="true"
+                              Label="Số lượng vé" />
+                <MudTextField @bind-Value="bill.Description"
+                              For="@(() => bill.Description)"
+                              Immediate="true"
+                              Label="Mô tả" />
+                <MudTextField @bind-Value="bill.TotalPrice"
+                              For="@(() => bill.TotalPrice)"
+                              Immediate="true" Label="Tổng tiền" />
+                <MudTextField @bind-Value="bill.Status"
+                              For="@(() => bill.Status)"
+                              Immediate="true" Label="Trạng Thái" />
+                
+            </MudCardContent>
+            <DialogActions>
+                <MudButton OnClick="Cancel">Quay Lại</MudButton>
+                <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            </DialogActions>
         </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
-    </DialogActions>
-</MudDialog>
+    
+</MudCard>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] private IDialogService _dialogService { get; set; } = null!;
 
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+ private async void OnButtonClicked()
+    {
+        bool? result = await _dialogService.ShowMessageBox(
+     "Xác nhận",
+     "Bạn có chắc chắn sửa?",
+     yesText: "Xác nhận", cancelText: "Hủy");
+        if (result == true)
+        {
+            _snackbar.Add("Sửa hóa đơn thành công!", Severity.Success);
+            await Task.Delay(60);
+            MudDialog.Close(DialogResult.Ok(true));
+            StateHasChanged();
+        }
+        else
+        {
+            _snackbar.Add("Sửa hóa đơn thất bại!", Severity.Error);
+        }
+    }
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-}
-@code {
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void UploadFiles(IBrowserFile file)
+    {
+        files.Add(file);
+    }
+    [Inject] private IDialogService dialogService { get; set; }
+   
+    MudForm from;
+    BillModel bill = new BillModel();
 
-}
-
-
-@code {
-
+    public class BillModel
+    {
+        public Guid CustomerId { get; set; }
+        public int TicketQuantity { get; set; }
+        public string Description { get; set; }
+        public double TotalPrice { get; set; }
+        public EntityStatus Status { get; set; } = new EntityStatus();
+    }
 }
