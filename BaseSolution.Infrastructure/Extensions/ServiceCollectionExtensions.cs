@@ -54,6 +54,8 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<IFilmScheduleReadOnlyRepository, FilmScheduleReadOnlyRepository>();
             services.AddTransient<IRoomLayoutReadWriteRepository, RoomLayoutReadWriteRepository>();
             services.AddTransient<IRoomLayoutReadOnlyRepository, RoomLayoutReadOnlyRepository>();
+            services.AddTransient<IPaymentMethodReadWriteRepository, PaymentMethodReadWriteRepository>();
+            services.AddTransient<IPaymentMethodReadOnlyRepository, PaymentMethodReadOnlyRepository>();
             return services;
         }
     }

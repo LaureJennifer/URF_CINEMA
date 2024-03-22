@@ -14,6 +14,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<PaymentMethodEntity, PaymentMethodDto>();
             CreateMap<PaymentMethodCreateRequest, PaymentMethodEntity>();
             CreateMap<PaymentMethodUpdateRequest, PaymentMethodEntity>();
+            CreateMap<PaymentMethodDeleteRequest, PaymentMethodEntity>();
         }
     }
 }
