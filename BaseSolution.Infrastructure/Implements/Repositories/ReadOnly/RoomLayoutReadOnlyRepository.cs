@@ -1,12 +1,18 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using BaseSolution.Application.DataTransferObjects.Film;
 using BaseSolution.Application.DataTransferObjects.RoomLayout;
 using BaseSolution.Application.DataTransferObjects.RoomLayout.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Pagination;
 using BaseSolution.Application.ValueObjects.Response;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +32,62 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public Task<RequestResult<RoomLayoutDto?>> GetRoomLayoutByIdAsync(Guid idRoomLayout, CancellationToken cancellationToken)
+        public async Task<RequestResult<RoomLayoutDto?>> GetRoomLayoutByIdAsync(Guid idRoomLayout, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var roomLayout = await _appReadOnlyDbContext.RoomLayoutEntities.AsNoTracking().Where(c => c.Id == idRoomLayout && !c.Deleted).ProjectTo<RoomLayoutDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
+
+                return RequestResult<RoomLayoutDto?>.Succeed(roomLayout);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<RoomLayoutDto?>.Fail(_localizationService["Room layout is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "Room layout"
+                    }
+                });
+            }
         }
 
-        public Task<RequestResult<PaginationResponse<RoomLayoutDto>>> GetRoomLayoutWithPaginationByAdminAsync(ViewRoomLayoutWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<RoomLayoutDto>>> GetRoomLayoutWithPaginationByAdminAsync(ViewRoomLayoutWithPaginationRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var roomLayout = _appReadOnlyDbContext.RoomLayoutEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<RoomLayoutDto>(_mapper.ConfigurationProvider);
+                if (!string.IsNullOrWhiteSpace(request.Name))
+                {
+                    roomLayout = roomLayout.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                }
+                if (request.Status != null)
+                {
+                    roomLayout = roomLayout.Where(x => x.Status == request.Status);
+                }
+                var result = await roomLayout.PaginateAsync(request, cancellationToken);
+                return RequestResult<PaginationResponse<RoomLayoutDto>>.Succeed(new PaginationResponse<RoomLayoutDto>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<RoomLayoutDto>>.Fail(_localizationService["List of room layout are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of room layout"
+                    }
+                });
+            }
         }
     }
 }

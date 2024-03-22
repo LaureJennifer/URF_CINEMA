@@ -1,4 +1,5 @@
 ﻿using BaseSolution.Application.ValueObjects.Pagination;
+using BaseSolution.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,8 @@ namespace BaseSolution.Application.DataTransferObjects.RoomLayout.Request
 {
     public class ViewRoomLayoutWithPaginationRequest : PaginationRequest
     {
+        public string? Name { get; set; }
+
+        public EntityStatus? Status { get; set; }
     }
 }
