@@ -1,69 +1,137 @@
 ﻿@page "/ExcelImport"
+@using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.Application.DataTransferObjects.RoomLayout.Request
+@using BaseSolution.Application.Interfaces.Services
+@using BaseSolution.Application.ViewModels.Excels.Mics
+@using BaseSolution.BlazorServer.Components
+@using BaseSolution.BlazorServer.Components.Excel
+@using BaseSolution.Domain.Entities
 @using Microsoft.AspNetCore.Components.Web
-@attribute [Authorize(Roles = "ADMIN")]
-
+@using System.Data;
+@using System.IO;
+@using OfficeOpenXml
 <MudText Color="Color.Primary" Class="mb-5" Typo="Typo.h4">Trang chủ</MudText>
-
-<CustomExcelImport Function="@(funcName)" Parameters="@(listExcelParams)" Enable="@isEnableExcelImport" OnClose="@(() => {isEnableExcelImport = false; _navigationManager.NavigateTo(_navigationManager.Uri, forceLoad: true);})" />
-
-<MudMenu Dense AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.BottomCenter">
-     <ActivatorContent>
-         <MudChip Icon="@Icons.Material.Filled.FileOpen" Color="Color.Success">Nhập file Excel</MudChip>
-     </ActivatorContent>
-     <ChildContent>
-         <MudMenuItem Icon="@Icons.Material.Filled.FileUpload" OnClick="@(async() => { if(await CheckSemester()){ isEnableExcelImport = true; funcName = "MajorIndicator";}})">Chuyên ngành</MudMenuItem>
-         <MudMenuItem Icon="@Icons.Material.Filled.FileUpload" OnClick="@(async() => { if(await CheckSemester()){ isEnableExcelImport = true; funcName = "SubjectIndicator";}})">Môn học</MudMenuItem>
-         <MudMenuItem Icon="@Icons.Material.Filled.FileUpload" OnClick="@(async() => { if(await CheckSemester()){ isEnableExcelImport = true; funcName = "LecturerIndicator";}})">Giảng viên</MudMenuItem>
-         <MudMenuItem Icon="@Icons.Material.Filled.FileUpload" OnClick="@(async() => { if(await CheckSemester()){ isEnableExcelImport = true; funcName = "ClassIndicator";}})">Lớp học</MudMenuItem>
-     </ChildContent>
- </MudMenu>
-
- <MudPaper Elevation="3" Class="pa-4 my-5">
-     <GeneralStatistic />
- </MudPaper>
-
- @*  <MudPaper Elevation="3" Class="pa-4 my-5">
-     <MajorOverview />
- </MudPaper> *@
-
- @code {
-    #region
-    private List<ExcelParameterVM> listExcelParams = new();
-    [Inject]
-    private ISemesterReadOnlyRepository _semesterReadOnlyRepository { get; set; }
-    [Inject]
-    private ILocalizationService _localizationService { get; set; }
-    [Inject]
-    private ISnackbar _snackBar { get; set; }
-    [Inject]
-    NavigationManager _navigationManager { get; set; }
-
-    private string funcName = "MajorIndicator";
-    private bool isEnableExcelImport = false;
-    private bool isEnableExcelExport = false;
-    private bool isEnableExcelExportTemplate = false;
-
-    async Task<bool> CheckSemester()
-    {
-        SemesterListWithPaginationViewModel vm = new(_semesterReadOnlyRepository, _localizationService);
-        await vm.HandleAsync(new(), default);
-
-        if (vm.Success)
-        {
-            if (((PaginationResponse<SemesterDto>)(vm.Data)).Data == null || ((PaginationResponse<SemesterDto>)vm.Data).Data.Where(c => c.StartTime < DateTimeOffset.Now && DateTimeOffset.Now < c.EndTime && c.Status == EntityStatus.Active).ToList().Count == 0)
+ <InputFile OnChange="@ImportExcelFile" />
+<MudGrid >
+    <MudItem xs="3" lg="3" md="3"></MudItem>
+    <MudItem xs="6" lg="6" md="6">
+        <MudStack Row="true">
+            @foreach (DataColumn col in dt.Columns)
             {
-                _snackBar.Add("Không có kỳ học hợp lệ!", Severity.Error);
-                return false;
+                <MudItem xs="3" lg="3" md="3">
+                    <MudPaper Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@col.ColumnName</MudPaper>
+                </MudItem>
+            }
+        </MudStack>
+            @foreach (DataRow row in dt.Rows)
+            {
+                <MudStack Row="true">
+                    @foreach (DataColumn col in dt.Columns)
+                    {
+                        var cellValue = row[col.ColumnName]?.ToString();
+                        if (!string.IsNullOrEmpty(cellValue))
+                        {
+                            <MudItem xs="3" lg="3" md="3">
+                            <MudPaper Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@cellValue</MudPaper>
+                            </MudItem>
+                        }
+                        else
+                        {
+                            <MudItem xs="3" lg="3" md="3">
+                                <MudPaper Style="width:auto;visibility:hidden;" Square="true" Class="mt-5">@cellValue</MudPaper>
+                            </MudItem>
+                        }
+                    }
+                </MudStack>
+            }
+    </MudItem>
+    <MudItem xs="3" lg="3" md="3"></MudItem>
+</MudGrid>
+@code {
+    DataTable dt = new DataTable();
+    async Task ImportExcelFile(InputFileChangeEventArgs e)
+    {
+        var fileStream = e.File.OpenReadStream();
+        var ms = new MemoryStream();
+        await fileStream.CopyToAsync(ms);
+        fileStream.Close();
+        ms.Position = 0;
+
+        using (var package = new ExcelPackage(ms))
+        {
+            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+            worksheet = TrimWorksheet(worksheet);
+            var rl = new List<string>();
+
+            int cc = worksheet.Dimension.Columns;
+            for (var j = 1; j <= cc; j++)
+            {
+                var cellValue = worksheet.Cells[1, j].Value?.ToString();
+                dt.Columns.Add(cellValue);
+            }
+
+            for (var j = 2; j <= worksheet.Dimension.Rows; j++)
+            {
+                for (var i = 1; i <= cc; i++)
+                {
+                    var cellValue = worksheet.Cells[j, i].Value?.ToString();
+                    rl.Add(cellValue);
+                }
+
+                if (rl.Count > 0)
+                {
+                    dt.Rows.Add(rl.ToArray());
+                }
+
+                rl.Clear();
             }
         }
-        else
+    }
+    private ExcelWorksheet TrimWorksheet(ExcelWorksheet worksheet)
+    {
+        int lastRow = worksheet.Dimension.End.Row;
+        int lastColumn = worksheet.Dimension.End.Column;
+
+        // Remove blank rows
+        for (int row = lastRow; row >= 2; row--)
         {
-            _snackBar.Add("Không có kỳ học hợp lệ!", Severity.Error);
-            return false;
+            bool isRowEmpty = true;
+            for (int col = 1; col <= lastColumn; col++)
+            {
+                var cellValue = worksheet.Cells[row, col].Value;
+                if (cellValue != null)
+                {
+                    isRowEmpty = false;
+                    break;
+                }
+            }
+
+            if (isRowEmpty)
+            {
+                worksheet.DeleteRow(row);
+            }
         }
 
-        return true;
-    }
+        // Remove blank columns
+        for (int col = lastColumn; col >= 1; col--)
+        {
+            bool isColumnEmpty = true;
+            for (int row = 2; row <= lastRow; row++)
+            {
+                var cellValue = worksheet.Cells[row, col].Value;
+                if (cellValue != null)
+                {
+                    isColumnEmpty = false;
+                    break;
+                }
+            }
 
-    #endregion
+            if (isColumnEmpty)
+            {
+                worksheet.DeleteColumn(col);
+            }
+        }
+
+        return worksheet;
+    }
 }
