@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseSolution.Application.ViewModels.Excels
+namespace BaseSolution.Application.ViewModels.Excels.Mics
 {
     public class ExcelParameterVM
     {
