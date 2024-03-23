@@ -82,13 +82,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var customer = _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider);
+                var customers = _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Name))
                 {
-                    customer = customer.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                    customers = customers.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
                 }
                
-                var result = await customer.PaginateAsync(request, cancellationToken);
+                var result = await customers.PaginateAsync(request, cancellationToken);
 
                 return RequestResult<PaginationResponse<CustomerDto>>.Succeed(new PaginationResponse<CustomerDto>()
                 {

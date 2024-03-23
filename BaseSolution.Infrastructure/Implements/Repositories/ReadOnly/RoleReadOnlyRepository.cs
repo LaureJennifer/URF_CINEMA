@@ -58,13 +58,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var role = _appReadOnlyDbContext.RoleEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<RoleDto>(_mapper.ConfigurationProvider);
+                var roles = _appReadOnlyDbContext.RoleEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<RoleDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Code))
                 {
-                    role = role.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
+                    roles = roles.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
                 }
                 
-                var result = await role.PaginateAsync(request, cancellationToken);
+                var result = await roles.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<RoleDto>>.Succeed(new PaginationResponse<RoleDto>
                 {
                     PageNumber = request.PageNumber,

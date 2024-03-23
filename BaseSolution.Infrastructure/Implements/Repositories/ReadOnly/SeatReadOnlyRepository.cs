@@ -48,7 +48,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     new ErrorItem
                     {
                         Error = e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "seat"
+                        FieldName = LocalizationString.Common.FailedToGet + "Seat"
                     }
                 });
             }
@@ -58,24 +58,24 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var seat = _appReadOnlyDbContext.SeatEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<SeatDto>(_mapper.ConfigurationProvider);
+                var seats = _appReadOnlyDbContext.SeatEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<SeatDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.RoomLayoutName))
                 {
-                    seat = seat.Where(x => x.RoomLayoutName.ToLower().Contains(request.RoomLayoutName.ToLower()));
+                    seats = seats.Where(x => x.RoomLayoutName.ToLower().Contains(request.RoomLayoutName.ToLower()));
                 }
                 if (!string.IsNullOrWhiteSpace(request.Code))
                 {
-                    seat = seat.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
+                    seats = seats.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
                 }
                 if (!string.IsNullOrWhiteSpace(request.Type))
                 {
-                    seat = seat.Where(x => x.Type.ToLower().Contains(request.Type.ToLower()));
+                    seats = seats.Where(x => x.Type.ToLower().Contains(request.Type.ToLower()));
                 }
                 if (request.Price != null)
                 {
-                    seat = seat.Where(x => x.Price == request.Price);
+                    seats = seats.Where(x => x.Price == request.Price);
                 }
-                var result = await seat.PaginateAsync(request, cancellationToken);
+                var result = await seats.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<SeatDto>>.Succeed(new PaginationResponse<SeatDto>
                 {
                     PageNumber = request.PageNumber,

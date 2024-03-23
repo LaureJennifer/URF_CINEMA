@@ -29,27 +29,25 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewRoomWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    RoomListWithPaginationViewModel vm = new(_roomReadOnlyRepository, _localizationService);
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] ViewRoomWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            RoomListWithPaginationViewModel vm = new(_roomReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+            await vm.HandleAsync(request, cancellationToken);
 
-        //    return Ok(vm);
-        //}
+            return Ok(vm);
+        }
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    RoomViewModel vm = new(_roomReadOnlyRepository, _localizationService);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        {
+            RoomViewModel vm = new(_roomReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(id, cancellationToken);
+            await vm.HandleAsync(id, cancellationToken);
 
-        //    return Ok(vm);
-        //}
+            return Ok(vm);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post(RoomCreateRequest request, CancellationToken cancellationToken)

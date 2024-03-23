@@ -58,6 +58,8 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<IPaymentMethodReadOnlyRepository, PaymentMethodReadOnlyRepository>();
             services.AddTransient<ISeatReadWriteRepository, SeatReadWriteRepository>();
             services.AddTransient<ISeatReadOnlyRepository, SeatReadOnlyRepository>();
+            services.AddTransient<IRoomReadWriteRepository, RoomReadWriteRepository>();
+            services.AddTransient<IRoomReadOnlyRepository, RoomReadOnlyRepository>();
             return services;
         }
     }
