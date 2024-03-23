@@ -81,16 +81,16 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var user = _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<UserDto>(_mapper.ConfigurationProvider);
+                var users = _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<UserDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Name))
                 {
-                    user = user.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                    users = users.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
                 }
                 if (request.RoleId != null)
                 {
-                    user = user.Where(x => x.RoleId == request.RoleId);
+                    users = users.Where(x => x.RoleId == request.RoleId);
                 }
-                var result = await user.PaginateAsync(request, cancellationToken);
+                var result = await users.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<UserDto>>.Succeed(new PaginationResponse<UserDto>
                 {
                     PageNumber = request.PageNumber,

@@ -61,16 +61,16 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var film = _appReadOnlyDbContext.FilmEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<FilmDto>(_mapper.ConfigurationProvider);
+                var films = _appReadOnlyDbContext.FilmEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<FilmDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Title))
                 {
-                    film = film.Where(x => x.Title.ToLower().Contains(request.Title.ToLower()));
+                    films = films.Where(x => x.Title.ToLower().Contains(request.Title.ToLower()));
                 }
                 if (request.Code != null)
                 {
-                    film = film.Where(x => x.Code == request.Code);
+                    films = films.Where(x => x.Code == request.Code);
                 }
-                var result = await film.PaginateAsync(request, cancellationToken);
+                var result = await films.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<FilmDto>>.Succeed(new PaginationResponse<FilmDto>
                 {
                     PageNumber = request.PageNumber,

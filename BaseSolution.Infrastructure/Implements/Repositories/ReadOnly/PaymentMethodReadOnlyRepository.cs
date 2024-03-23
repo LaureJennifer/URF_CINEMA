@@ -58,13 +58,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var paymentMethod = _appReadOnlyDbContext.PaymentMethodEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<PaymentMethodDto>(_mapper.ConfigurationProvider);
+                var paymentMethods = _appReadOnlyDbContext.PaymentMethodEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<PaymentMethodDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Name))
                 {
-                    paymentMethod = paymentMethod.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                    paymentMethods = paymentMethods.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
                 }
                 
-                var result = await paymentMethod.PaginateAsync(request, cancellationToken);
+                var result = await paymentMethods.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<PaymentMethodDto>>.Succeed(new PaginationResponse<PaymentMethodDto>
                 {
                     PageNumber = request.PageNumber,

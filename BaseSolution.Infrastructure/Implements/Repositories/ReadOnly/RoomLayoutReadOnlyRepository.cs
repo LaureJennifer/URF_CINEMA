@@ -58,16 +58,16 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var roomLayout = _appReadOnlyDbContext.RoomLayoutEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<RoomLayoutDto>(_mapper.ConfigurationProvider);
+                var roomLayouts = _appReadOnlyDbContext.RoomLayoutEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<RoomLayoutDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Name))
                 {
-                    roomLayout = roomLayout.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                    roomLayouts = roomLayouts.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
                 }
                 if (request.Status != null)
                 {
-                    roomLayout = roomLayout.Where(x => x.Status == request.Status);
+                    roomLayouts = roomLayouts.Where(x => x.Status == request.Status);
                 }
-                var result = await roomLayout.PaginateAsync(request, cancellationToken);
+                var result = await roomLayouts.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<RoomLayoutDto>>.Succeed(new PaginationResponse<RoomLayoutDto>
                 {
                     PageNumber = request.PageNumber,

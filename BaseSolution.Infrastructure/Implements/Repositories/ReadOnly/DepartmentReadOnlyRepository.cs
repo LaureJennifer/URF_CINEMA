@@ -58,20 +58,20 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var department = _appReadOnlyDbContext.DepartmentEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<DepartmentDto>(_mapper.ConfigurationProvider);
+                var departments = _appReadOnlyDbContext.DepartmentEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<DepartmentDto>(_mapper.ConfigurationProvider);
                 if (!string.IsNullOrWhiteSpace(request.Code))
                 {
-                    department = department.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
+                    departments = departments.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
                 }
                 if (!string.IsNullOrWhiteSpace(request.Name))
                 {
-                    department = department.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                    departments = departments.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
                 }
                 if (!string.IsNullOrWhiteSpace(request.Address))
                 {
-                    department = department.Where(x => x.Address.ToLower().Contains(request.Address.ToLower()));
+                    departments = departments.Where(x => x.Address.ToLower().Contains(request.Address.ToLower()));
                 }
-                var result = await department.PaginateAsync(request, cancellationToken);
+                var result = await departments.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<DepartmentDto>>.Succeed(new PaginationResponse<DepartmentDto>
                 {
                     PageNumber = request.PageNumber,

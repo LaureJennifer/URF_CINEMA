@@ -46,8 +46,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Room
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while updating the Room"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "Room")
+                        Error = _localizationService["Error occurred while updating the room"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToDelete, "room")
                     }
                 };
             }

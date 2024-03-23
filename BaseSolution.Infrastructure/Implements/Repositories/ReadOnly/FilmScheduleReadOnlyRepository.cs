@@ -58,20 +58,20 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var filmSchedule = _appReadOnlyDbContext.FilmScheduleEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<FilmScheduleDto>(_mapper.ConfigurationProvider);
+                var filmSchedules = _appReadOnlyDbContext.FilmScheduleEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<FilmScheduleDto>(_mapper.ConfigurationProvider);
                 if (request.ShowDate != null)
                 {
-                    filmSchedule = filmSchedule.Where(x => x.ShowDate == request.ShowDate);
+                    filmSchedules = filmSchedules.Where(x => x.ShowDate == request.ShowDate);
                 }
                 if (request.ShowTime != null)
                 {
-                    filmSchedule = filmSchedule.Where(x => x.ShowTime == request.ShowTime);
+                    filmSchedules = filmSchedules.Where(x => x.ShowTime == request.ShowTime);
                 }
                 if (request.Status != null)
                 {
-                    filmSchedule = filmSchedule.Where(x => x.Status == request.Status);
+                    filmSchedules = filmSchedules.Where(x => x.Status == request.Status);
                 }
-                var result = await filmSchedule.PaginateAsync(request, cancellationToken);
+                var result = await filmSchedules.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<FilmScheduleDto>>.Succeed(new PaginationResponse<FilmScheduleDto>
                 {
                     PageNumber = request.PageNumber,

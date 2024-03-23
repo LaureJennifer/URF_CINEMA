@@ -61,8 +61,8 @@ namespace BaseSolution.Infrastructure.ViewModels.Room
                     {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the Room"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "Room")
+                        Error = _localizationService["Error occurred while getting the room"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "room")
                     }
                 };
             }
