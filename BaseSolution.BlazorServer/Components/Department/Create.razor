@@ -7,35 +7,44 @@
 @inject ISnackbar _snackbar
 
 <MudCard >
-    <MudForm Model="@depart" @ref="@from" ValidationDelay="0" Style="width:550px; height: 450px;padding:15px;">
-        <MudTextField @bind-Value="depart.Code"
-                      For="@(() => depart.Code)"
-                      Immediate="true"
-                      Label="Mã Rạp"/>
-
-        <MudTextField @bind-Value="depart.Name"
+    <MudForm Model="@depart" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
+        <MudGrid>
+            <MudItem xs="6">
+                <MudTextField @bind-Value="depart.Code"
+                              For="@(() => depart.Code)"
+                              Immediate="true"
+                              Label="Mã Rạp"/>
+                <MudTextField @bind-Value="depart.Address"
+                              For="@(() => depart.Address)"
+                              Immediate="true" 
+                              Label="Địa chỉ" />
+                <MudTextField @bind-Value="depart.Email"
+                              For="@(() => depart.Email)"
+                              Immediate="true"
+                              Label="Email" />
+          </MudItem>
+            <MudItem xs="6">
+                <MudTextField @bind-Value="depart.Name"
                       For="@(() => depart.Name)"
                       Immediate="true" 
                       Label="Tên Rạp" />
-
-        <MudTextField @bind-Value="depart.Address"
-                      For="@(() => depart.Address)"
-                      Immediate="true" 
-                      Label="Địa chỉ" />
-
-        <MudTextField @bind-Value="depart.PhoneNumber"
-                      For="@(() => depart.PhoneNumber)"
-                      Immediate="true" 
-                      Label="Số điện thoại" />
-
-        <MudTextField @bind-Value="depart.Email"
-                      For="@(() => depart.Email)"
-                      Immediate="true"
-                      Label="Email" />
+                <MudTextField @bind-Value="depart.PhoneNumber"
+                              For="@(() => depart.PhoneNumber)"
+                              Immediate="true" 
+                              Label="Số điện thoại" />
+          </MudItem>
+        </MudGrid>
     </MudForm> 
     <DialogActions>
-        <MudButton OnClick="Cancel">Quay Lại</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+         <MudGrid>
+                <MudItem xs="7">
+
+                </MudItem>
+                <MudItem xs="5">
+                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            </MudItem>
+            </MudGrid>
     </DialogActions>
 </MudCard>
 

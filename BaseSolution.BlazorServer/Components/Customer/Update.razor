@@ -8,47 +8,52 @@
 
 
 <MudCard>
-    <MudForm Model="@cus" @ref="@from" ValidationDelay="0" Style="width:550px; height: 450px;padding:15px;">
-        <MudTextField @bind-Value="cus.Code"
-                      For="@(() => cus.Code)"
-                      Immediate="true" 
-                      Label="Mã Khách hàng" />
-
-        <MudTextField @bind-Value="cus.Name"
-                      For="@(() => cus.Name)"
-                      Immediate="true" 
-                      Label="Tên Khách Hàng" />
-
-        <MudTextField @bind-Value="cus.DateOfBirth"
-                      For="@(() => cus.DateOfBirth)"
-                      Immediate="true" 
-                      Label="Ngày sinh" />
-
-        <MudTextField @bind-Value="cus.Email"
-                      For="@(() => cus.Email)"
-                      Immediate="true" 
-                      Label="Email" />
-
-        <MudTextField @bind-Value="cus.PhoneNumber"
-                      For="@(() => cus.PhoneNumber)"
-                      Immediate="true" 
-                      Label="SĐT" />
-
-        <MudTextField @bind-Value="cus.Address"
-                      For="@(() => cus.Address)"
-                      Immediate="true" 
-                      Label="Địa chỉ" />
-
-        <DialogActions>
-            <MudButton OnClick="Cancel">Quay Lại</MudButton>
-            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
-        </DialogActions>
-        </MudForm>
-
+    <MudForm Model="@cus" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
+         <MudCardContent>
+            <MudGrid>
+                <MudItem xs="6">
+            
+                <MudTextField @bind-Value="cus.Code"
+                              For="@(() => cus.Code)"
+                              Immediate="true" 
+                              Label="Mã Khách hàng" />
+                  <MudTextField @bind-Value="cus.Email"
+                              For="@(() => cus.Email)"
+                              Immediate="true" 
+                              Label="Email" />
+               <MudTextField @bind-Value="cus.DateOfBirth"
+                              For="@(() => cus.DateOfBirth)"
+                              Immediate="true" 
+                              Label="Ngày sinh" />
+                </MudItem>
+                <MudItem xs="6">
+                 <MudTextField @bind-Value="cus.Name"
+                              For="@(() => cus.Name)"
+                              Immediate="true" 
+                              Label="Tên Khách Hàng" />
+                <MudTextField @bind-Value="cus.PhoneNumber"
+                              For="@(() => cus.PhoneNumber)"
+                              Immediate="true" 
+                              Label="SĐT" />
+                <MudTextField @bind-Value="cus.Address"
+                              For="@(() => cus.Address)"
+                              Immediate="true" 
+                              Label="Địa chỉ" />
+                </MudItem>
+           </MudGrid>
+      </MudCardContent> 
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+         <MudGrid>
+                <MudItem xs="7">
+                   
+                </MudItem>
+                <MudItem xs="5">
+                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+                     <MudButton Color="Color.Warning" OnClick="OnButtonClicked">Sửa</MudButton>
+            </MudItem>
+            </MudGrid>
     </DialogActions>
+    </MudForm>
 </MudCard>
 
 @code {

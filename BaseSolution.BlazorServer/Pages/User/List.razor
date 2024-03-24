@@ -12,16 +12,16 @@
 
 </MudGrid>
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
 
 
 <MudTable Items="@lst" Class="mt-4">
     <HeaderContent>
-        <MudTh>Stt</MudTh>
+        <MudTh>STT</MudTh>
         <MudTh>Mã nhân viên</MudTh>
         <MudTh>Ảnh</MudTh>
         <MudTh>Họ và tên</MudTh>
-        <MudTh>SĐT</MudTh>
+        <MudTh>Số điện thoại</MudTh>
         <MudTh>Email</MudTh>
         <MudTh>Chức năng</MudTh>
     </HeaderContent>
@@ -35,11 +35,11 @@
             </MudAvatar>
         </MudTd>
         <MudTd DataLabel="Họ và Tên">@context.Name</MudTd>
-        <MudTd DataLabel="SĐt">@context.PhoneNumber</MudTd>
+        <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
         <MudTd DataLabel="Email">@context.Email</MudTd>
         <MudTd>
             <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
+            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Xóa </MudIconButton>
         </MudTd>
 
     </RowTemplate>
@@ -73,7 +73,7 @@
     {
         var parameters = new DialogParameters<Delete>();
         parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
         DialogService.Show<Delete>("Xóa thông tin nhân viên", parameters, options);
