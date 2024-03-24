@@ -1,5 +1,6 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.User;
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
@@ -7,46 +8,73 @@
 @inject ISnackbar _snackbar
 
 <MudCard >
-    <MudForm Model="@user" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
+    <MudForm Model="@userDto" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
         <MudCardContent >
-            <MudTextField @bind-Value="user.Code"
-                          For="@(() => user.Code)"
-                          Immediate="true"
-                          Label="Mã nhân viên" />
-
-            <MudTextField @bind-Value="user.Name"
-                          For="@(() => user.Name)"
-                          Immediate="true"
-                          Label="Tên nhân viên" />
-
-            <MudTextField @bind-Value="user.PhoneNumber"
-                          For="@(() => user.PhoneNumber)"
-                          Immediate="true"
-                          Label="Số điện thoại" />
-
-            <MudTextField @bind-Value="user.Email"
-                          For="@(() => user.Email)"
-                          Immediate="true"
-                          Label="Email" />
-
-            <MudTextField @bind-Value="user.UrlImage"
-                          For="@(() => user.UrlImage)"
-                          Immediate="true"
-                          Label="Ảnh" />
-
-            <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                <ButtonTemplate>
-                    <MudButton HtmlTag="label"
-                               Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                               for="@context"> Ảnh </MudButton>
-                </ButtonTemplate>
-            </MudFileUpload>
+ <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="userDto.Code"
+                                  For="@(() => userDto.Code)"
+                                  Immediate="true"
+                                  Label="Mã nhân viên" />
+                    <MudTextField @bind-Value="userDto.UserName"
+                                  For="@(() => userDto.UserName)"
+                                  Immediate="true"
+                                  Label="Tên đăng nhập" />
+                                    <MudTextField @bind-Value="userDto.PhoneNumber"
+                                  For="@(() => userDto.PhoneNumber)"
+                                  Immediate="true"
+                                  Label="Số điện thoại" />
+                 </MudItem>
+                 <MudItem xs="6">
+                      <MudTextField @bind-Value="userDto.Name"
+                                  For="@(() => userDto.Name)"
+                                  Immediate="true"
+                                  Label="Tên nhân viên" />
+                                    <MudTextField @bind-Value="userDto.PassWord"
+                                  For="@(() => userDto.PassWord)"
+                                  Immediate="true"
+                                  Label="Mật khẩu" />
+                    <MudTextField @bind-Value="userDto.Email"
+                                  For="@(() => userDto.Email)"
+                                  Immediate="true"
+                                  Label="Email" />
+                </MudItem>
+          </MudGrid>
+               <MudGrid>
+                   <MudItem xs="6">
+                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           for="@context"> Ảnh </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                         </MudItem>
+                         <MudItem xs="6">
+                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Info"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           for="@context"> Trailler </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                         </MudItem>
+                </MudGrid>
         </MudCardContent>   
         <DialogActions>
-            <MudButton OnClick="Cancel">Quay Lại</MudButton>
-            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            <MudGrid>
+                <MudItem xs="7">
+                    
+                </MudItem>
+                <MudItem xs="5">
+                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+            <MudButton Color="Color.Warning" OnClick="OnButtonClicked">Sửa</MudButton>
+            </MudItem>
+            </MudGrid>
         </DialogActions>
    </MudForm>
 </MudCard>
@@ -85,15 +113,5 @@
     }
     
     MudForm from;
-    UserModel user = new UserModel();
-
-    public class UserModel
-    {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Email { get; set; }
-        public string UrlImage { get; set; }
-    }
-
+    public UserDto userDto = new UserDto();
 }

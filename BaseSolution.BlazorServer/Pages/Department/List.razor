@@ -19,7 +19,7 @@
          <MudTh>Mã Rạp</MudTh>
         <MudTh>Tên Rạp</MudTh>
         <MudTh>Địa chỉ</MudTh>
-        <MudTh>SĐT</MudTh>
+        <MudTh>Số điện thoại</MudTh>
          <MudTh>Email</MudTh>
         <MudTh>Chức năng</MudTh>
     </HeaderContent>
@@ -28,7 +28,7 @@
             <MudTd DataLabel="Mã Rạp">@context.Code</MudTd>
                   <MudTd DataLabel="Tên Rạp">@context.Name</MudTd>
                   <MudTd DataLabel="Địa chỉ">@context.Address</MudTd>
-            <MudTd DataLabel="SĐT">@context.PhoneNumber</MudTd>
+            <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
                 <MudTd DataLabel="Email">@context.Email</MudTd>
             <MudTd>
                         <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
@@ -60,7 +60,7 @@
     private void DeleteUser()
     {
         var parameters = new DialogParameters<Delete>();
-        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa Rạp không?, đã xóa không thể khôi phục");
+        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa Rạp không?");
         parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
