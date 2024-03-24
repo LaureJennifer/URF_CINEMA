@@ -12,7 +12,9 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
     {
         public BookingProfile()
         {
-            CreateMap<BookingEntity, BookingDto>();
+            CreateMap<BookingEntity, BookingDto>()
+                .ForMember(des => des.SeatCode, opt => opt.MapFrom(src => src.SeatEntity.Code))
+                .ForMember(des => des.RoomCode, opt => opt.MapFrom(src => src.RoomEntity.Code));
             CreateMap<BookingCreateRequest, BookingEntity>();
             CreateMap<BookingUpdateRequest, BookingEntity>();
         }

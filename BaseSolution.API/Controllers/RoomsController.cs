@@ -30,7 +30,7 @@ namespace BaseSolution.API.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewRoomWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetListRoomByAdmin([FromQuery] ViewRoomWithPaginationRequest request, CancellationToken cancellationToken)
         {
             RoomListWithPaginationViewModel vm = new(_roomReadOnlyRepository, _localizationService);
 
@@ -40,7 +40,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetRoomById(Guid id, CancellationToken cancellationToken)
         {
             RoomViewModel vm = new(_roomReadOnlyRepository, _localizationService);
 
@@ -50,7 +50,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(RoomCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateRoom(RoomCreateRequest request, CancellationToken cancellationToken)
         {
             RoomCreateViewModel vm = new(_roomReadOnlyRepository, _roomReadWriteRepository, _localizationService, _mapper);
 
@@ -60,7 +60,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(RoomUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateRoom(RoomUpdateRequest request, CancellationToken cancellationToken)
         {
             RoomUpdateViewModel vm = new(_roomReadWriteRepository, _localizationService, _mapper);
 
@@ -70,7 +70,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(RoomDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteRoom(RoomDeleteRequest request, CancellationToken cancellationToken)
         {
             RoomDeleteViewModel vm = new(_roomReadWriteRepository, _localizationService, _mapper);
 

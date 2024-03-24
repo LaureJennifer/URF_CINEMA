@@ -40,26 +40,48 @@ namespace BaseSolution.Infrastructure.Extensions
             });
 
             services.AddTransient<ILocalizationService, LocalizationService>();
+
             services.AddTransient<IUserReadOnlyRepository, UserReadOnlyRepository>();
             services.AddTransient<IUserReadWriteRepository, UserReadWriteRepository>();
+
             services.AddTransient<ICustomerReadWriteRepository, CustomerReadWriteRepository>();
             services.AddTransient<ICustomerReadOnlyRepository, CustomerReadOnlyRepository>();
+
             services.AddTransient<IFilmReadWriteRepository, FilmReadWriteRepository>();
             services.AddTransient<IFilmReadOnlyRepository, FilmReadOnlyRepository>();
+
             services.AddTransient<IRoleReadWriteRepository, RoleReadWriteRepository>();
             services.AddTransient<IRoleReadOnlyRepository, RoleReadOnlyRepository>();
+
             services.AddTransient<IDepartmentReadWriteRepository, DepartmentReadWriteRepository>();
             services.AddTransient<IDepartmentReadOnlyRepository, DepartmentReadOnlyRepository>();
+
             services.AddTransient<IFilmScheduleReadWriteRepository, FilmScheduleReadWriteRepository>();
             services.AddTransient<IFilmScheduleReadOnlyRepository, FilmScheduleReadOnlyRepository>();
+
             services.AddTransient<IRoomLayoutReadWriteRepository, RoomLayoutReadWriteRepository>();
             services.AddTransient<IRoomLayoutReadOnlyRepository, RoomLayoutReadOnlyRepository>();
+
             services.AddTransient<IPaymentMethodReadWriteRepository, PaymentMethodReadWriteRepository>();
             services.AddTransient<IPaymentMethodReadOnlyRepository, PaymentMethodReadOnlyRepository>();
+
             services.AddTransient<ISeatReadWriteRepository, SeatReadWriteRepository>();
             services.AddTransient<ISeatReadOnlyRepository, SeatReadOnlyRepository>();
+
             services.AddTransient<IRoomReadWriteRepository, RoomReadWriteRepository>();
             services.AddTransient<IRoomReadOnlyRepository, RoomReadOnlyRepository>();
+
+            services.AddTransient<IBillReadWriteRepository, BillReadWriteRepository>();
+            services.AddTransient<IBillReadOnlyRepository, BillReadOnlyRepository>();
+
+            services.AddTransient<IBookingReadWriteRepository, BookingReadWriteRepository>();
+            services.AddTransient<IBookingReadOnlyRepository, BookingReadOnlyRepository>();
+
+            services.AddTransient<ITicketReadOnlyRepository, TicketReadOnlyRepository>();
+            services.AddTransient<ITicketReadWriteRepository, TicketReadWriteRepository>();
+
+            services.AddTransient<IFilmDetailReadOnlyRepository, FilmDetailReadOnlyRepository>();
+            services.AddTransient<IFilmDetailReadWriteRepository, FilmDetailReadWriteRepository>();
             return services;
         }
     }

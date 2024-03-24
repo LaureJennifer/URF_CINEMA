@@ -1,12 +1,18 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using BaseSolution.Application.DataTransferObjects.Booking;
 using BaseSolution.Application.DataTransferObjects.Ticket;
 using BaseSolution.Application.DataTransferObjects.Ticket.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Pagination;
 using BaseSolution.Application.ValueObjects.Response;
+using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +32,68 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             _mapper = mapper;
             _localizationService = localizationService;
         }
-        public Task<RequestResult<TicketDto?>> GetTicketByIdAsync(Guid idTicket, CancellationToken cancellationToken)
+        public async Task<RequestResult<TicketDto?>> GetTicketByIdAsync(Guid idTicket, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var ticket = await _appReadOnlyDbContext.TicketEntities.AsNoTracking().Where(x => x.Id == idTicket).ProjectTo<TicketDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<TicketDto?>.Succeed(ticket);
+
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<TicketDto?>.Fail(_localizationService["Ticket is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "ticket"
+                    }
+                });
+            }
         }
 
-        public Task<RequestResult<PaginationResponse<TicketDto>>> GetTicketWithPaginationByAdminAsync(ViewTicketWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<PaginationResponse<TicketDto>>> GetTicketWithPaginationByAdminAsync(ViewTicketWithPaginationRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var tickets = _appReadOnlyDbContext.TicketEntities.AsNoTracking().ProjectTo<TicketDto>(_mapper.ConfigurationProvider);
+
+                if (request.BillId != null)
+                {
+                    tickets = tickets.Where(x => x.BillId == request.BillId);
+                }
+                if (!string.IsNullOrWhiteSpace(request.FilmName))
+                {
+                    tickets = tickets.Where(x => x.FilmName.ToLower().Contains(request.FilmName.ToLower()));
+                }
+                if (!string.IsNullOrWhiteSpace(request.Code))
+                {
+                    tickets = tickets.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
+                }
+                var result = await tickets.Where(x => x.Status != EntityStatus.InActive).PaginateAsync(request, cancellationToken);
+
+                return RequestResult<PaginationResponse<TicketDto>>.Succeed(new PaginationResponse<TicketDto>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<TicketDto>>.Fail(_localizationService["List of ticket are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of ticket"
+                    }
+                });
+            }
         }
     }
 }

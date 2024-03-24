@@ -58,24 +58,15 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var query = _appReadOnlyDbContext.BillEntities.AsNoTracking().ProjectTo<BillDto>(_mapper.ConfigurationProvider);
+                var bills = _appReadOnlyDbContext.BillEntities.AsNoTracking().ProjectTo<BillDto>(_mapper.ConfigurationProvider);
 
-                if (!string.IsNullOrWhiteSpace(request.SearchString))
+                if (!string.IsNullOrWhiteSpace(request.CustomerName))
                 {
-                    query = query.Where(x => x.Code == request.SearchString);
+                    bills = bills.Where(x => x.CustomerName == request.CustomerName);
                 }
-                var result = await query.PaginateAsync(request, cancellationToken);
+                var result = await bills.PaginateAsync(request, cancellationToken);
 
-                foreach (var item in result.Data!)
-                {
-                    var userCreated = await _appReadOnlyDbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == item.CreatedBy, cancellationToken) == null ? "N/A" : _appReadOnlyDbContext.Users.AsNoTracking().First(x => x.Id == item.CreatedBy)!.Name;
-                    item.CreatedUserName = userCreated;
 
-                    item.ServiceAmount = (float)(item.TotalService * item.ServicePrice);
-
-                    // tính  tổng tiền 
-                    item.TotalAmount = item.ServiceAmount + (float)item.RoomPrice;
-                }
                 return RequestResult<PaginationResponse<BillDto>>.Succeed(new PaginationResponse<BillDto>()
                 {
                     PageNumber = request.PageNumber,
@@ -86,7 +77,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             }
             catch (Exception e)
             {
-                return RequestResult<PaginationResponse<BillDto>>.Fail(_localizationService["List of Bill are not found"], new[]
+                return RequestResult<PaginationResponse<BillDto>>.Fail(_localizationService["List of bill are not found"], new[]
                 {
                     new ErrorItem
                     {

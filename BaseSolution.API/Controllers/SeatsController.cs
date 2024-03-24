@@ -31,7 +31,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ViewSeatWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetListSeatByAdmin([FromQuery] ViewSeatWithPaginationRequest request, CancellationToken cancellationToken)
         {
             SeatListWithPaginationViewModel vm = new(_seatReadOnlyRepository, _localizationService);
 
@@ -41,7 +41,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetSeatById(Guid id, CancellationToken cancellationToken)
         {
             SeatViewModel vm = new(_seatReadOnlyRepository, _localizationService);
 
@@ -51,7 +51,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(SeatCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateSeat(SeatCreateRequest request, CancellationToken cancellationToken)
         {
             SeatCreateViewModel vm = new(_seatReadOnlyRepository, _seatReadWriteRepository, _localizationService, _mapper);
 
@@ -61,7 +61,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(SeatUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateSeat(SeatUpdateRequest request, CancellationToken cancellationToken)
         {
             SeatUpdateViewModel vm = new(_seatReadWriteRepository, _localizationService, _mapper);
 
@@ -71,7 +71,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(SeatDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteSeat(SeatDeleteRequest request, CancellationToken cancellationToken)
         {
             SeatDeleteViewModel vm = new(_seatReadWriteRepository, _localizationService, _mapper);
 

@@ -1,4 +1,6 @@
 ﻿using BaseSolution.Application.ValueObjects.Pagination;
+using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace BaseSolution.Application.DataTransferObjects.Bill.Request
 {
     public class ViewBillWithPaginationRequest : PaginationRequest
     {
+        public string? CustomerName { get; set; }
 
     }
 }

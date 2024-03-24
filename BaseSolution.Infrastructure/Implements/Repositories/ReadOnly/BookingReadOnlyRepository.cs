@@ -9,6 +9,7 @@ using BaseSolution.Application.ValueObjects.Pagination;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
 using BaseSolution.Infrastructure.Migrations;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +43,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             catch (Exception e)
             {
 
-                return RequestResult<BookingDto?>.Fail(_localizationService["BookingDto is not found"], new[]
+                return RequestResult<BookingDto?>.Fail(_localizationService["Booking is not found"], new[]
                 {
                     new ErrorItem
                     {
@@ -57,20 +58,19 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var query = _appReadOnlyDbContext.BookingEntities.AsNoTracking().ProjectTo<BookingDto>(_mapper.ConfigurationProvider);
+                var bookings = _appReadOnlyDbContext.BookingEntities.AsNoTracking().ProjectTo<BookingDto>(_mapper.ConfigurationProvider);
 
-                if (!string.IsNullOrWhiteSpace(request.SearchString))
+                if (request.SeatId!=null)
                 {
-                    query = query.Where(x => x.NameCustomer.Contains(request.SearchString!));
+                    bookings = bookings.Where(x => x.SeatId==request.SeatId);
                 }
-                var result = await query.Where(x => x.Status != EntityStatus.InActive).PaginateAsync(request, cancellationToken);
-                foreach (var item in result.Data!)
+                if (request.RoomId != null)
                 {
-                    item.ServiceAmount = item.TotalService * item.ServicePrice;
-                    item.RoomAmount = UtilityExtensions.TinhTien(item.CheckInReality, item.CheckOutReality, item.RoomPrice, item.PrePaid);
-                    item.TotalAmount = item.ServiceAmount + item.RoomAmount;
+                    bookings = bookings.Where(x => x.RoomId == request.RoomId);
                 }
-                return RequestResult<PaginationResponse<RoombookingDto>>.Succeed(new PaginationResponse<RoombookingDto>
+                var result = await bookings.Where(x => x.SeatStatus != EntityStatus.InActive).PaginateAsync(request, cancellationToken);
+                
+                return RequestResult<PaginationResponse<BookingDto>>.Succeed(new PaginationResponse<BookingDto>
                 {
                     PageNumber = request.PageNumber,
                     PageSize = request.PageSize,
@@ -81,12 +81,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             catch (Exception e)
             {
 
-                return RequestResult<PaginationResponse<RoombookingDto>>.Fail(_localizationService["List of roombooking are not found"], new[]
+                return RequestResult<PaginationResponse<BookingDto>>.Fail(_localizationService["List of booking are not found"], new[]
                 {
                     new ErrorItem
                     {
                         Error= e.Message,
-                        FieldName = LocalizationString.Common.FailedToGet + "list of roombooking"
+                        FieldName = LocalizationString.Common.FailedToGet + "list of booking"
                     }
                 });
             }

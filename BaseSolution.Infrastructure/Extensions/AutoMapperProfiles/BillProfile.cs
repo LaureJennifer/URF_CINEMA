@@ -11,9 +11,16 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
     {
         public BillProfile()
         {
-            CreateMap<BillEntity, BillDto>();
+            CreateMap<BillEntity, BillDto>()
+                .ForMember(des => des.CustomerName, opt => opt.MapFrom(x => x.CustomerEntity.Name))
+               .ForMember(des => des.TotalPrice1, opt => opt.MapFrom(src => src.Tickets.Select(x=>x.BookingEntity).Sum(x=>x.SeatEntity.Price)))
+               .ForMember(des => des.TicketQuantity1, opt => opt.MapFrom(src => src.Tickets.Select(x => x.BookingEntity).Count()));
+
+            //CreateMap<BillDto, BillEntity>()
+            //    .ForMember(des => des.TotalPrice, opt => opt.MapFrom(x => x.TotalPrice1));
             CreateMap<BillCreateRequest, BillEntity>();
             CreateMap<BillUpdateRequest, BillEntity>();
+
         }
     }
 }
