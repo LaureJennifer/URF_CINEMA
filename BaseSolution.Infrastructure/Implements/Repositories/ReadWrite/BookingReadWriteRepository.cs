@@ -57,7 +57,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var booking_ = await GetBookingByIdAsync(request.Id, cancellationToken);
 
                 booking_!.Deleted = true;
-                booking_.DeletedBy = request.DeletedBy;
                 booking_.DeletedTime = DateTimeOffset.UtcNow;
                 booking_.SeatStatus = EntityStatus.Deleted;
 
@@ -84,7 +83,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var booking_ = await GetBookingByIdAsync(entity.Id, cancellationToken);
 
-                booking_!.SeatStatus = entity.SeatStatus;
+                booking_!.SeatStatus = entity.SeatStatus == EntityStatus.Available ? EntityStatus.Available : entity.SeatStatus;
+                booking_.SeatId = entity.SeatId;
+                booking_.RoomId = entity.RoomId;
                 booking_.ModifiedBy = entity.ModifiedBy;
                 booking_.ModifiedTime = DateTimeOffset.UtcNow;
 

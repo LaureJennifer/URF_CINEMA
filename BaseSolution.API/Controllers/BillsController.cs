@@ -6,6 +6,7 @@ using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
+using BaseSolution.Infrastructure.ViewModels.Bill;
 using BaseSolution.Infrastructure.ViewModels.Seat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,30 +29,29 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewBillWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    BillListWithPaginationViewModel vm = new(_seatReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+        [HttpGet]
+        public async Task<IActionResult> GetListBillByAdmin([FromQuery] ViewBillWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            BillListWithPaginationViewModel vm = new(_billReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(request, cancellationToken);
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    BillViewModel vm = new(_seatReadOnlyRepository, _localizationService);
+            return Ok(vm);
+        }
 
-        //    await vm.HandleAsync(id, cancellationToken);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBillById(Guid id, CancellationToken cancellationToken)
+        {
+            BillViewModel vm = new(_billReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(BillCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBill(BillCreateRequest request, CancellationToken cancellationToken)
         {
             BillCreateViewModel vm = new(_billReadOnlyRepository, _billReadWriteRepository, _localizationService, _mapper);
 
@@ -61,7 +61,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(BillUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateBill(BillUpdateRequest request, CancellationToken cancellationToken)
         {
             BillUpdateViewModel vm = new(_billReadWriteRepository, _localizationService, _mapper);
 
@@ -71,7 +71,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(BillDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteBill(BillDeleteRequest request, CancellationToken cancellationToken)
         {
             BillDeleteViewModel vm = new(_billReadWriteRepository, _localizationService, _mapper);
 

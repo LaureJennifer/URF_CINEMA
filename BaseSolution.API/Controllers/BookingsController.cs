@@ -6,6 +6,7 @@ using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
+using BaseSolution.Infrastructure.ViewModels.Booking;
 using BaseSolution.Infrastructure.ViewModels.Seat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,30 +29,29 @@ namespace BaseSolution.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        // GET api/<ExampleController>/5
-        //[HttpGet]
-        //public async Task<IActionResult> Get([FromQuery] ViewBookingWithPaginationRequest request, CancellationToken cancellationToken)
-        //{
-        //    BookingListWithPaginationViewModel vm = new(_bookingReadOnlyRepository, _localizationService);
 
-        //    await vm.HandleAsync(request, cancellationToken);
+        [HttpGet]
+        public async Task<IActionResult> GetListBookingByAdmin([FromQuery] ViewBookingWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            BookingListWithPaginationViewModel vm = new(_bookingReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(request, cancellationToken);
 
-        //// GET api/<ExampleController>/5
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
-        //{
-        //    BookingViewModel vm = new(_bookingReadOnlyRepository, _localizationService);
+            return Ok(vm);
+        }
 
-        //    await vm.HandleAsync(id, cancellationToken);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetBookingById(Guid id, CancellationToken cancellationToken)
+        {
+            BookingViewModel vm = new(_bookingReadOnlyRepository, _localizationService);
 
-        //    return Ok(vm);
-        //}
+            await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Post(BookingCreateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateBooking(BookingCreateRequest request, CancellationToken cancellationToken)
         {
             BookingCreateViewModel vm = new(_bookingReadOnlyRepository, _bookingReadWriteRepository, _localizationService, _mapper);
 
@@ -61,7 +61,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(BookingUpdateRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateBooking(BookingUpdateRequest request, CancellationToken cancellationToken)
         {
             BookingUpdateViewModel vm = new(_bookingReadWriteRepository, _localizationService, _mapper);
 
@@ -71,7 +71,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Delete(BookingDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteBooking(BookingDeleteRequest request, CancellationToken cancellationToken)
         {
             BookingDeleteViewModel vm = new(_bookingReadWriteRepository, _localizationService, _mapper);
 
