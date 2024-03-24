@@ -18,9 +18,18 @@
         <MudStack Row="true">
             @foreach (DataColumn col in dt.Columns)
             {
-                <MudItem xs="3" lg="3" md="3">
-                    <MudPaper Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@col.ColumnName</MudPaper>
-                </MudItem>
+                if (!string.IsNullOrEmpty(col.ColumnName))
+                {
+                    <MudItem xs="3" lg="3" md="3">
+                        <MudPaper Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@col.ColumnName</MudPaper>
+                    </MudItem>
+                }
+                else
+                {
+                    <MudItem xs="3" lg="3" md="3">
+                        <MudPaper Style="width:auto;" Square="true" Class="mt-5 invisible">@col.ColumnName</MudPaper>
+                    </MudItem>
+                }
             }
         </MudStack>
             @foreach (DataRow row in dt.Rows)

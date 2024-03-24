@@ -1,10 +1,6 @@
 ﻿using BaseSolution.Application.ViewModels.Excels.Mics;
 using Newtonsoft.Json.Linq;
 using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace BaseSolution.Infrastructure.Implements.Services.Additional
 {
