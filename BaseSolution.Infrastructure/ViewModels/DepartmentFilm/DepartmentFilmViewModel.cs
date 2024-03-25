@@ -7,26 +7,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace BaseSolution.Infrastructure.ViewModels.FilmSchedule
+namespace BaseSolution.Infrastructure.ViewModels.DepartmentFilm
 {
-    public class FilmScheduleViewModel : ViewModelBase<Guid>
+    public class DepartmentFilmViewModel : ViewModelBase<Guid>
     {
-        private readonly IFilmScheduleReadOnlyRepository _filmScheduleReadOnlyRepository;
+        private readonly IDepartmentFilmReadOnlyRepository _departmentFilmReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
 
-        public FilmScheduleViewModel(IFilmScheduleReadOnlyRepository filmScheduleReadOnlyRepository, ILocalizationService localizationService)
+        public DepartmentFilmViewModel(IDepartmentFilmReadOnlyRepository departmentFilmReadOnlyRepository, ILocalizationService localizationService)
         {
-            _filmScheduleReadOnlyRepository = filmScheduleReadOnlyRepository;
+            _departmentFilmReadOnlyRepository = departmentFilmReadOnlyRepository;
             _localizationService = localizationService;
         }
 
-        public async override Task HandleAsync(Guid idFilmSchedule, CancellationToken cancellationToken)
+        public async override Task HandleAsync(Guid idDepartment, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _filmScheduleReadOnlyRepository.GetFilmScheduleByIdAsync(idFilmSchedule, cancellationToken);
+                var result = await _departmentFilmReadOnlyRepository.GetDepartmentFilmByIdAsync(idDepartment, cancellationToken);
                 Data = result.Data!;
                 Success = result.Success;
                 ErrorItems = result.Errors;
@@ -41,8 +40,8 @@ namespace BaseSolution.Infrastructure.ViewModels.FilmSchedule
                 {
                     new ErrorItem
                     {
-                        Error = _localizationService["Error occurred while getting the film schedule"],
-                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "film schedule")
+                        Error = _localizationService["Error occurred while getting the department film"],
+                        FieldName = string.Concat(LocalizationString.Common.FailedToGet, "department film")
                     }
                 };
             }
