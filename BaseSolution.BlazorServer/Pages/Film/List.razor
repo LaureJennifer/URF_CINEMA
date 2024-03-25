@@ -14,8 +14,8 @@
     <MudTable Items="@lst" Class="mt-4">
          <HeaderContent>
         <MudTh>STT</MudTh>
-        <MudTh>Mã Film</MudTh>
-        <MudTh>Tên Film</MudTh>
+        <MudTh>Mã Phim</MudTh>
+        <MudTh>Tên Phim</MudTh>
         <MudTh>Đạo diễn</MudTh>
          <MudTh>Ngôn Ngữ</MudTh>
          <MudTh>Thể loại</MudTh>
@@ -25,8 +25,8 @@
     </HeaderContent>
     <RowTemplate>
             <MudTd DataLabel="Stt">@(lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Mã Film">@context.Code</MudTd>
-                        <MudTd DataLabel="Tên Film">@context.Title</MudTd>
+                    <MudTd DataLabel="Mã Phim">@context.Code</MudTd>
+                        <MudTd DataLabel="Tên Phim">@context.Title</MudTd>
                           <MudTd DataLabel="Đạo diễn">@context.DirectedBy</MudTd>
                               <MudTd DataLabel="Ngôn Ngữ">@context.Language</MudTd>
                               <MudTd DataLabel="Thể loại">@context.Genres</MudTd>
@@ -34,7 +34,7 @@
                             <MudTd DataLabel="Xếp hạng tuổi">@context.AgeRating</MudTd>
                     <MudTd>
         <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                    <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
+                    <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"></MudIconButton>
                 </MudTd>
             </RowTemplate>
                  <PagerContent>

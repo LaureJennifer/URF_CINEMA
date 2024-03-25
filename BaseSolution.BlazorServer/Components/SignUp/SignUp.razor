@@ -2,43 +2,41 @@
 @using System.ComponentModel.DataAnnotations
 @using BaseSolution.BlazorServer.Components.Login;
 @inject IDialogService DialogService
+@inject ISnackbar _snackbar
 <MudDialog>
     <DialogContent>
-             <center> <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success"> Đăng nhập </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Warning">Đăng ký</MudButton> </center>
-        <MudGrid>
-            <MudItem xs="10" sm="10" Class="mt-4">
-
-                    <MudForm>      
-                            <MudTextField T="string" Label="Họ tên"/>
-                            <MudTextField T="string" Label="Mật khẩu"/> 
-                             <MudDatePicker Label="ngày sinh" /> 
-                             <MudTextField T="string" Label="Số điện thoại"/> 
-                             <MudTextField T="string" Label="Email"/> 
-                             <MudTextField T="string" Label="xác nhận Mật khẩu"/> 
-                             <div class="d-flex">
-                                <MudRadioGroup T="string" Required="true" RequiredError="">
-                                    <MudRadio Option="@("Nam")">Nam</MudRadio>
-                                    <MudRadio Option="@("Nữ")">Nữ</MudRadio>
-                                </MudRadioGroup>
-                            </div>
-                            <div class="d-flex align-center justify-space-between">
-                                <MudCheckBox T="bool" Required="true" RequiredError="yêu cầu đồng ý" Label="Tôi cam kết tuấn theo chính sách bảo mật và điều khoản sử dụng Của BetaURF"  />
-
-                            </div>
-                             <center>
-                                <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="mt-3">Đăng ký </MudButton>  </center>
-                              <center>  <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="mt-3">Đăng nhập bằng Google <MudIcon Icon="@Icons.Custom.Brands.Google" Title="Google" /></MudButton> </center>
-
-                    </MudForm>   
-
-            </MudItem>
-
-        </MudGrid>
+        <MudCard>
+            <MudForm>
+                 <MudCardContent>
+                     <MudGrid>
+                       <MudItem xs="6">
+                                <MudTextField T="string" Label="Họ tên"/>
+                                <MudTextField T="string" Label="Email"/> 
+                                <MudTextField T="string" Label="Mật khẩu"/> 
+                                  <div class="d-flex">
+                             <MudRadioGroup T="string" Required="true" RequiredError="">
+                                        <MudRadio Option="@("Nam")">Nam</MudRadio>
+                                        <MudRadio Option="@("Nữ")">Nữ</MudRadio>
+                             </MudRadioGroup>
+                                </div>
+                              </MudItem>
+                       <MudItem xs="6">
+                                 <MudDatePicker Label="ngày sinh" />
+                                 <MudTextField T="string" Label="Số điện thoại"/> 
+                                 <MudTextField T="string" Label="xác nhận Mật khẩu"/> 
+                       </MudItem>
+                                <div class="d-flex align-center justify-space-between">
+                                    <MudCheckBox T="bool" Required="true" RequiredError="yêu cầu đồng ý" Label="Tôi cam kết tuấn theo chính sách bảo mật và điều khoản sử dụng Của URF CENIMAS"  />
+                                </div>               
+                  </MudGrid>
+              </MudCardContent> 
+            </MudForm>   
+          </MudCard>
     </DialogContent>
+      
     <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="OnButtonClicked">Đăng ký</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
@@ -46,10 +44,23 @@
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
-    private void OpenDialog()
+    [Inject] private IDialogService _dialogService { get; set; } = null!;
+    private async void OnButtonClicked()
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        DialogService.Show<Login>("Đăng nhập", closeOnEscapeKey);
+        bool? result = await _dialogService.ShowMessageBox(
+     "Xác nhận",
+     "Bạn có chắc muốn đăng Ký?",
+     yesText: "Xác nhận", cancelText: "Hủy");
+        if (result == true)
+        {
+            _snackbar.Add("Đăng Ký thành công!", Severity.Success);
+            await Task.Delay(60);
+            MudDialog.Close(DialogResult.Ok(true));
+            StateHasChanged();
+        }
+        else
+        {
+            _snackbar.Add("Đăng ký thất bại!", Severity.Error);
+        }
     }
 }

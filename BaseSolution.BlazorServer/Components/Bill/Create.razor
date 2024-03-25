@@ -7,31 +7,47 @@
 @inject ISnackbar _snackbar
 
 <MudCard>
-    <MudForm Model="@bill" @ref="@from" ValidationDelay="0" Style="width:500px; height: 450px;padding:15px;">
+    <MudForm Model="@bill" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
             <MudCardContent>
-                <MudTextField @bind-Value="bill.CustomerId" 
-                              For="@(() => bill.CustomerId)"
-                              Immediate="true"
-                              Label="Mã Khách hàng" />
-                <MudTextField @bind-Value="bill.TicketQuantity"
-                              For="@(() => bill.TicketQuantity)"
-                              Immediate="true"
-                              Label="Số lượng vé" />
-                <MudTextField @bind-Value="bill.Description"
-                              For="@(() => bill.Description)"
-                              Immediate="true"
-                              Label="Mô tả" />
-                <MudTextField @bind-Value="bill.TotalPrice"
-                              For="@(() => bill.TotalPrice)"
-                              Immediate="true" Label="Tổng tiền" />
-                <MudTextField @bind-Value="bill.Status"
+                <MudGrid>
+                    <MudItem xs="6">
+               
+                            <MudTextField @bind-Value="bill.CustomerId" 
+                                          For="@(() => bill.CustomerId)"
+                                          Immediate="true"
+                                          Label="Mã Khách hàng" />
+                            <MudTextField @bind-Value="bill.TicketQuantity"
+                                          For="@(() => bill.TicketQuantity)"
+                                          Immediate="true"
+                                          Label="Số lượng vé" />
+                                           <MudTextField @bind-Value="bill.Status"
                               For="@(() => bill.Status)"
                               Immediate="true" Label="Trạng Thái" />
-                
+                   </MudItem>
+                    <MudItem xs="6">
+
+                            <MudTextField @bind-Value="bill.Description"
+                                          For="@(() => bill.Description)"
+                                          Immediate="true"
+                                          Label="Mô tả" />
+                            <MudTextField @bind-Value="bill.TotalPrice"
+                                          For="@(() => bill.TotalPrice)"
+                                          Immediate="true" Label="Tổng tiền" />
+                   </MudItem>
+                 </MudGrid>
             </MudCardContent>
             <DialogActions>
-                <MudButton OnClick="Cancel">Quay Lại</MudButton>
-                <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+                 <MudGrid>
+                <MudItem xs="7">
+                </MudItem>
+
+                <MudItem xs="2">
+                    <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+                </MudItem>
+                <MudItem xs="3">
+                   <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            </MudItem>
+            </MudGrid>
             </DialogActions>
         </MudForm>
     
