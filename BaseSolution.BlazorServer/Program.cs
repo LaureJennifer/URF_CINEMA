@@ -1,6 +1,9 @@
-using BaseSolution.BlazorServer.Data;
+﻿using BaseSolution.BlazorServer.Data;
+using BaseSolution.BlazorServer.Repositories.Implements;
+using BaseSolution.BlazorServer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor.Services;
 
 namespace BaseSolution.BlazorServer
@@ -11,10 +14,18 @@ namespace BaseSolution.BlazorServer
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
+            builder.Services.AddTransient<IBookingFilmRepo, BookingFilmRepo>();
+            builder.Services.AddTransient<IFilmRepositories, FilmRepositories>();
+            builder.Services.AddHttpClient("API", client =>
+            {
+                client.BaseAddress = new Uri(builder.Configuration["BackEndAPIURL"]!);
+                // Cấu hình các thiết lập khác của HttpClient
+            });
 
             var app = builder.Build();
 
