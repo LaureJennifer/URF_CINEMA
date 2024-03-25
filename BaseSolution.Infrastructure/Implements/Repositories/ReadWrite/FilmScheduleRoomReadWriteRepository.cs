@@ -50,7 +50,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
-        public async Task<RequestResult<int>> DeleteFilmScheduleRoomAsync(FilmSheduleRoomDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<RequestResult<int>> DeleteFilmScheduleRoomAsync(FilmScheduleRoomDeleteRequest request, CancellationToken cancellationToken)
         {
             try
             {

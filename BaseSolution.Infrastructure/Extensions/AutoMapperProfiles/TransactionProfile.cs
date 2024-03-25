@@ -11,7 +11,8 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
     {
         public TransactionProfile()
         {
-            CreateMap<TransactionEntity, TransactionDto>();
+            CreateMap<TransactionEntity, TransactionDto>()
+                .ForMember(des => des.PaymentMethodName, opt => opt.MapFrom(x => x.PaymentMethodEntity.Name));
             CreateMap<TransactionCreateRequest, TransactionEntity>();
             CreateMap<TransactionUpdateRequest, TransactionEntity>();
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request
 {
-    public class FilmSheduleRoomDeleteRequest
+    public class FilmScheduleRoomDeleteRequest
     {
         public Guid Id { get; set; }
         public Guid? DeletedBy { get; set; }
