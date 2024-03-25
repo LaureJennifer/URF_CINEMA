@@ -6,6 +6,7 @@ using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Domain.Entities;
 using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 entity.CreatedTime = DateTimeOffset.UtcNow;
-                //entity.TotalPrice = entity.Tickets.Select(ticket => ticket.BookingEntity.SeatEntity.Price).Sum();
+                
                 await _dbContext.BillEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync();
 
