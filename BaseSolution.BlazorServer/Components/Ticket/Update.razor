@@ -7,7 +7,7 @@
 @inject ISnackbar _snackbar
 
 <MudCard>
-    <MudForm Model="@ticket" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
+    <MudForm Model="@ticket" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
         <MudCardContent>
             <MudTextField @bind-Value="ticket.Code"
                           For="@(() => ticket.Code)"
@@ -23,8 +23,17 @@
 
     </MudForm>
     <DialogActions>
-        <MudButton OnClick="Cancel">Quay Lại</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+       <MudGrid>
+             <MudItem xs="5">
+
+             </MudItem>
+                <MudItem xs="2">
+                    <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+                </MudItem>
+                <MudItem xs="5">
+             <MudButton Color="Color.Warning" OnClick="OnButtonClicked">Sửa</MudButton>
+            </MudItem>
+            </MudGrid>
     </DialogActions>
 </MudCard>
 

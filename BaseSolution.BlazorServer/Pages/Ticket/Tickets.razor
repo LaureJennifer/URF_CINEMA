@@ -2,9 +2,6 @@
 @using BaseSolution.BlazorServer.Components.Ticket;
 @using BaseSolution.Domain.Entities;
 @inject IDialogService DialogService
-
-
-
 <MudGrid>
     <MudItem xs="8">
         <MudText Class="mt-3" Typo="Typo.h4">Danh sách Vé</MudText>
@@ -12,16 +9,16 @@
     <MudItem xs="4">
         <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
     </MudItem>
-
 </MudGrid>
-
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
 
 <MudTable Items="@lst" Class="mt-4">
     <HeaderContent>
         <MudTh>STT</MudTh>
         <MudTh>Mã Vé</MudTh>
         <MudTh>Trạng Thái</MudTh>
+        <MudTh>Chức năng</MudTh>
+
     </HeaderContent>
     <RowTemplate>
 
@@ -67,7 +64,7 @@
     {
         var parameters = new DialogParameters<Delete>();
         parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
         DialogService.Show<Delete>("Xóa vé", parameters, options);

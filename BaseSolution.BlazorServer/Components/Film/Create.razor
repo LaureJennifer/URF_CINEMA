@@ -7,54 +7,80 @@
 @inject ISnackbar _snackbar
 
 <MudCard>
-    <MudForm Model="@film" @ref="@from" ValidationDelay="0" Style="width:500px; height: 500px;padding:15px;">
+    <MudForm Model="@film" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
         <MudCardContent>
-            <MudTextField @bind-Value="film.Code"
-                          For="@(() => film.Code)"
-                          Immediate="true"
-                          Label="Mã Film" />
-
-            <MudTextField @bind-Value="film.Title"
-                          For="@(() => film.Title)"
-                          Immediate="true"
-                          Label="Tên film" />
-
-            <MudTextField @bind-Value="film.DirectedBy"
-                          For="@(() => film.DirectedBy)"
-                          Immediate="true" 
-                          Label="Đạo diễn" />
-
-            <MudTextField @bind-Value="film.Language"
-                          For="@(() => film.Language)"
-                          Immediate="true" 
-                          Label="Ngôn ngữ" />
-            <MudTextField @bind-Value="film.Genres"
-                          For="@(() => film.Genres)"
-                          Immediate="true"
-                          Label="Thể loại" />
-            <MudTextField @bind-Value="film.Duration"
-                          For="@(() => film.Duration)"
-                          Immediate="true"
-                          Label="Thời lượng" />
-            <MudTextField @bind-Value="film.AgeRating"
-                          For="@(() => film.AgeRating)"
-                          Immediate="true"
-                          Label="Độ tuổi" />
-                            <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                                <ButtonTemplate>
-                                    <MudButton HtmlTag="label"
-                                               Variant="Variant.Filled"
-                                               Color="Color.Primary"
-                                               StartIcon="@Icons.Material.Filled.CloudUpload"
-                                               for="@context"> Ảnh </MudButton>
-                                </ButtonTemplate>
-                            </MudFileUpload>
+            <MudGrid>
+                <MudItem xs="6">
+                    <MudTextField @bind-Value="film.Code"
+                                  For="@(() => film.Code)"
+                                  Immediate="true"
+                                  Label="Mã Phim" />
+                    <MudTextField @bind-Value="film.Language"
+                                  For="@(() => film.Language)"
+                                  Immediate="true" 
+                                  Label="Ngôn ngữ" />
+                    <MudTextField @bind-Value="film.DirectedBy"
+                                  For="@(() => film.DirectedBy)"
+                                  Immediate="true" 
+                                  Label="Đạo diễn" />
+                    <MudTextField @bind-Value="film.AgeRating"
+                                  For="@(() => film.AgeRating)"
+                                  Immediate="true"
+                                  Label="Độ tuổi" />
+            </MudItem>
+                <MudItem xs="6">
+                     <MudTextField @bind-Value="film.Title"
+                                  For="@(() => film.Title)"
+                                  Immediate="true"
+                                  Label="Tên Phim" />
+                
+                    <MudTextField @bind-Value="film.Genres"
+                                  For="@(() => film.Genres)"
+                                  Immediate="true"
+                                  Label="Thể loại" />
+                    <MudTextField @bind-Value="film.Duration"
+                                  For="@(() => film.Duration)"
+                                  Immediate="true"
+                                  Label="Thời lượng" />
+            </MudItem>
+      </MudGrid>
+       <MudGrid>
+                   <MudItem xs="6">
+                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           for="@context"> Ảnh </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                         </MudItem>
+                         <MudItem xs="6">
+                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
+                            <ButtonTemplate>
+                                <MudButton HtmlTag="label"
+                                           Variant="Variant.Filled"
+                                           Color="Color.Info"
+                                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                                           for="@context"> Trailler </MudButton>
+                            </ButtonTemplate>
+                        </MudFileUpload>
+                         </MudItem>
+                </MudGrid>
         </MudCardContent>
                </MudForm>   
    
     <DialogActions>
-        <MudButton OnClick="Cancel">Quay Lại</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm Mới</MudButton>
+            <MudGrid>
+                <MudItem xs="7">
+
+                </MudItem>
+                <MudItem xs="5">
+                     <MudButton   Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+            <MudButton  Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            </MudItem>
+            </MudGrid>
     </DialogActions>
 </MudCard>
 

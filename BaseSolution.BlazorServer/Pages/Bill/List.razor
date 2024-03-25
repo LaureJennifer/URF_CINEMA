@@ -16,7 +16,7 @@
 
 </MudGrid>
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
 
 
 
@@ -28,6 +28,8 @@
         <MudTh>Mô tả</MudTh>
         <MudTh>Tổng tiền</MudTh>
         <MudTh>Trạng Thái</MudTh>
+        <MudTh>Chức năng</MudTh>
+
     </HeaderContent>
     <RowTemplate>
 
@@ -60,22 +62,22 @@
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Create>("Thêm mới khách hàng", closeOnEscapeKey);
+        DialogService.Show<Create>("Thêm mới hóa đơn", closeOnEscapeKey);
     }
     private void OpenDialogg()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Update>("Sửa thông tin khách hàng", closeOnEscapeKey);
+        DialogService.Show<Update>("Sửa thông tin hóa đơn", closeOnEscapeKey);
     }
     private void DeleteUser()
     {
         var parameters = new DialogParameters<Delete>();
         parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Delete");
+        parameters.Add(x => x.ButtonText, "Xóa");
         parameters.Add(x => x.Color, Color.Error);
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa khách hàng", parameters, options);
+        DialogService.Show<Delete>("Xóa hóa đơn", parameters, options);
     }
 }
 
