@@ -1,75 +1,92 @@
-﻿@page "/room"
+﻿@page "/room/{roomId}"
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.Room
+@using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 <MudPaper Square="true" Class="mt-3 mud-theme-dark">
 
     <MudContainer Fixed="true">
-    <MudCarousel Class="mud-width-full" Style="height:200px;" AutoCycle="false" TData="object">
-    <BulletTemplate Context="selected">
-        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
-            <span class="mud-icon-button-label">
-                <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Circle)" Color="@Color.Inherit" />
-            </span>
-        </div>
-    </BulletTemplate>
-    <PreviousButtonTemplate>
-        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
-            <span class="mud-icon-button-label">
-                <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@Color.Inherit" />
-            </span>
-        </div>
-    </PreviousButtonTemplate>
-    <NextButtonTemplate>
-        <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
-            <span class="mud-icon-button-label">
-                <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@Color.Inherit" />
-            </span>
-        </div>
-    </NextButtonTemplate>
-    <ChildContent>
-        <MudCarouselItem >
-            <div class="d-flex" style="height:100%">
-               <MudImage Src="https://insieutoc.vn/wp-content/uploads/2021/02/poster-ngang.jpg" Width="1500" Height="200" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
-            </div>
-        </MudCarouselItem>
-        <MudCarouselItem >
-            <div class="d-flex" style="height:100%">
-               <MudImage Src="https://static.ybox.vn/2018/4/28/b32fb676-4acf-11e8-bc42-56c566ee3692.png" Width="1500" Height="200" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
-
-            </div>
-        </MudCarouselItem>
-        <MudCarouselItem>
-            <div class="d-flex" style="height:100%">
-               <MudImage Src="https://kenh14cdn.com/thumb_w/500/2016/p9-1455516821188.gif.png" Width="1500" Height="180" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4"/>
-
-            </div>
-        </MudCarouselItem>
-    </ChildContent>
-</MudCarousel>
-
-<MudGrid>
-       <MudItem xs="9">
-        <center><MudText Typo="Typo.h3">Front of cinema</MudText></center>
-    </MudItem>
-       <MudItem xs="3" Class="mt-6" >
-       <MudPaper Class="pa-2 mud-success">Your seat</MudPaper>
-       <MudPaper Class="pa-2 mud-Lighten5 mt-3">Available</MudPaper>
-       <MudPaper Class="pa-2 mud-warning mt-3">Reserved</MudPaper>
-       <MudPaper Class="pa-2 mud-error mt-3">Sold out</MudPaper>
-       <MudPaper Class="pa-2 mud-primary mt-3">Be Kept</MudPaper>
-       <MudPaper Class="pa-2 mud-info mt-6">Couple</MudPaper>
-       <MudPaper Style="background-color:#FFEE58" Class="pa-2 mt-3">Standard</MudPaper>
-       <MudPaper Style="background-color:#A1887F" Class="pa-2 mt-3">Vip</MudPaper>
+        <MudCarousel Style="height:200px;color:#F5F5F5;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+            <ChildContent>
+                @if (_lst == null)
+                {
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                }
+                else
+                {
+                    if (_lst == null)
+                    {
+                        <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+                    }
+                    else
+                    {
+                        @foreach (var item in _lst)
+                        {
+                            <MudCarouselItem Transition="transition" Class="ml-3">
+                                <MudImage Src="@item.PosterURL" Style="width:97%;height:90%" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                            </MudCarouselItem>
+                        }
+                    }
+                }
+            </ChildContent>
+        </MudCarousel>
+        <MudGrid>
+            <MudItem xs="9">
+                <MudText><MudText Typo="Typo.h4">Front of cinema</MudText></MudText>
+                <ExcelImport></ExcelImport>
+            </MudItem>
+            <MudItem xs="3" Class="mt-6">
+                <MudPaper Class="pa-2 mud-success">Your seat</MudPaper>
+                <MudPaper Class="pa-2 mud-Lighten5 mt-3">Available</MudPaper>
+                <MudPaper Class="pa-2 mud-warning mt-3">Reserved</MudPaper>
+                <MudPaper Class="pa-2 mud-error mt-3">Sold out</MudPaper>
+                <MudPaper Class="pa-2 mud-primary mt-3">Be Kept</MudPaper>
+                <MudPaper Class="pa-2 mud-info mt-6">Couple</MudPaper>
+                <MudPaper Style="background-color:#FFEE58" Class="pa-2 mt-3">Standard</MudPaper>
+                <MudPaper Style="background-color:#A1887F" Class="pa-2 mt-3">Vip</MudPaper>
                 <MudLink Href="/Payment"> <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Procced</MudButton> </MudText></MudLink>
-
-      
-     
-    </MudItem>
-</MudGrid>
-
+            </MudItem>
+        </MudGrid>
 
     </MudContainer>
 </MudPaper>
 @code {
-    public string Search { get; set; }
+    [Parameter]
+    public string roomId { get; set; }
+    [Inject] IRoomRepo _roomRepo { get; set; }
+    [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
+    [Inject] IFilmRepositories _film { get; set; }
+    List<FilmDto>? _lst { get; set; }
+    Guid _roomLayoutDtoId { get; set; }
+    RoomLayoutDto _roomLayoutDto { get; set; }
+    bool arrows = true;
+    bool bullets = true;
+    bool enableSwipeGesture = true;
+    bool autocycle = true;
+    Transition transition = Transition.Slide;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        await LoadLayout();
+    }
+
+    private async Task GetRoomById(string roomId)
+    {
+        var result = await _roomRepo.GetByIdAsync(Guid.Parse(roomId));
+        _roomLayoutDtoId = result.Data.RoomLayoutId;
+    }
+    private async Task LoadLayout()
+    {
+        await GetRoomById(roomId);
+        var result = await _roomLayoutRepo.GetByIdAsync(_roomLayoutDtoId);
+        _roomLayoutDto = result.Data;
+    }
+    private async Task LoadData()
+    {
+
+        var result = await _film.GetAllActive();
+        _lst = result.Data.Data.ToList();
+    }
     void CloseChip()
     {
         // Code..

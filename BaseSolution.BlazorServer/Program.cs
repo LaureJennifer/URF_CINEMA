@@ -21,6 +21,11 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddMudServices();
             builder.Services.AddTransient<IBookingFilmRepo, BookingFilmRepo>();
             builder.Services.AddTransient<IFilmRepositories, FilmRepositories>();
+            builder.Services.AddTransient<IRoomLayoutRepo, RoomLayoutRepo>();
+            builder.Services.AddTransient<IRoomRepo, RoomRepo>();
+            builder.Services.AddTransient<IFilmScheduleRoomRepo, FilmScheduleRoomRepo>();
+
+
             builder.Services.AddHttpClient("API", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["BackEndAPIURL"]!);
