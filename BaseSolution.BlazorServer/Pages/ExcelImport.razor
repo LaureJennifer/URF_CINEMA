@@ -10,92 +10,130 @@
 @using System.Data;
 @using System.IO;
 @using OfficeOpenXml
-<MudText Color="Color.Primary" Class="mb-5" Typo="Typo.h4">Trang chủ</MudText>
- <InputFile OnChange="@ImportExcelFile" />
-<MudGrid >
-    <MudItem xs="3" lg="3" md="3"></MudItem>
-    <MudItem xs="6" lg="6" md="6">
-        <MudStack Row="true">
-            @foreach (DataColumn col in dt.Columns)
-            {
-                if (!string.IsNullOrEmpty(col.ColumnName))
+
+<MudPaper>
+    <MudText Typo="Typo.h5" Align="Align.Center">Front of cinema</MudText>
+    <MudGrid>
+        <MudItem xs="2" md="2"></MudItem>
+        <MudItem xs="8" md="8">
+        @foreach (DataRow row in dt.Rows)
+        {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Class="ml-7 mb-2">
+                @foreach (DataColumn col in dt.Columns)
                 {
-                    <MudItem xs="3" lg="3" md="3">
-                        <MudPaper Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@col.ColumnName</MudPaper>
-                    </MudItem>
-                }
-                else
-                {
-                    <MudItem xs="3" lg="3" md="3">
-                        <MudPaper Style="width:auto;" Square="true" Class="mt-5 invisible">@col.ColumnName</MudPaper>
-                    </MudItem>
-                }
-            }
-        </MudStack>
-            @foreach (DataRow row in dt.Rows)
-            {
-                <MudStack Row="true">
-                    @foreach (DataColumn col in dt.Columns)
+                    var cellValue = row[col.ColumnName]?.ToString();
+                    if (!string.IsNullOrEmpty(cellValue))
                     {
-                        var cellValue = row[col.ColumnName]?.ToString();
-                        if (!string.IsNullOrEmpty(cellValue))
-                        {
-                            <MudItem xs="3" lg="3" md="3">
-                            <MudPaper Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@cellValue</MudPaper>
+                        <MudItem xs="3" lg="3" md="3">
+                            <MudButton OnClick="()=>ChangeStatus()" Variant="Variant.Filled" Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@cellValue</MudButton>
                             </MudItem>
-                        }
-                        else
-                        {
-                            <MudItem xs="3" lg="3" md="3">
-                                <MudPaper Style="width:auto;visibility:hidden;" Square="true" Class="mt-5">@cellValue</MudPaper>
-                            </MudItem>
-                        }
                     }
-                </MudStack>
-            }
-    </MudItem>
-    <MudItem xs="3" lg="3" md="3"></MudItem>
-</MudGrid>
+                    else
+                    {
+                        <MudItem xs="3" lg="3" md="3">
+                            <MudButton Style="width:auto;visibility:hidden;" Square="true" Class="mt-5">@cellValue</MudButton>
+                            </MudItem>
+                    }
+                }
+            </MudStack>
+        }
+        </MudItem>
+        <MudItem xs="2" md="2"></MudItem>
+    </MudGrid>
+</MudPaper>
 @code {
     DataTable dt = new DataTable();
-    async Task ImportExcelFile(InputFileChangeEventArgs e)
+    protected async override Task OnInitializedAsync()
     {
-        var fileStream = e.File.OpenReadStream();
-        var ms = new MemoryStream();
-        await fileStream.CopyToAsync(ms);
-        fileStream.Close();
-        ms.Position = 0;
+        string path = @"C:\Users\GIGABYTE\Desktop\Map2.xlsx";
+        await ImportExcelFile(path);
+    }
+    public async Task ChangeStatus()
+    {
 
-        using (var package = new ExcelPackage(ms))
+    }
+    async Task ImportExcelFile(string filePath)
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+        using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
         {
-            ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-            worksheet = TrimWorksheet(worksheet);
-            var rl = new List<string>();
+            var ms = new MemoryStream();
+            await fileStream.CopyToAsync(ms);
+            ms.Position = 0;
 
-            int cc = worksheet.Dimension.Columns;
-            for (var j = 1; j <= cc; j++)
+            using (var package = new ExcelPackage(ms))
             {
-                var cellValue = worksheet.Cells[1, j].Value?.ToString();
-                dt.Columns.Add(cellValue);
-            }
+                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                worksheet = TrimWorksheet(worksheet);
+                var rl = new List<string>();
 
-            for (var j = 2; j <= worksheet.Dimension.Rows; j++)
-            {
-                for (var i = 1; i <= cc; i++)
+                int columnCount = worksheet.Dimension.Columns;
+                for (var j = 1; j <= columnCount; j++)
                 {
-                    var cellValue = worksheet.Cells[j, i].Value?.ToString();
-                    rl.Add(cellValue);
+                    var cellValue = worksheet.Cells[1, j].Value?.ToString();
+                    dt.Columns.Add(cellValue);
                 }
 
-                if (rl.Count > 0)
+                var rowCount = worksheet.Dimension.Rows;
+                for (var j = 1; j <= rowCount; j++)
                 {
-                    dt.Rows.Add(rl.ToArray());
-                }
+                    for (var i = 1; i <= columnCount; i++)
+                    {
+                        var cellValue = worksheet.Cells[j, i].Value?.ToString();
+                        rl.Add(cellValue);
+                    }
 
-                rl.Clear();
+                    if (rl.Count > 0)
+                    {
+                        dt.Rows.Add(rl.ToArray());
+                    }
+                    rl.Clear();
+                }
             }
         }
     }
+    // async Task ImportExcelFile(InputFileChangeEventArgs e)
+    // {
+    //     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+    //     var fileStream = e.File.OpenReadStream();
+    //     var ms = new MemoryStream();
+    //     await fileStream.CopyToAsync(ms);
+    //     fileStream.Close();
+    //     ms.Position = 0;
+
+    //     using (var package = new ExcelPackage(ms))
+    //     {
+    //         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+    //         worksheet = TrimWorksheet(worksheet);
+    //         var rl = new List<string>();
+
+    //         int columnCount = worksheet.Dimension.Columns;
+    //         for (var j = 1; j <= columnCount; j++)
+    //         {
+    //             var cellValue = worksheet.Cells[1, j].Value?.ToString();
+    //             dt.Columns.Add(cellValue);
+    //         }
+    //         var rowCount = worksheet.Dimension.Rows;
+    //         for (var j = 1; j <= rowCount; j++)
+    //         {
+    //             for (var i = 1; i <= columnCount; i++)
+    //             {
+    //                 var cellValue = worksheet.Cells[j, i].Value?.ToString();
+    //                 rl.Add(cellValue);
+    //             }
+
+    //             if (rl.Count > 0)
+    //             {
+    //                 dt.Rows.Add(rl.ToArray());
+    //             }
+    //             rl.Clear();
+    //         }
+
+
+    //     }
+    // }
+
     private ExcelWorksheet TrimWorksheet(ExcelWorksheet worksheet)
     {
         int lastRow = worksheet.Dimension.End.Row;

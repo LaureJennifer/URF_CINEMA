@@ -1,4 +1,4 @@
-﻿@page "/room/{roomId}"
+﻿@page "/room/{filmId}/{roomId}"
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.RoomLayout
@@ -32,8 +32,9 @@
         </MudCarousel>
         <MudGrid>
             <MudItem xs="9">
-                <MudText><MudText Typo="Typo.h4">Front of cinema</MudText></MudText>
-                <ExcelImport></ExcelImport>
+                
+                    <ExcelImport></ExcelImport>
+                               
             </MudItem>
             <MudItem xs="3" Class="mt-6">
                 <MudPaper Class="pa-2 mud-success">Your seat</MudPaper>
@@ -52,7 +53,10 @@
 </MudPaper>
 @code {
     [Parameter]
+    public string filmId { get; set; }
+    [Parameter]
     public string roomId { get; set; }
+
     [Inject] IRoomRepo _roomRepo { get; set; }
     [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
     [Inject] IFilmRepositories _film { get; set; }

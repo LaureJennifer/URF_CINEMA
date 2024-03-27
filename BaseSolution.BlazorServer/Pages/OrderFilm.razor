@@ -94,6 +94,6 @@ else
     private async void NavigateToRoom()
     {
         await FindFilmScheduleRoomByDateTime();
-        _navigationManager.NavigateTo($"/room/{_roomId.ToString()}");
+        _navigationManager.NavigateTo($"/room/{filmId}/{_roomId.ToString()}");
     }
 }
