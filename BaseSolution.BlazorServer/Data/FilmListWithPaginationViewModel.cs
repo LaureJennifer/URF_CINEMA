@@ -1,6 +1,10 @@
-﻿using BaseSolution.BlazorServer.Data.DataTransferObjects.Film;
-using BaseSolution.BlazorServer.ValueObjects.Pagination;
-using BaseSolution.BlazorServer.ValueObjects.Response;
+﻿
+
+
+
+using BaseSolution.Application.DataTransferObjects.Film;
+using BaseSolution.Application.ValueObjects.Pagination;
+using BaseSolution.Application.ValueObjects.Response;
 
 namespace BaseSolution.BlazorServer.Data
 {

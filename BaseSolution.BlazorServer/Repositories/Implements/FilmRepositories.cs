@@ -6,7 +6,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
 {
     public class FilmRepositories : IFilmRepositories
     {
-        public async Task<FilmListWithPaginationViewModel> GetAllActive(ViewFilmWithPaginationRequest request)
+        public async Task<FilmListWithPaginationViewModel> GetAllActive()
         {
             var client = new HttpClient
             {

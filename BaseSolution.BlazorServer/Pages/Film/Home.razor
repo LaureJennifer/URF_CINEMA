@@ -1,6 +1,6 @@
 ﻿@page "/"
+@using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.BlazorServer.Components.Login;
-@using BaseSolution.BlazorServer.Data.DataTransferObjects.Film
 @using BaseSolution.BlazorServer.Data.DataTransferObjects.Film.Request
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
@@ -111,7 +111,7 @@
     private async Task LoadData()
     {
 
-        var result = await _film.GetAllActive(obj);
+        var result = await _film.GetAllActive();
         _lst = result.Data.Data.ToList();
     }
 }

@@ -5,6 +5,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {
     public interface IFilmRepositories
     {
-        public Task<FilmListWithPaginationViewModel> GetAllActive(ViewFilmWithPaginationRequest request);
+        public Task<FilmListWithPaginationViewModel> GetAllActive();
     }
 }

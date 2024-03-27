@@ -12,5 +12,6 @@ namespace BaseSolution.Application.DataTransferObjects.User.Request
         public string? Name { get; set; }
 
         public Guid? RoleId { get; set; }
+        public string value { get; set; } = string.Empty;
     }
 }

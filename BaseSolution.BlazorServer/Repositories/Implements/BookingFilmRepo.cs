@@ -1,7 +1,6 @@
-﻿
-using BaseSolution.Application.DataTransferObjects.FilmSchedule;
+﻿using BaseSolution.Application.DataTransferObjects.Film;
 using BaseSolution.BlazorServer.Data;
-using BaseSolution.BlazorServer.Data.DataTransferObjects.Film;
+
 using BaseSolution.BlazorServer.Data.DataTransferObjects.Film.Request;
 using BaseSolution.BlazorServer.Data.DataTransferObjects.FilmSchedule.Request;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
