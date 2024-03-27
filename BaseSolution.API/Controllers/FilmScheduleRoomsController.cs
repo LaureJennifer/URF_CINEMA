@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.FilmSchedule.Request;
+using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
@@ -45,6 +47,20 @@ namespace BaseSolution.API.Controllers
 
             await vm.HandleAsync(id, cancellationToken);
 
+            return Ok(vm);
+        }
+        // Find by showDate && showTime
+        [HttpGet("showDateTime")]
+        public async Task<IActionResult> GetFilmScheduleRoomByShowDateTime([FromQuery]FilmScheduleRoomFindByDateTimeRequest request, CancellationToken cancellationToken)
+        {
+            FilmScheduleRoomByTimeViewModel vm = new(_filmScheduleRoomReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+            //if (vm.Data != null)
+            //{
+            //    FilmScheduleRoomDto result = (FilmScheduleRoomDto)vm.Data;
+            //    return Ok(result);
+            //}
             return Ok(vm);
         }
 

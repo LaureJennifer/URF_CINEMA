@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request;
+using BaseSolution.Application.DataTransferObjects.User;
 
 namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
 {
@@ -17,5 +18,7 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
         Task<RequestResult<FilmScheduleRoomDto?>> GetFilmScheduleRoomByIdAsync(Guid idFilmScheduleRoom, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<FilmScheduleRoomDto>>> GetFilmScheduleRoomWithPaginationByAdminAsync(
             ViewFilmScheduleRoomWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<FilmScheduleRoomDto?>> GetFilmScheduleRoomByShowDateTimeAsync(FilmScheduleRoomFindByDateTimeRequest request, CancellationToken cancellationToken);
+
     }
 }

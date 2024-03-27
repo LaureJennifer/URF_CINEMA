@@ -9,6 +9,7 @@ namespace BaseSolution.Application.DataTransferObjects.Room
 {
     public class RoomDto
     {
+        public Guid RoomLayoutId { get; set; }
         public string RoomLayoutName { get; set; }
         public string DepartmentName { get; set; }
         public string DepartmentAddress { get; set; }

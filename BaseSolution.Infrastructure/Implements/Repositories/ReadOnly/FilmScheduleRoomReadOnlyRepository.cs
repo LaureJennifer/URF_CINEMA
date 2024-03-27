@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using BaseSolution.Application.DataTransferObjects.FilmSchedule;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request;
+using BaseSolution.Application.DataTransferObjects.User;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
@@ -90,6 +91,29 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         Error= e.Message,
                         FieldName = LocalizationString.Common.FailedToGet + "list of film schedule room"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<FilmScheduleRoomDto?>> GetFilmScheduleRoomByShowDateTimeAsync(FilmScheduleRoomFindByDateTimeRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {               
+                var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking()
+                    .Where(x => x.FilmScheduleEntity.ShowDate == request.ShowDate && x.FilmScheduleEntity.ShowTime == request.ShowTime)
+                    .ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<FilmScheduleRoomDto?>.Succeed(filmScheduleRoom); 
+
+            }
+            catch (Exception e)
+            {
+                return RequestResult<FilmScheduleRoomDto?>.Fail(_localizationService["Film schedule room is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "film schedule room"
                     }
                 });
             }
