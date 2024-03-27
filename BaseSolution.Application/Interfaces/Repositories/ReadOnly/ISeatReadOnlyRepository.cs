@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BaseSolution.Application.DataTransferObjects.Seat;
 using BaseSolution.Application.DataTransferObjects.Seat.Request;
+using BaseSolution.Application.DataTransferObjects.User;
 
 namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
 {
@@ -17,5 +18,7 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
         Task<RequestResult<SeatDto?>> GetSeatByIdAsync(Guid idSeat, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<SeatDto>>> GetSeatWithPaginationByAdminAsync(
             ViewSeatWithPaginationRequest request, CancellationToken cancellationToken);
+        Task<RequestResult<SeatDto>> GetSeatByCodeAsync(string code, CancellationToken cancellationToken);
+
     }
 }
