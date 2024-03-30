@@ -34,17 +34,16 @@
                 <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Style="background-color:white">@time.ToString("hh : mm")</MudButton>
             }
         </MudItem>
-        <MudButton OnClick="()=>NavigateToRoom()" Variant="Variant.Filled" Style="background-color:greenyellow">Đặt vé</MudButton>
     </MudGrid>
 }
 else
 {
     <p>Không tìm thấy thông tin phim.</p>
 }
+
 @code {
     [Parameter]
     public string filmId { get; set; }
-
     [Inject]
     IBookingFilmRepo _bookingFilmRepo{ get; set; }
     [Inject]
@@ -56,6 +55,8 @@ else
     DateTimeOffset _showDateSelected;
     DateTimeOffset _showTimeSelected;
     Guid _roomId;
+    Guid _filmScheduleId;
+
     protected override async Task OnInitializedAsync()
     {
         await GetFilmById(filmId);
@@ -68,32 +69,37 @@ else
         _showDateSelected = _selectedFilm.ShowDates[0];
         _showTimeSelected = _selectedFilm.ShowTimes[0];
     }
+
     private async Task LoadData()
     {
         // var result = await _bookingFilmRepo.GetAllFilmSchedule(obj);
         // _selectedFilm = result.Data;
     }
+
     private void SelectDate(DateTimeOffset date)
     {
         _showDateSelected = date;
     }
+
     private void SelectTime(DateTimeOffset time)
     {
         _showTimeSelected = time;
+        NavigateToRoom();
     }
+
     private async Task FindFilmScheduleRoomByDateTime()
     {
 
         request.ShowDate = _showDateSelected;
         request.ShowTime = _showTimeSelected;
         var result = await _filmSheduleRoomRepo.GetFilmScheduleRoomByShowDateTimeAsync(request);
+        _filmScheduleId = result.Data.FilmScheduleId;
         _roomId = result.Data.RoomId;
-
-
     }
+
     private async void NavigateToRoom()
     {
         await FindFilmScheduleRoomByDateTime();
-        _navigationManager.NavigateTo($"/room/{filmId}/{_roomId.ToString()}");
+        _navigationManager.NavigateTo($"/room/{filmId}/{_filmScheduleId.ToString()}/{_roomId.ToString()}");
     }
 }

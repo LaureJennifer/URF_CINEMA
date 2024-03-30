@@ -56,11 +56,7 @@ namespace BaseSolution.API.Controllers
             FilmScheduleRoomByTimeViewModel vm = new(_filmScheduleRoomReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
-            //if (vm.Data != null)
-            //{
-            //    FilmScheduleRoomDto result = (FilmScheduleRoomDto)vm.Data;
-            //    return Ok(result);
-            //}
+
             return Ok(vm);
         }
 
