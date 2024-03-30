@@ -53,7 +53,7 @@
                     <MudImage Src="@item.UrlImage" @onclick="OpenDialog" Style="width:70%;" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Tên Phim: @item.Title</MudText>
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Thời gian : @item.Duration phút</MudText>
-                    <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToString("dd/mm/yyyy")</MudText>
+                    <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToString("dd/MM/yyyy")</MudText>
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Thể loại : @item.Genres</MudText>
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4"><MudButton @onclick="() => Order(item.Id)" Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Đặt vé</MudButton> </MudText>
                 </MudItem>
@@ -67,7 +67,7 @@
                     <MudImage Src="@item.UrlImage" Style="width:70%;" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Tên Phim: @item.Title</MudText>
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Thời gian : @item.Duration phút</MudText>
-                    <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToString("dd/mm/yyyy")</MudText>
+                    <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToString("dd/MM/yyyy")</MudText>
                     <MudText Align="Align.Start" Style="color:#F5F5F5" Class="ml-4 mb-5">Thể loại : @item.Genres</MudText>
                 </MudItem>
             }

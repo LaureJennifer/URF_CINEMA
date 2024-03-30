@@ -1,7 +1,8 @@
-﻿@page "/room/{filmId}/{roomId}"
+﻿@page "/room/{filmId}/{filmScheduleId}/{roomId}"
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 <MudPaper Square="true" Class="mt-3 mud-theme-dark">
 
@@ -31,12 +32,11 @@
             </ChildContent>
         </MudCarousel>
         <MudGrid>
-            <MudItem xs="9">
-                
-                    <ExcelImport></ExcelImport>
-                               
+            <MudItem xs="10" md="10">
+                <ExcelImport filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId"></ExcelImport>
             </MudItem>
-            <MudItem xs="3" Class="mt-6">
+            
+            <MudItem xs="2" md="2" Class="mt-6">
                 <MudPaper Class="pa-2 mud-success">Your seat</MudPaper>
                 <MudPaper Class="pa-2 mud-Lighten5 mt-3">Available</MudPaper>
                 <MudPaper Class="pa-2 mud-warning mt-3">Reserved</MudPaper>
@@ -55,19 +55,23 @@
     [Parameter]
     public string filmId { get; set; }
     [Parameter]
-    public string roomId { get; set; }
-
+    public string filmScheduleId { get; set; }
+    [Parameter]
+    public string roomId { get; set; }    
+     
     [Inject] IRoomRepo _roomRepo { get; set; }
     [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
     [Inject] IFilmRepositories _film { get; set; }
     List<FilmDto>? _lst { get; set; }
     Guid _roomLayoutDtoId { get; set; }
     RoomLayoutDto _roomLayoutDto { get; set; }
+    int TotalSeconds = 300;
     bool arrows = true;
     bool bullets = true;
     bool enableSwipeGesture = true;
     bool autocycle = true;
     Transition transition = Transition.Slide;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
@@ -79,18 +83,21 @@
         var result = await _roomRepo.GetByIdAsync(Guid.Parse(roomId));
         _roomLayoutDtoId = result.Data.RoomLayoutId;
     }
+
     private async Task LoadLayout()
     {
         await GetRoomById(roomId);
         var result = await _roomLayoutRepo.GetByIdAsync(_roomLayoutDtoId);
         _roomLayoutDto = result.Data;
     }
+
     private async Task LoadData()
     {
 
         var result = await _film.GetAllActive();
         _lst = result.Data.Data.ToList();
     }
+
     void CloseChip()
     {
         // Code..

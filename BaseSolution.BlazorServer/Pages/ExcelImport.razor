@@ -5,12 +5,12 @@
 @using BaseSolution.Application.ViewModels.Excels.Mics
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Components.Excel
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using Microsoft.AspNetCore.Components.Web
 @using System.Data;
 @using System.IO;
 @using OfficeOpenXml
-
 <MudPaper>
     <MudText Typo="Typo.h5" Align="Align.Center">Front of cinema</MudText>
     <MudGrid>
@@ -41,17 +41,36 @@
         <MudItem xs="2" md="2"></MudItem>
     </MudGrid>
 </MudPaper>
+
 @code {
+    [Inject] IRoomRepo _roomRepo { get; set; }
+
+    [Parameter] public string filmId { get; set; }
+    [Parameter] public string filmScheduleId { get; set; }
+    [Parameter] public string roomId { get; set; }
     DataTable dt = new DataTable();
+    Guid _roomLayoutDtoId { get; set; }
+    string _roomLayoutName { get; set; }
+
     protected async override Task OnInitializedAsync()
     {
-        string path = @"C:\Users\GIGABYTE\Desktop\Map2.xlsx";
+        await GetRoomById(roomId);
+        string path = _roomLayoutName;
         await ImportExcelFile(path);
     }
+
+    private async Task GetRoomById(string roomId)
+    {
+        var result = await _roomRepo.GetByIdAsync(Guid.Parse(roomId));
+        _roomLayoutDtoId = result.Data.RoomLayoutId;
+        _roomLayoutName = result.Data.RoomLayoutName;
+    }
+
     public async Task ChangeStatus()
     {
 
     }
+
     async Task ImportExcelFile(string filePath)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -93,47 +112,7 @@
             }
         }
     }
-    // async Task ImportExcelFile(InputFileChangeEventArgs e)
-    // {
-    //     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-    //     var fileStream = e.File.OpenReadStream();
-    //     var ms = new MemoryStream();
-    //     await fileStream.CopyToAsync(ms);
-    //     fileStream.Close();
-    //     ms.Position = 0;
-
-    //     using (var package = new ExcelPackage(ms))
-    //     {
-    //         ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-    //         worksheet = TrimWorksheet(worksheet);
-    //         var rl = new List<string>();
-
-    //         int columnCount = worksheet.Dimension.Columns;
-    //         for (var j = 1; j <= columnCount; j++)
-    //         {
-    //             var cellValue = worksheet.Cells[1, j].Value?.ToString();
-    //             dt.Columns.Add(cellValue);
-    //         }
-    //         var rowCount = worksheet.Dimension.Rows;
-    //         for (var j = 1; j <= rowCount; j++)
-    //         {
-    //             for (var i = 1; i <= columnCount; i++)
-    //             {
-    //                 var cellValue = worksheet.Cells[j, i].Value?.ToString();
-    //                 rl.Add(cellValue);
-    //             }
-
-    //             if (rl.Count > 0)
-    //             {
-    //                 dt.Rows.Add(rl.ToArray());
-    //             }
-    //             rl.Clear();
-    //         }
-
-
-    //     }
-    // }
-
+    
     private ExcelWorksheet TrimWorksheet(ExcelWorksheet worksheet)
     {
         int lastRow = worksheet.Dimension.End.Row;
