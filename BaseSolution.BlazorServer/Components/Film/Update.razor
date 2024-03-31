@@ -1,129 +1,204 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.Film.Request
+@using BaseSolution.BlazorServer.Data.ValueObjects.Common
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
-@inject IDialogService DialogService
+@inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-<MudCard>
-    <MudForm Model="@film" @ref="@from" ValidationDelay="0" Style="width:auto; padding:15px;">
-        <MudCardContent>
-            <MudGrid>
-                <MudItem xs="6">
-                    <MudTextField @bind-Value="film.Code"
-                                  For="@(() => film.Code)"
-                                  Immediate="true"
-                                  Label="Mã Phim" />
-                    <MudTextField @bind-Value="film.Language"
-                                  For="@(() => film.Language)"
-                                  Immediate="true" 
-                                  Label="Ngôn ngữ" />
-                    <MudTextField @bind-Value="film.DirectedBy"
-                                  For="@(() => film.DirectedBy)"
-                                  Immediate="true" 
-                                  Label="Đạo diễn" />
-                    <MudTextField @bind-Value="film.AgeRating"
-                                  For="@(() => film.AgeRating)"
-                                  Immediate="true"
-                                  Label="Độ tuổi" />
+@inject NavigationManager _navigate;
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Code" Label="Mã phim*" />
             </MudItem>
-                <MudItem xs="6">
-                     <MudTextField @bind-Value="film.Title"
-                                  For="@(() => film.Title)"
-                                  Immediate="true"
-                                  Label="Tên Phim" />
-                
-                    <MudTextField @bind-Value="film.Genres"
-                                  For="@(() => film.Genres)"
-                                  Immediate="true"
-                                  Label="Thể loại" />
-                    <MudTextField @bind-Value="film.Duration"
-                                  For="@(() => film.Duration)"
-                                  Immediate="true"
-                                  Label="Thời lượng" />
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Title" Label="Tên phim*" />
             </MudItem>
-      </MudGrid>
-       <MudGrid>
-                   <MudItem xs="6">
-                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                            <ButtonTemplate>
-                                <MudButton HtmlTag="label"
-                                           Variant="Variant.Filled"
-                                           Color="Color.Primary"
-                                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                                           for="@context"> Ảnh </MudButton>
-                            </ButtonTemplate>
-                        </MudFileUpload>
-                         </MudItem>
-                         <MudItem xs="6">
-                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                            <ButtonTemplate>
-                                <MudButton HtmlTag="label"
-                                           Variant="Variant.Filled"
-                                           Color="Color.Info"
-                                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                                           for="@context"> Trailler </MudButton>
-                            </ButtonTemplate>
-                        </MudFileUpload>
-                         </MudItem>
-                </MudGrid>
-        </MudCardContent>
-               </MudForm>   
-    <DialogActions>
-            <MudGrid>
-                <MudItem xs="7">
-
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.DirectedBy" Label="Đạo diễn*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Actor" Label="Diễn viên*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Language" Label="Ngôn ngữ*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Genres" Label="Thể loại*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.ReleaseDate" Placeholder="dd/MM/yyyy" Label="Ngày khởi chiếu*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Duration" Placeholder="phút" Label="Thời lượng*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Script" Label="Định dạng phim*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.AgeRating" Label="Độ tuổi*" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_filmDto.Status" For="@(() => _filmDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudItem>
+            @if (imageUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@imageUrl" />
                 </MudItem>
-                <MudItem xs="5">
-                     <MudButton   Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-            <MudButton  Color="Color.Warning" OnClick="OnButtonClicked">Sửa</MudButton>
+            }
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadPosterFiles">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh Bìa</MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
             </MudItem>
-            </MudGrid>
+            @if (posterUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@posterUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadTrailerFiles">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Trailer</MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudItem>
+            @if (trailerUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@trailerUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject]
+    public IFilmRepo _filmRepo { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    public FilmDto _filmDto = new();
+
+    public FilmUpdateRequest obj = new();
+    public ViewFilmWithPaginationRequest customer_ = new();
+
+    public string imageUrl { get; set; } = "";
+    public string posterUrl { get; set; } = "";
+    public string trailerUrl { get; set; } = "";
+
+    [Parameter]
+    public Guid idFilm { set; get; }
+
     IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
+    ImageHandle imageHandle = new();
+
+    private async Task UploadFiles(IBrowserFile file)
     {
+        imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
         files.Add(file);
     }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
+
+    private async Task UploadPosterFiles(IBrowserFile file)
     {
-        bool? result = await _dialogService.ShowMessageBox(
+        posterUrl = @"\poster\Film\" + await imageHandle.AddImage(file, "Film");
+        files.Add(file);
+    }
+
+    private async Task UploadTrailerFiles(IBrowserFile file)
+    {
+        posterUrl = @"\trailer\Film\" + await imageHandle.AddImage(file, "Film");
+        files.Add(file);
+    }
+
+    private async Task OnButtonClicked()
+    {
+        obj.Code = _filmDto.Code;
+        obj.Title = _filmDto.Title;
+        obj.DirectedBy = _filmDto.DirectedBy;
+        obj.Actor = _filmDto.Actor;
+        obj.Language = _filmDto.Language;
+        obj.UrlImage = imageUrl;
+        obj.PosterURL = posterUrl;
+        obj.TrailerURL = trailerUrl;
+        obj.Genres = _filmDto.Genres;
+        obj.Duration = _filmDto.Duration;
+        obj.ReleaseDate = _filmDto.ReleaseDate;
+        obj.Script = _filmDto.Script;
+        obj.AgeRating = _filmDto.AgeRating;
+        obj.Status = _filmDto.Status;
+        bool? confirm = await _dialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc chắn sửa?",
      yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        if (confirm == true)
         {
-            _snackbar.Add("Sửa phim thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Sửa phim thất bại!", Severity.Error);
+            var result = await _filmRepo.UpdateAsync(obj);
+            if (result == true)
+            {
+                await Task.Delay(1000);
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Sửa thành công", Severity.Success);
+                _navigate.NavigateTo("/film/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Sửa thất bại",
+                        Severity.Error
+                );
+            }
         }
     }
-    MudForm from;
-    FilmModel film = new FilmModel();
 
-    public class FilmModel
+    protected override async Task OnInitializedAsync()
     {
-        public string Code { get; set; }
-        public string Title { get; set; }
-        public string DirectedBy { get; set; }
-        public string Language { get; set; }
-        public string Genres { get; set; }
-        public string Duration { get; set; }
-        public string AgeRating { get; set; }
+        await LoadData();
     }
+
+    private async Task LoadData()
+    {
+
+        var result = await _filmRepo.GetByIdAsync(idFilm);
+        _filmDto = result.Data!;
+    }
+
+    void Cancel() => _mudDialog.Cancel();
 }

@@ -18,6 +18,7 @@
     <PackageReference Include="EPPlus" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.16" />
+    <PackageReference Include="Microsoft.JSInterop" Version="7.0.17" />
     <PackageReference Include="MudBlazor" Version="6.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
@@ -54,12 +55,14 @@
     <Folder Include="Pages\FilmSchedule\" />
     <Folder Include="Pages\User\" />
     <Folder Include="Pages\Transaction\" />
-    <Folder Include="Pages\Ticket\" />
     <Folder Include="Pages\Seat\" />
     <Folder Include="Pages\RoomLayout\" />
     <Folder Include="Pages\Room\" />
     <Folder Include="Pages\Role\" />
     <Folder Include="Pages\PaymentMethod\" />
+    <Folder Include="wwwroot\image\Customer\" />
+    <Folder Include="wwwroot\poster\" />
+    <Folder Include="wwwroot\trailer\" />
   </ItemGroup>
 
 </Project>

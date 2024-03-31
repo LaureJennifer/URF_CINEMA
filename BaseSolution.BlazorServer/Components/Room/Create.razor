@@ -1,91 +1,104 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Room
+@using BaseSolution.Application.DataTransferObjects.Room.Request
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
+
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
 
-
-<MudCard>
-    <MudForm Model="@room" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
-        <MudCardContent>
-            <MudTextField @bind-Value="room.Code"
-                          For="@(() => room.Code)"
-                          Immediate="true"
-                          Label="Mã Phòng" />
-
-            <MudTextField @bind-Value="room.Capacity"
-                          For="@(() => room.Capacity)"
-                          Immediate="true"
-                          Label="Sức Chứa" />
-
-            <MudTextField @bind-Value="room.SoundSystem"
-                          For="@(() => room.SoundSystem)"
-                          Immediate="true"
-                          Label="Âm thanh" />
-
-            <MudTextField @bind-Value="room.ScreenSize"
-                          For="@(() => room.ScreenSize)"
-                          Immediate="true"
-                          Label="Kích Thước màn hình" />
-
-        </MudCardContent> 
-        <DialogActions>
-            <MudGrid>
-             <MudItem xs="6">
-
-             </MudItem>
-                <MudItem xs="2">
-                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-                </MudItem>
-                <MudItem xs="4">
-            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_roomDto.Code" Label="Mã phòng*" />
             </MudItem>
-            </MudGrid>
-        </DialogActions>
-    </MudForm>
-</MudCard>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_roomDto.ScreenSize" Label="Kích thước màn hình*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_roomDto.Capacity" Label="Sức chứa*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_roomDto.SoundSystem" Label="Âm thanh*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_roomDto.DepartmentName" Label="Tên rạp*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_roomDto.DepartmentAddress" Label="Địa chỉ*" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
+    [Inject]
+    public IRoomRepo _roomRepo { get; set; }
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    public RoomDto _roomDto = new();
+    private List<RoomDto> _lstRoom { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
+    public RoomCreateRequest obj = new();
+    public ViewRoomWithPaginationRequest room_ = new();
+
+    private async Task OnButtonClicked()
     {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
+        obj.Code = _roomDto.Code;
+        obj.Capacity = _roomDto.Capacity;
+        obj.SoundSystem = _roomDto.SoundSystem;
+        obj.ScreenSize = _roomDto.ScreenSize;
+        obj.Status = _roomDto.Status;
+        obj.DepartmentId = _roomDto.DepartmentId;
+        obj.RoomLayoutId = _roomDto.RoomLayoutId;
+        bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
-     "Bạn có chắc chắn thêm mới?",
+     "Bạn có chắc thêm mới?",
      yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        if (confirm == true)
         {
-            _snackbar.Add("Thêm mới phòng chiếu thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Thêm mới phòng chiếu thất bại!", Severity.Error);
+            var result = await _roomRepo.AddAsync(obj);
+            if (result == true)
+            {
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Thêm thành công", Severity.Success);
+                _navigate.NavigateTo("/room/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Thêm thất bại",
+                        Severity.Error
+                );
+            }
         }
     }
-    MudForm from;
-    RoomModel room = new RoomModel();
-
-    public class RoomModel
+    protected override async Task OnInitializedAsync()
     {
-        public string Code { get; set; }
-        public int Capacity { get; set; }
-        public string SoundSystem { get; set; }
-        public string ScreenSize { get; set; }
+        await LoadData();
     }
+
+    private async Task LoadData()
+    {
+
+        var result = await _roomRepo.GetAllActive(room_);
+        if (result != null)
+        {
+            _lstRoom = result.Data.Data.ToList();
+        }
+    }
+
+
+    void Cancel() => _mudDialog.Cancel();
 }

@@ -69,7 +69,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteFilmScheduleRoom(FilmScheduleRoomDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteFilmScheduleRoom([FromQuery]FilmScheduleRoomDeleteRequest request, CancellationToken cancellationToken)
         {
             FilmScheduleRoomDeleteRoomViewModel vm = new(_filmScheduleRoomReadWriteRepository, _localizationService, _mapper);
 

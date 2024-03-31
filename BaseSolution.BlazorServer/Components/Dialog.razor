@@ -1,23 +1,24 @@
-﻿
+﻿@page "/videoplayer"
+<video src="@VideoUrl" @ref="videoPlayerRef"></video>
 
-<MudDialog>
-    <DialogContent>
-@*          Tên phim:
-         Rạp chiếu:
-         Ngày chiếu:
-         Giờ chiếu: 
-         Phòng chiếu: 
-         Ghế ngồi:  *@
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
-    </DialogActions>
-</MudDialog>
+<MudButton OnClick="TogglePlay">Play/Pause</MudButton>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    private bool isPlaying = false;
+    private string VideoUrl = "https://youtu.be/vXPFT0Zy4Oo";
+    private ElementReference videoPlayerRef;
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    private void TogglePlay()
+    {
+        // if (isPlaying)
+        // {
+        //     videoPlayerRef.InvokeAsync<bool>("pause");
+        // }
+        // else
+        // {
+        //     videoPlayerRef.InvokeAsync<bool>("play");
+        // }
+
+        // isPlaying = !isPlaying;
+    }
 }

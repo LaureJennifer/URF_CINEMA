@@ -26,5 +26,7 @@ namespace BaseSolution.Application.DataTransferObjects.Film
         public string Script { get; set; }
         public string Genres { get; set; }
         public string AgeRating { get; set; }
+        public EntityStatus Status { get; set; }
+
     }
 }
