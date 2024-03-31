@@ -1,103 +1,137 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Customer
+@using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.BlazorServer.Data.ValueObjects.Common
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
-@inject IDialogService DialogService
+@inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-
-
-<MudCard>
-    <MudForm Model="@cus" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
-         <MudCardContent>
-            <MudGrid>
-                <MudItem xs="6">
-            
-                <MudTextField @bind-Value="cus.Code"
-                              For="@(() => cus.Code)"
-                              Immediate="true" 
-                              Label="Mã Khách hàng" />
-                  <MudTextField @bind-Value="cus.Email"
-                              For="@(() => cus.Email)"
-                              Immediate="true" 
-                              Label="Email" />
-               <MudTextField @bind-Value="cus.DateOfBirth"
-                              For="@(() => cus.DateOfBirth)"
-                              Immediate="true" 
-                              Label="Ngày sinh" />
-                </MudItem>
-                <MudItem xs="6">
-                 <MudTextField @bind-Value="cus.Name"
-                              For="@(() => cus.Name)"
-                              Immediate="true" 
-                              Label="Tên Khách Hàng" />
-                <MudTextField @bind-Value="cus.PhoneNumber"
-                              For="@(() => cus.PhoneNumber)"
-                              Immediate="true" 
-                              Label="SĐT" />
-                <MudTextField @bind-Value="cus.Address"
-                              For="@(() => cus.Address)"
-                              Immediate="true" 
-                              Label="Địa chỉ" />
-                </MudItem>
-           </MudGrid>
-      </MudCardContent> 
-    <DialogActions>
-         <MudGrid>
-                <MudItem xs="7">
-                   
-                </MudItem>
-                <MudItem xs="5">
-                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-                     <MudButton Color="Color.Warning" OnClick="OnButtonClicked">Sửa</MudButton>
+@inject NavigationManager _navigate;
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_customerDto.Name" Label="Họ và tên*" />
             </MudItem>
-            </MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_customerDto.PhoneNumber" Label="Số điện thoại*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_customerDto.Email" Label="Email*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_customerDto.PassWord" Label="Mật khẩu*" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_customerDto.Status" For="@(() => _customerDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudItem>
+            @if (imageUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@imageUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
     </DialogActions>
-    </MudForm>
-</MudCard>
-
+</MudDialog>
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    [Inject]
+    public ICustomerRepo _customerRepo { get; set; }
+    [Inject]
+    public IRoleRepo _roleRespo { get; set; }
+
+    public CustomerDto _customerDto = new();
+
+    public CustomerUpdateRequest obj = new();
+    public ViewCustomerWithPaginationRequest customer_ = new();
+
+    public string imageUrl { get; set; } = "";
+
+    [Parameter]
+    public Guid IdCustomer { set; get; }
+
     IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
+    ImageHandle imageHandle = new();
+
+    private async Task UploadFiles(IBrowserFile file)
     {
+        imageUrl = @"\image\Customer\" + await imageHandle.AddImage(file, "Customer");
         files.Add(file);
     }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
+
+    private async Task OnButtonClicked()
     {
-        bool? result = await _dialogService.ShowMessageBox(
+        obj.Id = _customerDto.Id;
+        obj.Name = _customerDto.Name;
+        obj.PhoneNumber = _customerDto.PhoneNumber;
+        obj.Email = _customerDto.Email;
+        obj.PassWord = _customerDto.PassWord;
+        obj.UrlImage = imageUrl;
+        obj.Status = _customerDto.Status;
+        bool? confirm = await _dialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc chắn sửa?",
      yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        if (confirm == true)
         {
-            _snackbar.Add("Sửa khách hàng thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Sửa khách hàng thất bại!", Severity.Error);
+            var result = await _customerRepo.UpdateAsync(obj);
+            if (result == true)
+            {
+                await Task.Delay(1000);
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Sửa thành công", Severity.Success);
+                _navigate.NavigateTo("/customer/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Sửa thất bại",
+                        Severity.Error
+                );
+            }
         }
     }
-    MudForm from;
-    CusModel cus = new CusModel();
 
-    public class CusModel
+    protected override async Task OnInitializedAsync()
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public DateTimeOffset DateOfBirth { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Address { get; set; }
-        
+        await LoadData();
     }
+
+    private async Task LoadData()
+    {
+
+        var result = await _customerRepo.GetByIdAsync(IdCustomer);
+        _customerDto = result.Data!;
+    }
+
+    void Cancel() => _mudDialog.Cancel();
 }

@@ -10,6 +10,7 @@ namespace BaseSolution.Application.DataTransferObjects.Ticket
 {
     public class TicketDto
     {
+        public Guid Id { get; set; }
         public Guid BillId { get; set; }
         public string FilmName { get; set; }
         public string SeatCode { get; set; }

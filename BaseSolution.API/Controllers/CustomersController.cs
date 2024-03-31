@@ -72,7 +72,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteCustomer(CustomerDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteCustomer([FromQuery]CustomerDeleteRequest request, CancellationToken cancellationToken)
         {
             CustomerDeleteViewModel vm = new(_customerReadWriteRepository, _localizationService, _mapper);
 

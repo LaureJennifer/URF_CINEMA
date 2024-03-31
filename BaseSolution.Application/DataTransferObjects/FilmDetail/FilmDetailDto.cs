@@ -9,6 +9,7 @@ namespace BaseSolution.Application.DataTransferObjects.FilmDetail
 {
     public class FilmDetailDto
     {
+        public Guid Id { get; set; }
         public string FilmName { get; set; }
         public DateTimeOffset ShowDate { get; set; }
         public DateTimeOffset ShowTime { get; set; }

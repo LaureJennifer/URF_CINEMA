@@ -1,83 +1,145 @@
-﻿@page "/lstbill"
+﻿@using BaseSolution.Application.DataTransferObjects.Bill
+@using BaseSolution.Application.DataTransferObjects.Bill.Request
 @using BaseSolution.BlazorServer.Components.Bill
 @using BaseSolution.BlazorServer.Pages.Bill;
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
-@inject IDialogService DialogService
 
-
+@page "/bill/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
 
 <MudGrid>
     <MudItem xs="8">
         <MudText Class="mt-3" Typo="Typo.h4">Danh sách hóa đơn</MudText>
     </MudItem>
     <MudItem xs="4">
-        <MudTextField @bind-Value="Search" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <MudTextField @bind-Value="searchString" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
     </MudItem>
-
 </MudGrid>
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+<MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
 
-
-
-<MudTable Items="@lst" Class="mt-4">
-    <HeaderContent>
-        <MudTh>STT</MudTh>
-        <MudTh>Mã Khách Hàng</MudTh>
-        <MudTh>Số lượng vé</MudTh>
-        <MudTh>Mô tả</MudTh>
-        <MudTh>Tổng tiền</MudTh>
-        <MudTh>Trạng Thái</MudTh>
-        <MudTh>Chức năng</MudTh>
-
-    </HeaderContent>
-    <RowTemplate>
-
-        <MudTd DataLabel="Stt">@(lst.IndexOf(context) + 1)</MudTd>
-        <MudTd DataLabel="Mã Khách Hàng">@context.CustomerId</MudTd>
-        <MudTd DataLabel="Số Lượng Vé">@context.TicketQuantity</MudTd>
-        <MudTd DataLabel="Mô Tả">@context.Description</MudTd>
-        <MudTd DataLabel="Tổng Tiền">@context.TotalPrice</MudTd>
-        <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
-        <MudTd>
-            <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
-
-        </MudTd>
-
-    </RowTemplate>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-
-</MudTable>
-
-@code {
-    public string Search { get; set; }
-    List<BillEntity> lst = new List<BillEntity>()
+@if (_lst == null)
 {
-        new BillEntity() { TicketQuantity = 02, Description = "ABC", TotalPrice = 100.000 }
-};
-    private void OpenDialog()
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    if (_lst.Count == 0)
+    {
+        <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+    }
+    else
+    {
+        <MudTable Items="@_lst" Class="mt-4">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+                <MudTh>Tên Khách Hàng</MudTh>
+          @*       <MudTh>Số lượng vé</MudTh> *@
+                <MudTh>Mô tả</MudTh>
+                <MudTh>Tổng tiền</MudTh>
+                <MudTh>Thời gian tạo</MudTh>
+                <MudTh>Trạng Thái</MudTh>
+                <MudTh>Chức năng</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
+                <MudTd DataLabel="Tên Khách Hàng">@context.CustomerName</MudTd>
+          @*       <MudTd DataLabel="Số Lượng Vé">@context.TicketQuantity</MudTd> *@
+                <MudTd DataLabel="Mô Tả">@context.Description</MudTd>
+                <MudTd DataLabel="Tổng Tiền">@context.TotalPrice</MudTd>
+                <MudTd DataLabel="Thời gian tạo">@context.CreatedTime.ToString("dd/MM/yyyy")</MudTd>
+                <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
+                <MudTd>
+                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+        <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+            <MessageContent>
+                Xác nhận xóa hóa đơn!
+            </MessageContent>
+            <YesButton>
+                <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+                    Xác nhận
+                </MudButton>
+            </YesButton>
+        </MudMessageBox>
+    }
+}
+@code {
+    [Inject]
+    public IBillRepo _billRepo { get; set; }
+
+    public List<BillDto>? _lst { get; set; }
+
+    public ViewBillWithPaginationRequest obj = new();
+    public BillDeleteRequest _billDelete = new();
+
+    string searchString = string.Empty;
+
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Create>("Thêm mới hóa đơn", closeOnEscapeKey);
+        _dialogService.Show<Create>("Thêm mới hóa đơn", closeOnEscapeKey);
+        await LoadData();
     }
-    private void OpenDialogg()
-    {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Update>("Sửa thông tin hóa đơn", closeOnEscapeKey);
-    }
-    private void DeleteUser()
+    private async Task UpdateDialog(Guid Id)
     {
-        var parameters = new DialogParameters<Delete>();
-        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Xóa");
-        parameters.Add(x => x.Color, Color.Error);
-        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa hóa đơn", parameters, options);
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.idBill, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin hóa đơn", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task OnDeleteClicked(Guid Id)
+    {
+        var user = await _billRepo.GetByIdAsync(Id);
+        var data = user.Data;
+        _billDelete.Id = data.Id;
+        _billDelete.DeletedTime = DateTime.Now;
+        bool? result = await _mbox.Show();
+        StateHasChanged();
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        var removeConfirm = await _billRepo.RemoveAsync(_billDelete);
+        if (removeConfirm.Success)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+        }
+        await Task.Delay(2000);
+        await LoadData();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _billRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
     }
 }
 

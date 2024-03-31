@@ -1,117 +1,164 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Role
 @using BaseSolution.Application.DataTransferObjects.User;
-@using BaseSolution.Domain.Entities
+@using BaseSolution.Application.DataTransferObjects.User.Request
+@using BaseSolution.BlazorServer.Data.ValueObjects.Common
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
-
-<MudCard >
-    <MudForm Model="@userDto" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
-        <MudCardContent >
- <MudGrid>
-                <MudItem xs="6">
-                    <MudTextField @bind-Value="userDto.Code"
-                                  For="@(() => userDto.Code)"
-                                  Immediate="true"
-                                  Label="Mã nhân viên" />
-                    <MudTextField @bind-Value="userDto.UserName"
-                                  For="@(() => userDto.UserName)"
-                                  Immediate="true"
-                                  Label="Tên đăng nhập" />
-                                    <MudTextField @bind-Value="userDto.PhoneNumber"
-                                  For="@(() => userDto.PhoneNumber)"
-                                  Immediate="true"
-                                  Label="Số điện thoại" />
-                 </MudItem>
-                 <MudItem xs="6">
-                      <MudTextField @bind-Value="userDto.Name"
-                                  For="@(() => userDto.Name)"
-                                  Immediate="true"
-                                  Label="Tên nhân viên" />
-                                    <MudTextField @bind-Value="userDto.PassWord"
-                                  For="@(() => userDto.PassWord)"
-                                  Immediate="true"
-                                  Label="Mật khẩu" />
-                    <MudTextField @bind-Value="userDto.Email"
-                                  For="@(() => userDto.Email)"
-                                  Immediate="true"
-                                  Label="Email" />
-                </MudItem>
-          </MudGrid>
-               <MudGrid>
-                   <MudItem xs="6">
-                        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                            <ButtonTemplate>
-                                <MudButton HtmlTag="label"
-                                           Variant="Variant.Filled"
-                                           Color="Color.Primary"
-                                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                                           for="@context"> Ảnh </MudButton>
-                            </ButtonTemplate>
-                        </MudFileUpload>
-                         </MudItem>
-                         <MudItem xs="6">
-                       @* <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Class="mt-3">
-                            <ButtonTemplate>
-                                <MudButton HtmlTag="label"
-                                           Variant="Variant.Filled"
-                                           Color="Color.Info"
-                                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                                           for="@context"> Trailler </MudButton>
-                            </ButtonTemplate>
-                        </MudFileUpload>*@
-                         </MudItem>
-                </MudGrid>
-        </MudCardContent>   
-        <DialogActions>
-            <MudGrid>
-                <MudItem xs="7">
-                    
-                </MudItem>
-                <MudItem xs="5">
-                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-            <MudButton Color="Color.Warning" OnClick="OnButtonClicked">Sửa</MudButton>
+@inject NavigationManager _navigate;
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_userDto.Name" Label="Họ và tên*" />
             </MudItem>
-            </MudGrid>
-        </DialogActions>
-   </MudForm>
-</MudCard>
-
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_userDto.PhoneNumber" Label="Số điện thoại*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_userDto.Email" Label="Email*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_userDto.PassWord" Label="Mật khẩu*" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                @if(_lstRole != null)
+                {
+                    <MudSelect T="string" Label="Chức vụ" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedRoleId" For="@(() => _selectedRoleId)" Class="mb-2">
+                        @foreach (var item in _lstRole)
+                        {
+                            <MudSelectItem Value="@item.Id.ToString()">@item.Code</MudSelectItem>
+                        }
+                    </MudSelect>
+                }  
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_userDto.Status" For="@(() => _userDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudItem>
+            @if (imageUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@imageUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
+    </DialogActions>
+</MudDialog>
 @code {
 
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject]
+    public IUserRepo _userRepo { get; set; }
+    [Inject]
+    public IRoleRepo _roleRespo { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    public UserDto _userDto = new();
+    List<RoleDto> _lstRole = new();
+
+    public UserUpdateRequest obj = new();
+    public ViewUserWithPaginationRequest user_ = new();
+
+    public string imageUrl { get; set; } = "";
+    private string _selectedRoleId;
+    [Parameter]
+    public Guid IdUser { set; get; }
+
     IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
+    ImageHandle imageHandle = new();
+
+    private async Task UploadFiles(IBrowserFile file)
     {
+        imageUrl = @"\image\User\" + await imageHandle.AddImage(file, "User");
         files.Add(file);
     }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
+
+    private async Task OnButtonClicked()
     {
-        bool? result = await _dialogService.ShowMessageBox(
-        "Xác nhận",
-        "Bạn có chắc thêm mới?",
-        yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        obj.Id = _userDto.Id;
+        obj.Name = _userDto.Name;
+        obj.PhoneNumber = _userDto.PhoneNumber;
+        obj.Email = _userDto.Email;
+        obj.PassWord = _userDto.PassWord;
+        obj.UrlImage = imageUrl;
+        obj.Status = _userDto.Status;
+        obj.RoleId = _userDto.RoleId;
+        bool? confirm = await DialogService.ShowMessageBox(
+     "Xác nhận",
+     "Bạn có chắc chắn sửa?",
+     yesText: "Xác nhận", cancelText: "Hủy");
+        if (confirm == true)
         {
-            _snackbar.Add("Thêm mới thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Thêm mới thất bại!", Severity.Error);
+            if (_selectedRoleId == null)
+            {
+                _snackbar.Add
+                (
+                    "Chưa chọn chức vụ",
+                     Severity.Error
+                );
+            }
+            else
+            {
+                obj.RoleId = Guid.Parse(_selectedRoleId);
+                var result = await _userRepo.UpdateAsync(obj);
+                if (result == true)
+                {
+                    await Task.Delay(1000);
+                    _mudDialog.Close(DialogResult.Ok(true));
+                    _snackbar.Add("Sửa thành công", Severity.Success);
+                    _navigate.NavigateTo("/user/list");
+                    StateHasChanged();
+                }
+                else
+                {
+                    _snackbar.Add
+                    (
+                        "Sửa thất bại",
+                         Severity.Error
+                    );
+                }
+            }
         }
     }
-    
-    MudForm from;
-    public UserDto userDto = new UserDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _userRepo.GetByIdAsync(IdUser);
+        _userDto = result.Data!;
+        var result1 = await _roleRespo.GetAllActive();
+        _lstRole = result1.Data.Data.ToList();
+    }
+
+    void Cancel() => _mudDialog.Cancel();
 }

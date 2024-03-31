@@ -1,78 +1,158 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Bill
+@using BaseSolution.Application.DataTransferObjects.Bill.Request
+@using BaseSolution.Application.DataTransferObjects.Booking
+@using BaseSolution.Application.DataTransferObjects.Booking.Request
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.FilmSchedule
+@using BaseSolution.Application.DataTransferObjects.Ticket
+@using BaseSolution.Application.DataTransferObjects.Ticket.Request
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
+
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
 
-<MudCard>
-    <MudForm Model="@ticket" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
-        <MudCardContent>
-            <MudTextField @bind-Value="ticket.Code"
-                          For="@(() => ticket.Code)"
-                          Immediate="true"
-                          Label="Mã Vé" />
-
-            <MudTextField @bind-Value="ticket.Status"
-                          For="@(() => ticket.Status)"
-                          Immediate="true"
-                          Label="Trạng Thái" />
-        </MudCardContent>
-
-    </MudForm>
-    <DialogActions>
+<MudDialog>
+    <DialogContent>
         <MudGrid>
-             <MudItem xs="5">
-
-             </MudItem>
-                <MudItem xs="2">
-                    <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-                </MudItem>
-                <MudItem xs="5">
-             <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_ticketDto.Code" Label="Mã vé*" />
             </MudItem>
-            </MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                @if (_lstFilm != null)
+                {
+                    <MudSelect T="string" Label="Tên phim" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedFilmId" For="@(() => _selectedFilmId)" Class="mb-2">
+                        @foreach (var item in _lstFilm)
+                        {
+                            <MudSelectItem Value="@item.Id.ToString()">@item.Title</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_ticketDto.SeatCode" Label="Ghế ngồi*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_ticketDto.RoomCode" Label="Phòng*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmscheduleDto.ShowTime" Label="Giờ chiếu*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmscheduleDto.ShowDate" Label="Ngày chiếu*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_ticketDto.Status" For="@(() => _ticketDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                @if (_lstBill != null)
+                {
+                    <MudSelect T="string" Label="Hóa đơn" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedBillId" For="@(() => _selectedBillId)" Class="mb-2">
+                        @foreach (var item in _lstBill)
+                        {
+                            <MudSelectItem Value="@item.Id.ToString()">@item.TotalPrice</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
+    [Inject]
+    public ITicketRepo _ticketRepo { get; set; }
+    [Inject]
+    public IBillRepo _billRepo { get; set; }
+    [Inject]
+    public IBookingRepo _bookingRepo { get; set; }
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    public FilmScheduleDto _filmscheduleDto = new();
+    public TicketDto _ticketDto = new();
+    private List<TicketDto> _lstTicket { get; set; }
+    private List<BillDto> _lstBill;
+    private List<BookingDto> _lstBooking{ get; set; }
+    private List<FilmDto> _lstFilm{ get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
+    public string _selectedBillId { get; set; }
+    public string _selectedBookingId { get; set; }
+    public string _selectedFilmId { get; set; }
+
+    public TicketCreateRequest obj = new();
+    public ViewTicketWithPaginationRequest ticket_ = new();
+    public ViewBillWithPaginationRequest bill_ = new();
+    public ViewBookingWithPaginationRequest booking_ = new();
+
+    private async Task OnButtonClicked()
     {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
+        obj.Code = _ticketDto.Code;
+        obj.BillId = Guid.Parse(_selectedBillId);
+        obj.BookingId = Guid.Parse(_selectedBookingId);
+        obj.FilmId = Guid.Parse(_selectedFilmId);
+        obj.Status = _ticketDto.Status;
+        bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
-     "Bạn có chắc chắn thêm mới?",
+     "Bạn có chắc thêm mới?",
      yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        if (confirm == true)
         {
-            _snackbar.Add("Thêm mới vé thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Thêm mới vé thất bại!", Severity.Error);
+            // obj.RoleId = Guid.Parse(_selectedRoleId);
+            var result = await _ticketRepo.AddAsync(obj);
+            if (result == true)
+            {
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Thêm thành công", Severity.Success);
+                _navigate.NavigateTo("/ticket/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Thêm thất bại",
+                        Severity.Error
+                );
+            }
         }
     }
-    MudForm from;
-    TicketModel ticket = new TicketModel();
-
-    public class TicketModel
+    protected override async Task OnInitializedAsync()
     {
-        public string Code { get; set; }
-        public EntityStatus Status { get; set; } = EntityStatus.Active;
+        await LoadData();
     }
+
+    private async Task LoadData()
+    {
+
+        var result = await _ticketRepo.GetAllActive(ticket_);
+        if (result != null)
+        {
+            _lstTicket = result.Data.Data.ToList();
+        }
+        var result1 = await _billRepo.GetAllActive(bill_);
+        _lstBill = result1.Data.Data.ToList();
+
+        var result2 = await _bookingRepo.GetAllActive(booking_);
+        _lstBill = result1.Data.Data.ToList();
+    }
+
+
+    void Cancel() => _mudDialog.Cancel();
 }
