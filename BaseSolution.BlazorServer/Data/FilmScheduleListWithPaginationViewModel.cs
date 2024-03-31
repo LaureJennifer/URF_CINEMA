@@ -1,11 +1,11 @@
-﻿using BaseSolution.BlazorServer.Data.DataTransferObjects.Film;
-using BaseSolution.BlazorServer.ValueObjects.Pagination;
-using BaseSolution.BlazorServer.ValueObjects.Response;
+﻿using BaseSolution.Application.DataTransferObjects.FilmSchedule;
+using BaseSolution.Application.ValueObjects.Pagination;
+using BaseSolution.Application.ValueObjects.Response;
 
 namespace BaseSolution.BlazorServer.Data
 {
     public class FilmScheduleListWithPaginationViewModel : APIResponse
     {
-        public PaginationResponse<FilmDto>? Data { get; set; }
+        public PaginationResponse<FilmScheduleDto>? Data { get; set; }
     }
 }

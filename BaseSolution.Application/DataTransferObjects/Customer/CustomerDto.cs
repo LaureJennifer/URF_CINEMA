@@ -9,6 +9,7 @@ namespace BaseSolution.Application.DataTransferObjects.Customer
 {
     public class CustomerDto
     {
+        public Guid Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -18,6 +19,7 @@ namespace BaseSolution.Application.DataTransferObjects.Customer
         public string UserName { get; set; }
 
         public string PassWord { get; set; }
+        public EntityStatus Status { get; set; }
         public DateTimeOffset DateOfBirth { get; set; }
         
     }

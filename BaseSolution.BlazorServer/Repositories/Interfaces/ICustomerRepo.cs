@@ -1,0 +1,16 @@
+﻿using BaseSolution.Application.DataTransferObjects.Customer.Request;
+using BaseSolution.Application.DataTransferObjects.Customer;
+using BaseSolution.Application.ValueObjects.Response;
+using BaseSolution.BlazorServer.Data;
+
+namespace BaseSolution.BlazorServer.Repositories.Interfaces
+{
+    public interface ICustomerRepo
+    {
+        public Task<bool> AddAsync(CustomerCreateRequest request);
+        public Task<RequestResult<CustomerDeleteRequest>> RemoveAsync(CustomerDeleteRequest request);
+        public Task<bool> UpdateAsync(CustomerUpdateRequest request);
+        public Task<RequestResult<CustomerDto>> GetByIdAsync(Guid id);
+        public Task<CustomerListWithPaginationViewModel> GetAllActive(ViewCustomerWithPaginationRequest request);
+    }
+}

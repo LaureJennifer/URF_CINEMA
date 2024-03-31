@@ -55,19 +55,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             MemoryStream memStream = new MemoryStream(obj.FileData);
             var fileSplit = obj.FileName.Split('.');
             var fileExtension = "." + fileSplit[fileSplit.Count() - 1];
-            if (string.IsNullOrEmpty(obj.Function))
+            var fileName = await ImportRoomLayout(memStream, fileExtension, obj.Parameters);
+            return new()
             {
-                var fileName2 = await ImportRoomLayout(memStream, fileExtension, obj.Parameters);
-
-                return new()
-                {
-
-                    IsSuccess = true,
-                    FileName = fileName2,
-                };
-            }
-            else
-                return new() { IsSuccess = false };
+                IsSuccess = true,
+                FileName = fileName,
+            };
         }
         private async Task<string> ImportRoomLayout(MemoryStream stream, string fileExtension, List<ExcelParameterVM> lstParams)
         {
@@ -75,29 +68,35 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             //Khởi tạo 1 ExcelServices với tên các cột trong file Excel
             ExcelServices<ExcelRoomLayoutVM> _svExcel = new();
             //CRUD + Validate với dữ liệu trong DB
+            var validateResult = await _svExcel.Validate(stream, null, 1);
+            stream = validateResult.MemoryStream!;
             List<ExcelRoomLayoutVM> lstExcelVM = await _svExcel.GetValueFromFileStream(stream);
             List<RoomLayoutEntity> lstObj = lstExcelVM.Select(c => c.ConvertToEntity()).ToList();
             List<RoomLayoutEntity> lstRoomLayout = new();
             List<ExcelErrorVM> lstMarkup = new();
 
-            int length  = lstObj.Count;
-            for (int i = 0; i < length; i++)
+            foreach(var i in lstObj)
             {
-                var roomLayoutId = Guid.Empty;
                 try
                 {
-                    string rlName = lstExcelVM[i].Name;
-                    roomLayoutId = _dbContext.RoomLayoutEntities.Where(x => x.Name == rlName).Select(x => x.Id).FirstOrDefault();
-                    if(roomLayoutId != Guid.Empty)
-                    lstRoomLayout.Add(lstObj[i]);
+                    lstRoomLayout.Add(i);
                 }
                 catch
                 {
                     lstMarkup.Add(new() { Message = "Thêm dữ liệu thất bại (Lỗi hệ thống hoặc dữ liệu)", IsSuccess = false });
                 }
             }
-            var _lstRoomLayout = await _roomLayoutReadWrite.CreateRangeRoomLayoutAsync(lstRoomLayout, cancellationToken);
-            return "Thành công";
+            await _roomLayoutReadWrite.CreateRangeRoomLayoutAsync(lstRoomLayout, cancellationToken);
+            return SaveFile(fileExtension, "Excels/Handled");
+        }
+        public string SaveFile(string fileExtension, string folder)
+        {
+            string fileName = Guid.NewGuid().ToString() + fileExtension;
+
+            var filePath = Path.Combine(_pathFolder, folder, fileName);
+            var stream = new FileStream(filePath, FileMode.Create);
+            stream.Close();
+            return fileName;
         }
     }
 }

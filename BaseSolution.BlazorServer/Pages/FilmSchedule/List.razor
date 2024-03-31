@@ -1,65 +1,141 @@
-﻿@page "/listfilmschedule"
+﻿@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.FilmDetail
+@using BaseSolution.Application.DataTransferObjects.FilmDetail.Request
+@using BaseSolution.Application.DataTransferObjects.FilmSchedule
+@using BaseSolution.Application.DataTransferObjects.FilmSchedule.Request
 @using BaseSolution.BlazorServer.Components.Filmschedule;
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
-@inject IDialogService DialogService
+
+@page "/filmschedule/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+
 <MudGrid>
-         <MudItem xs="8">
-                <MudText  Class="mt-3" Typo="Typo.h4">Danh sách Lịch Chiếu</MudText>
-         </MudItem>
-         <MudItem xs="4">
-                <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-         </MudItem>
+    <MudItem xs="8">
+        <MudText  Class="mt-3" Typo="Typo.h4">Danh sách Lịch Chiếu</MudText>
+    </MudItem>
+    <MudItem xs="4">
+        <MudTextField @bind-Value="searchString" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+    </MudItem>
  </MudGrid>
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
-        <MudTable Items="@lst" Class="mt-4">
-                    <HeaderContent>
-                    <MudTh>STT</MudTh>
-                    <MudTh>Tên phim</MudTh>
-                    <MudTh>Ngày Chiếu</MudTh>
-                     <MudTh>Thời gian chiếu</MudTh>
-                    <MudTh>Chức năng</MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="STT">@(lst.IndexOf(context) + 1)</MudTd>
-                            <MudTd DataLabel="Tên phim">@context.Id</MudTd>
-                            <MudTd DataLabel="Ngày Chiếu">@context.ShowDate</MudTd>
-                            <MudTd DataLabel="Thời gian chiếu">@context.ShowTime</MudTd>
-                        <MudTd>
-                                        <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                            <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
-                        </MudTd>
-                    </RowTemplate>
-                             <PagerContent>
-                                    <MudTablePager />
-                             </PagerContent>
-            </MudTable>
-@code {
-    public string Search { get; set; }
-    List<FilmScheduleEntity> lst = new List<FilmScheduleEntity>()
+
+<MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+
+@if (_lst == null)
 {
-    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 16, 10, 30, 0, new TimeSpan(2, 0, 0)), ShowTime = new DateTimeOffset(2024, 4, 18, 17, 26, 0, new TimeSpan(4, 0, 0))  },
-    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 17, 15, 0, 0, new TimeSpan(-5, 0, 0)), ShowTime = new DateTimeOffset(2024, 5, 14, 8, 24, 0, new TimeSpan(6, 0, 0)) },
-    new FilmScheduleEntity() { ShowDate = new DateTimeOffset(2024, 3, 18, 20, 45, 0, new TimeSpan(0, 8, 0)), ShowTime = new DateTimeOffset(2024, 4, 12, 9, 26, 0, new TimeSpan(5, 0, 0)) }
-};
-    private void OpenDialog()
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    if (_lst.Count == 0)
+    {
+        <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+    }
+    else
+    {
+        <MudTable Items="@_lst" Class="mt-4">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+                <MudTh>Tên phim</MudTh>
+                <MudTh>Ngày Chiếu</MudTh>
+                <MudTh>Thời gian chiếu</MudTh>
+                <MudTh>Chức năng</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="STT">@(_lst.IndexOf(context) + 1)</MudTd>
+                <MudTd DataLabel="Tên phim">@context.FilmName</MudTd>
+                <MudTd DataLabel="Ngày Chiếu">@context.ShowDate.ToString("dd/MM/yyyy")</MudTd>
+                <MudTd DataLabel="Thời gian chiếu">@context.ShowTime.ToString("hh : mm")</MudTd>
+                <MudTd>
+                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+        <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+            <MessageContent>
+                Xác nhận xóa hóa đơn!
+            </MessageContent>
+            <YesButton>
+                <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+                    Xác nhận
+                </MudButton>
+            </YesButton>
+        </MudMessageBox>
+    }
+}
+@code {
+    [Inject]
+    public IFilmDetailRepo _filmDetailRepo { get; set; }
+
+    public List<FilmDetailDto>? _lst { get; set; }
+
+
+    public ViewFilmDetailWithPaginationRequest obj = new();
+    public FilmDetailDeleteRequest _filmDetailDelete = new();
+
+    string searchString = string.Empty;
+
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Create>("Thêm Mới Lịch Phim", closeOnEscapeKey);
+        _dialogService.Show<Create>("Thêm mới vé", closeOnEscapeKey);
+        await LoadData();
     }
-    private void OpenDialogg()
-    {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Update>("Sửa Thông Tin Lịch Phim", closeOnEscapeKey);
-    }
-    private void DeleteUser()
+    private async Task UpdateDialog(Guid Id)
     {
-        var parameters = new DialogParameters<Delete>();
-        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa không ?");
-        parameters.Add(x => x.ButtonText, "Xóa");
-        parameters.Add(x => x.Color, Color.Error);
-        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa Lịch Phim", parameters, options);
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.idFilmSchedule, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin vé", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData();
+        }
+    }
+
+    private async Task OnDeleteClicked(Guid Id)
+    {
+        var user = await _filmDetailRepo.GetByIdAsync(Id);
+        var data = user.Data;
+        _filmDetailDelete.Id = data.Id;
+        _filmDetailDelete.DeletedTime = DateTime.Now;
+        bool? result = await _mbox.Show();
+        StateHasChanged();
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        var removeConfirm = await _filmDetailRepo.RemoveAsync(_filmDetailDelete);
+        if (removeConfirm.Success)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+        }
+        await Task.Delay(2000);
+        await LoadData();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _filmDetailRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
     }
 }

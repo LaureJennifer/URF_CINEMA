@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 {
-    public class ViewDepartmentFilmWithPaginationRequest:PaginationRequest
+    public class ViewDepartmentFilmWithPaginationRequest : PaginationRequest
     {
         public string? DepartmentName { get; set; }
         public string? FilmTitle { get; set; }

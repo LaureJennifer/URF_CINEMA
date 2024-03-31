@@ -69,7 +69,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteTicket(TicketDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteTicket([FromQuery]TicketDeleteRequest request, CancellationToken cancellationToken)
         {
             TicketDeleteViewModel vm = new(_ticketReadWriteRepository, _localizationService, _mapper);
 

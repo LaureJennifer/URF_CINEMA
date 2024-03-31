@@ -17,6 +17,5 @@ namespace BaseSolution.Application.DataTransferObjects.User.Request
         public string PhoneNumber { get; set; }
         public string UrlImage { get; set; }
         public Guid RoleId { get; set; }    
-        public string Role { get; set; }
     }
 }

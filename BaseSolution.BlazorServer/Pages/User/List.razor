@@ -1,11 +1,13 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.Application.DataTransferObjects.User.Request
 @using BaseSolution.BlazorServer.Components.User;
-@inject IDialogService DialogService
-@inject ISnackbar _snackbar
-@page "/listuser"
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
+
+@page "/user/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+
 <MudGrid>
     <MudItem xs="8">
         <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
@@ -49,8 +51,8 @@ else
                 <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
                 <MudTd DataLabel="Email">@context.Email</MudTd>
                 <MudTd>
-                    <MudIconButton @onclick="()=>UpdateDialog(context.Id)" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                    <MudIconButton @onclick="()=>OnDeleteClicked(context.Id)" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>
@@ -69,67 +71,74 @@ else
         </MudMessageBox>
     }
 }
+
 @code {
-    string searchString = string.Empty;
     [Inject]
-    public IUserRepositories _user{ get; set; }
+    public IUserRepo _userRepo{ get; set; }
+
     public List<UserDto>? _lst { get; set; }
-    PaginationRequest _paginationRequest = new();
+
     public ViewUserWithPaginationRequest obj = new();
-    public UserDeleteRequest UserDelete = new();
+    public UserDeleteRequest _userDelete = new();
+
+    string searchString = string.Empty;
+
     MudMessageBox _mbox { get; set; }
-    PaginationResponse<string>? _paginationResponse { get; set; } = new();
+
     private async Task CreateDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Create>("Thêm mới nhân viên", closeOnEscapeKey);
+        _dialogService.Show<Create>("Thêm mới nhân viên", closeOnEscapeKey);
         await LoadData();
     }
+
     private async Task UpdateDialog(Guid Id)
     {
-        var parameters = new DialogParameters();
-        parameters.Add("IdUser", Id);
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        DialogService.Show<Update>("Sửa thông tin nhân viên", closeOnEscapeKey);
-        await LoadData();
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.IdUser, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin nhân viên", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData();
+        }
     }
 
     private async Task OnDeleteClicked(Guid Id)
     {
-        var user_ = await _user.GetByIdAsync(Id);
-        var data = user_.Data;
-        UserDelete.Id = data.Id;
-        UserDelete.DeletedTime = DateTime.Now;
-        UserDelete.DeletedBy = null;
+        var user = await _userRepo.GetByIdAsync(Id);
+        var data = user.Data;
+        _userDelete.Id = data.Id;
+        _userDelete.DeletedTime = DateTime.Now;
+        bool? result = await _mbox.Show();
         StateHasChanged();
     }
-    private async Task OnConfirmDelete()
+
+    public async Task OnConfirmDelete()
     {
-        var obj = await _user.RemoveAsync(UserDelete);
-
-        if (obj.Success)
+        var removeConfirm = await _userRepo.RemoveAsync(_userDelete);
+        if (removeConfirm.Success)
         {
-            _snackbar.Add("Xóa thành công!", Severity.Success);
-            await LoadData();
+            _snackbar.Add("Xóa thành công", Severity.Success);
         }
-
         else
-            _snackbar.Add("Xóa thất bại !" + obj.Errors, Severity.Error);
+        {
+            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+        }
         await Task.Delay(2000);
         await LoadData();
-
     }
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
     }
+
     private async Task LoadData()
     {
 
-        var result = await _user.GetAllActive(obj);
+        var result = await _userRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
     }
-
 }

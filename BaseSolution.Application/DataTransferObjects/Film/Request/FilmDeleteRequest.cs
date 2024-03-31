@@ -10,5 +10,6 @@ namespace BaseSolution.Application.DataTransferObjects.Film.Request
     {
         public Guid Id { get; set; }
         public Guid? DeletedBy { get; set; }
+        public DateTimeOffset DeletedTime { get; set; }
     }
 }
