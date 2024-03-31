@@ -7,6 +7,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
     public class RoomLayoutRepo : IRoomLayoutRepo
     {
         public async Task<bool> AddAsync(RoomLayoutCreateRequest request)
+
         {
             var client = new HttpClient
             {

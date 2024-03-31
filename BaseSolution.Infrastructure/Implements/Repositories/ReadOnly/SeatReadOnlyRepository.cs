@@ -97,5 +97,27 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 });
             }
         }
+
+        public async Task<RequestResult<SeatDto>> GetSeatByCodeAsync(string code, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var seat = await _appReadOnlyDbContext.SeatEntities.AsNoTracking().Where(x => x.Code.ToLower() == code.ToLower()).ProjectTo<SeatDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<SeatDto>.Succeed(seat);
+
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<SeatDto>.Fail(_localizationService["Seat is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "seat"
+                    }
+                });
+            }
+        }
     }
 }

@@ -49,6 +49,15 @@ namespace BaseSolution.API.Controllers
 
             return Ok(vm);
         }
+        [HttpGet("code")]
+        public async Task<IActionResult> GetSeatByCode(string code, CancellationToken cancellationToken)
+        {
+            SeatByCodeViewModel vm = new(_seatReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(code, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateSeat(SeatCreateRequest request, CancellationToken cancellationToken)

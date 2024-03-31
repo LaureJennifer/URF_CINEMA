@@ -25,6 +25,7 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
+
             builder.Services.AddTransient<IBookingRepo, BookingRepo>();
             builder.Services.AddTransient<IFilmRepo, FilmRepo>();
             builder.Services.AddTransient<IUserRepo, UserRepo>();
@@ -35,6 +36,12 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<IRoomRepo, RoomRepo>();
             builder.Services.AddTransient<IDepartmentRepo, DepartmentRepo>();
             builder.Services.AddTransient<IFilmDetailRepo, FilmDetailRepo>();
+            builder.Services.AddTransient<IBookingFilmRepo, BookingFilmRepo>();
+            builder.Services.AddTransient<IFilmRepositories, FilmRepositories>();
+            builder.Services.AddTransient<IRoomLayoutRepo, RoomLayoutRepo>();
+            builder.Services.AddTransient<IRoomRepo, RoomRepo>();
+            builder.Services.AddTransient<IFilmScheduleRoomRepo, FilmScheduleRoomRepo>();
+
 
             builder.Services.AddHttpClient("API", client =>
             {

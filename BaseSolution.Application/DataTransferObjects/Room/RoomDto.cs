@@ -11,6 +11,7 @@ namespace BaseSolution.Application.DataTransferObjects.Room
     {
         public Guid Id { get; set; }
         public Guid DepartmentId { get; set; }
+
         public Guid RoomLayoutId { get; set; }
         public string RoomLayoutName { get; set; }
         public string DepartmentName { get; set; }

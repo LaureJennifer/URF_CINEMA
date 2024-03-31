@@ -91,6 +91,10 @@ namespace BaseSolution.Infrastructure.Extensions
 
             services.AddTransient<ITransactionReadWriteRepository, TransactionReadWriteRepository>();
             services.AddTransient<ITransactionReadOnlyRepository, TransactionReadOnlyRepository>();
+
+            services.AddTransient<IBillStatisticReadOnlyRespository, BillStatisticReadOnlyRespository>();
+            services.AddTransient<ITicketStatisticReadOnlyRespository, TicketStatisticReadOnlyRespository>();
+
             return services;
         }
     }
