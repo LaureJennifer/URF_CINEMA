@@ -13,7 +13,6 @@ namespace BaseSolution.Domain.Entities
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
         public Guid DepartmentId { get; set; }
-        public int TicketQuantity {  get; set; }
         public string Description { get; set; }
         public double TotalPrice { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;

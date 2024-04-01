@@ -50,7 +50,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 // Find bill to map TicketQuantity and TotalPrice then update database
                 var billEntity_ = _appReadWriteDbContext.BillEntities.FirstOrDefault(c => c.Id == idBill);
                 billEntity_!.TotalPrice = totalPrice;
-                billEntity_.TicketQuantity = ticketQuantity;
 
                  _appReadWriteDbContext.BillEntities.Update(billEntity_);
                 await _appReadWriteDbContext.SaveChangesAsync();
@@ -93,7 +92,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     // Find bill to map TicketQuantity and TotalPrice then update database
                     var billEntity_ = _appReadWriteDbContext.BillEntities.FirstOrDefault(c => c.Id == bill.Id);
                     billEntity_!.TotalPrice = totalPrice;
-                    billEntity_.TicketQuantity = ticketQuantity;
 
                     _appReadWriteDbContext.BillEntities.Update(billEntity_);
                     

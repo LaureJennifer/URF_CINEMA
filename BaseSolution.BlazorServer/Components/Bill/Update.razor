@@ -69,6 +69,8 @@
 
     public BillUpdateRequest obj = new();
     public ViewBillWithPaginationRequest bill_ = new();
+    [Parameter]
+    public Guid idBill { get; set; }
 
     private async Task OnButtonClicked()
     {

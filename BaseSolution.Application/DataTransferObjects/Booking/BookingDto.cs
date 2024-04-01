@@ -10,6 +10,7 @@ namespace BaseSolution.Application.DataTransferObjects.Booking
 {
     public class BookingDto
     {
+        public Guid Id { get; set; }
         public Guid SeatId { get; set; }
         public Guid RoomId { get; set; }
         public string SeatCode { get; set; }

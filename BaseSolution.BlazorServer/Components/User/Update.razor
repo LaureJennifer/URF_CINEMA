@@ -154,7 +154,7 @@
     private async Task LoadData()
     {
 
-        var result = await _userRepo.GetByIdAsync(IdUser);
+        var result = await _userRepo.GetByIdAsync(idUser);
         _userDto = result.Data!;
         var result1 = await _roleRespo.GetAllActive();
         _lstRole = result1.Data.Data.ToList();

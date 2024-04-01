@@ -1,6 +1,8 @@
-﻿using BaseSolution.Application.DataTransferObjects.RoomLayout.Request;
+﻿using BaseSolution.Application.DataTransferObjects.RoomLayout;
+using BaseSolution.Application.DataTransferObjects.RoomLayout.Request;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
+using BaseSolution.BlazorServer.ValueObjects.Response;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
@@ -30,6 +32,11 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             if (obj != null)
                 return obj;
             return new();
+        }
+
+        public Task<RequestResult<RoomLayoutDto>> GetByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
