@@ -14,7 +14,7 @@ namespace BaseSolution.Application.DataTransferObjects.Ticket
         public string FilmName { get; set; }
         public string SeatCode { get; set; }
         public string RoomCode { get; set; }
-
+        public double Price { get; set; }
         public DateTimeOffset ShowDate { get; set; }
         public DateTimeOffset ShowTime { get; set; }
         public string Code { get; set; }

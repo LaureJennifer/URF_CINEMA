@@ -21,6 +21,8 @@ namespace BaseSolution.Domain.Entities
         
         public EntityStatus Status { get; set; }
         public List<DepartmentFilmEntity> DepartmentFilms { get; set; }
+        public List<BillEntity> Bills { get; set; }
+
         public List<RoomEntity> Rooms { get; set; }
     }
 }

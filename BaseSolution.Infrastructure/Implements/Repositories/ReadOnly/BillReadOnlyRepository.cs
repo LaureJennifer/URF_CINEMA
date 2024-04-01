@@ -12,7 +12,6 @@ using BaseSolution.Domain.Entities;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
-using BaseSolution.Infrastructure.Migrations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -78,6 +77,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 var bills = _appReadOnlyDbContext.BillEntities.AsNoTracking().ProjectTo<BillDto>(_mapper.ConfigurationProvider);
 
                 if (!string.IsNullOrWhiteSpace(request.CustomerName))
+                {
+                    bills = bills.Where(x => x.CustomerName == request.CustomerName);
+                }
+                if (!string.IsNullOrWhiteSpace(request.DepartmentName))
                 {
                     bills = bills.Where(x => x.CustomerName == request.CustomerName);
                 }

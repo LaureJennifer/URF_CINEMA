@@ -13,7 +13,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<DepartmentEntity> builder)
         {
-            builder.ToTable("DepartmentEntity");
+            builder.ToTable("Department");
             builder.HasKey(x => x.Id);
             builder.Property(x=>x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.Code).IsRequired();

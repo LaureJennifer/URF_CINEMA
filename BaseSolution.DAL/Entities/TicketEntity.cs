@@ -11,10 +11,11 @@ namespace BaseSolution.Domain.Entities
     public class TicketEntity : EntityBase
     {
         public Guid Id { get; set; }
-        public Guid BillId { get; set;}
+        public Guid? BillId { get; set;}
         public Guid FilmId { get; set;}
         public Guid BookingId { get; set;}
         public string Code {  get; set;}
+        public double Price { get; set;}
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public BillEntity BillEntity { get; set; }
         public FilmEntity FilmEntity { get; set; }

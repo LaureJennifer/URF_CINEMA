@@ -11,6 +11,8 @@ namespace BaseSolution.Application.DataTransferObjects.Bill.Request
     public class BillCreateRequest
     {
         public Guid CustomerId { get; set; }
+        public Guid DepartmentId { get; set; }
+
         public int TicketQuantity { get; set; }
         public string Description { get; set; }
         public double TotalPrice { get; set; }
