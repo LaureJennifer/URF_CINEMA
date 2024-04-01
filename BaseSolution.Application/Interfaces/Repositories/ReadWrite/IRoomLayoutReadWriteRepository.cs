@@ -13,6 +13,7 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadWrite
     public interface IRoomLayoutReadWriteRepository
     {
         Task<RequestResult<Guid>> AddRoomLayoutAsync(RoomLayoutEntity entity, CancellationToken cancellationToken);
+        Task<RequestResult<List<Guid>>> CreateRangeRoomLayoutAsync(List<RoomLayoutEntity> ListMajorEntity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdateRoomLayoutAsync(RoomLayoutEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> DeleteRoomLayoutAsync(RoomLayoutDeleteRequest request, CancellationToken cancellationToken);
 

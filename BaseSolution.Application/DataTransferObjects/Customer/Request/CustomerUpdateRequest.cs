@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseSolution.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ namespace BaseSolution.Application.DataTransferObjects.Customer.Request
         public string? UserName { get; set; }
 
         public string? PassWord { get; set; }
+        public EntityStatus Status { get; set; }
         public DateTimeOffset? DateOfBirth { get; set; }
     }
 }

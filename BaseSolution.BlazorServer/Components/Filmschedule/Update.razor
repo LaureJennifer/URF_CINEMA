@@ -39,6 +39,8 @@
     </DialogActions>
 </MudCard>
 @code {
+    [Parameter]
+    public Guid idFilmSchedule { set; get; }
     [Inject] private IDialogService _dialogService { get; set; } = null!;
 
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }

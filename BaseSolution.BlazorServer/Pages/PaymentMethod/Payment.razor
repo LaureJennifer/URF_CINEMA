@@ -1,183 +1,165 @@
-﻿@page "/Payment"
+﻿@page "/payment"
+@using BaseSolution.Application.DataTransferObjects.Bill
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.PaymentMethod
+@using BaseSolution.Application.DataTransferObjects.Room
+@using BaseSolution.Application.DataTransferObjects.Seat
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Data.Extensions
 @using MudBlazor
+@using System.Globalization
 @inject NavigationManager manager;
 @inject IDialogService DialogService
 
-<MudAppBar Style="background-color:#261D30" Fixed="false" Elevation="0">
+<MudAppBar Style="background-color:burlywood" Fixed="false" Elevation="0">
     <MudLink Href="/room"><MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Color="Color.Inherit" Edge="Edge.Start" /></MudLink>
     <MudText>Thanh toán</MudText>
     <MudSpacer />
 </MudAppBar>
 
-<MudPaper Height="1000px" Width="100%" Style="background-color:#180F20">
+<MudPaper Style="background-color:#180F20;width:auto;height:auto;">
     <MudContainer Fixed="true">
-        <MudPaper Height="0px" Width="100%" Square="true" Style="background-color:#180F20">
+        <MudPaper Square="true" Style="background-color:#180F20">
             <MudGrid>
-                <MudItem xs="12" md="8">
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8" Style="height:210px; width:100%; background-color:#180F20;">
-                        <MudGrid>
-                            <MudItem xs="12" md="12">
-                                <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                    <MudText>
-                                        <MudIcon Icon="@Icons.Material.Filled.AccountCircle" Style="color:white" /> THÔNG TIN THANH TOÁN
-                                    </MudText>
-                                </MudPaper>
-                            </MudItem>
-                            <MudItem xs="12" md="4">
-                                <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                    Họ Và Tên:
-                                </MudPaper>
-                            </MudItem>
-                            <MudItem xs="12" md="4">
-                                <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                    SĐT:
-                                </MudPaper>
-                            </MudItem>
-                            <MudItem xs="12" md="4">
-                                <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                    Email:
-                                </MudPaper>
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8" Style="height:210px; width:100%; background-color:#180F20;">
-                        <MudGrid>
-                            <MudItem xs="12" md="12">
-                                <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                    Ghế
-                                </MudPaper>
-                            </MudItem>
-                        </MudGrid>
-                    </MudPaper>
-                    <MudDivider />
-                    <MudText Align="Align.Right" Style="color:white">Tổng tiền: </MudText>
-                    <MudText Align="Align.Right" Style="color:white">Số tiền cần thanh toán: </MudText>
-                    <MudDivider />
-                    <MudText Align="Align.Left" Style="color:white; font-size:28px;"><MudIcon Icon="" /> Phương thức thanh toán</MudText>
-                    <MudText Align="Align.Right" Style="color:white">Chọn phương thức thanh toán</MudText>
-                    <MudDivider />
+                <MudItem xs="8" md="8" lg="8" Style="background-color:#B7DEA4;">
                     <MudGrid>
-                        <MudItem xs="12">
-                            <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false" Style="color:white">
-                                <MudRadioGroup T="string" Style="color:azure">
-                                    <MudRadio T="string" Style="color:azure">Thẻ nội địa</MudRadio>
-                                    <MudRadio T="string" Color="Color.Info">Thẻ quốc tế</MudRadio>
-                                    <MudRadio T="string" Color="Color.Info">Ví Momo</MudRadio>
+                        <MudItem xs="12" md="12" lg="12" Class="mt-5">
+                            <MudText Style="color:white;">THÔNG TIN THANH TOÁN</MudText>
+                        </MudItem>
+                        <MudItem xs="12" md="12" lg="12">
+                            <MudPaper>
+                                <MudGrid>
+                                    <MudItem xs="4" md="4" Class="ml-5">
+                                        <MudText Color="Color.Default">Họ Và Tên: @_paymentDto.CustomerName</MudText>
+                                    </MudItem>
+                                    <MudItem xs="4" md="4">
+                                        <MudText Color="Color.Default">SĐT: @_paymentDto.PhoneNumber</MudText>
+                                    </MudItem>
+                                    <MudItem xs="3" md="3">
+                                        <MudText Color="Color.Default">Email: @_paymentDto.Email</MudText>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="11" lg="11" md="11">
+                            <MudText Align="Align.Right" Style="color:#180F20">Tổng tiền: @_paymentDto.TotalPrice.ToString("#,##0") vnd</MudText>
+                        </MudItem>
+                        <MudItem xs="11" lg="11" md="11">
+                            <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @_paymentDto.TotalPrice.ToString("#,##0") vnd</MudText>
+                        </MudItem>
+                        <MudDivider />
+                        <MudText Align="Align.Left" Style="color:#180F20;">Phương thức thanh toán</MudText>
+                        <MudDivider />
+                    </MudGrid>
+                    <MudGrid>
+                        <MudItem xs="12" md="12" lg="12" Style="color:#180F20;">
+                            <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
+                                <MudRadioGroup T="string" @bind-Value="@SelectedOption">
+                                    @foreach(var item in _lst)
+                                    {
+                                        <MudRadio T="string" Style="color:#180F20;">@item.Name</MudRadio>
+                                    }
                                 </MudRadioGroup>
                             </MudField>
                         </MudItem>
                     </MudGrid>
                 </MudItem>
-                <MudItem xs="12" md="4">
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8" Style="background-color:#180F20">
-                        <MudItem xs="12" md="6">
-                            <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                <MudImage Src="https://tse2.mm.bing.net/th?id=OIP.28bgeV4gAtA0jQckI7dAUgHaMd&pid=Api&P=0&h=220" Width="100" Height="150" Alt="Swedish Farm House" Elevation="1" Class="rounded-lg ma-4" />
-                            </MudPaper>
-                        </MudItem>
-                        <MudItem xs="12" md="6">
-                            <MudPaper Class="d-flex align-center justify-bottom mud-width-full py-8" Style="color:white; background-color:#180F20">
-                                <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
-                                    <MudText Typo="Typo.h6" Style="color:white">LOKI : SEASON 2</MudText>
-                                    <MudText Typo="Typo.subtitle1" Style="color:white">2D Subtitle</MudText>
-                                </MudPaper>
-                            </MudPaper>
-                        </MudItem>
+                <MudItem xs="4" md="4" lg="4">
+                    <MudPaper Style="background-color:#2E0E4A">
+                        <MudGrid>
+                            <MudItem xs="12" md="12" lg="12">
+                                <MudImage Src="@_filmDto.UrlImage" Style="width:90%;height:70%;" Alt="Swedish Farm House" Elevation="1" Class="rounded-lg ma-4" />
+                            </MudItem>
+                            <MudItem xs="12" md="12" lg="12" Class="ml-3">
+                                <MudText Typo="Typo.h6" Style="color:white">Tên phim: @_filmDto.Title</MudText>
+                                <MudText Typo="Typo.subtitle1" Style="color:white">Định dạng phim: @_filmDto.Script</MudText>
+                            </MudItem>
+                            <MudItem xs="12" md="12">
+                                <MudText Class="ml-3" Typo="Typo.body1" Style="color:white;"><MudIcon Icon="@Icons.Material.TwoTone.Discount" />Thể Loại: @_filmDto.Genres</MudText>
+                                <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.Alarm" />Thời lượng: @_filmDto.Duration phút</MudText>
+                                <MudDivider />
+                            </MudItem>
+                            <MudItem xs="12" md="12" lg="12">
+                                <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.AccountBalance" />Rạp chiếu: @_departmentDto.Name</MudText>
+                                @foreach (var item in _filmDto.ShowDates)
+                                {
+                                    <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" />Ngày chiếu: @item</MudText>
+                                }
+                                @foreach (var item in _filmDto.ShowTimes)
+                                {
+                                    <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" />Giờ chiếu: @item</MudText>
+                                }
+                                <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.Computer" />Phòng chiếu: @_roomDto.Code</MudText>
+                                <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.EventSeat" />Ghế ngồi: @_seatDto.Code</MudText>
+                                <MudDivider />
+                            </MudItem>
+                            <MudGrid>
+                                <MudItem xs="3" lg="3" md="3"></MudItem>
+                                <MudItem xs="3" lg="3" md="3">
+                                    <MudButton Style="color:white">Quay lại</MudButton>
+                                </MudItem>
+                                <MudItem xs="3" lg="3" md="3">
+                                    <MudButton Style="color:white">Tiếp tục</MudButton>
+                                </MudItem>
+                                <MudItem xs="2" lg="2" md="2"></MudItem>
+                            </MudGrid>
+                        </MudGrid>
                     </MudPaper>
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8" Style="background-color:#180F20">
-                        <MudItem xs="12" md="12">
-                            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 250px; background-color:#180F20" Outlined="true">
-                                <MudPaper Class="pa-3" Elevation="0" Style="background-color:#180F20">
-                                    <MudText Style="font-size:25; color:white;"><MudIcon Icon="@Icons.Material.TwoTone.Discount" /> Thể Loại:</MudText>
-                                    <MudText Style="color:white"><MudIcon Icon="@Icons.Material.Filled.Alarm" /> Thời lượng:</MudText>
-                                </MudPaper>
-                                <MudSpacer />
-                                <MudPaper Class="pa-3" Elevation="6" Style="background-color:#180F20">
-                                    <MudText Typo="Typo.caption" Style="color:white">
-
-                                    </MudText>
-                                </MudPaper>
-                            </MudPaper>
-                        </MudItem>
-                    </MudPaper>
-                    <MudDivider />
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8" Style="background-color:#180F20">
-                        <MudItem xs="12" md="12">
-                            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 250px; background-color:#180F20" Outlined="true">
-                                <MudPaper Class="pa-3" Elevation="6" Style="background-color:#180F20">
-                                    <MudText Style="color:white"><MudIcon Icon="@Icons.Material.Filled.AccountBalance" /> Rạp chiếu: </MudText>
-                                    <MudText Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" /> Ngày chiếu: </MudText>
-                                    <MudText Style="color:white"><MudIcon Icon="@Icons.Material.Filled.AccessAlarms" /> Giờ chiếu: </MudText>
-                                    <MudText Style="color:white"><MudIcon Icon="@Icons.Material.Filled.Computer" /> Phòng chiếu: </MudText>
-                                    <MudText Style="color:white"><MudIcon Icon="@Icons.Material.Filled.EventSeat" /> Ghế ngồi: </MudText>
-                                </MudPaper>
-                                <MudSpacer />
-                                <MudPaper Class="pa-3" Elevation="6" Style="background-color:#180F20">
-
-                                </MudPaper>
-                            </MudPaper>
-                        </MudItem>
-                    </MudPaper>
-                    <MudDivider />
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8" Style="background-color:#180F20">
-                        <MudItem xs="12" md="4">
-                            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 200px; background-color:#180F20" Outlined="true">
-                                <MudPaper Class="pa-3" Elevation="6" Style="background-color:white">
-                                    <MudButton Style="color:#180F20">Quay lại</MudButton>
-                                </MudPaper>
-                            </MudPaper>
-                        </MudItem>
-                        <MudItem xs="12" md="4">
-                            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 200px; background-color:#180F20" Outlined="true">
-                                <MudPaper Class="pa-3" Elevation="6" Style="background-color:white">
-                                    <MudButton Style="color:#180F20">Tiếp tục</MudButton>
-                                </MudPaper>
-                            </MudPaper>
-                        </MudItem>
-                    </MudPaper>
+                    <MudGrid/>
                 </MudItem>
             </MudGrid>
         </MudPaper>
     </MudContainer>
 </MudPaper>
-<MudPaper Height="180px" Width="100%" Style="background-color:#261D30">
-    <MudContainer Fixed="true">
-        <MudPaper Height="0px" Width="100%" Square="true">
-            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 100%; background-color:#261D30;" Outlined="true">
-                <MudPaper Class="pa-3" Elevation="6" Style="background-color:#261D30">
-                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 380px; background-color:#261D30" Outlined="true">
-                        <MudText Align="Align.Left" Style="color:white" Typo="Typo.h6">URF CINEMAS</MudText>
-                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
-                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
-                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
-                    </MudGrid>
-                </MudPaper>
-                <MudSpacer />
-                <MudPaper Class="pa-3" Elevation="6">
-                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 150px; background-color:#261D30" Outlined="true">
-                        <MudText Style="color:white" Typo="Typo.h6">FOLLOW US</MudText>
-                        <MudText Style="color:white">
-                            <MudIcon Icon="@Icons.Custom.Brands.Facebook"
-                                     Style="color:white" />
-                        </MudText>
-                    </MudGrid>
-                </MudPaper>
-                <MudSpacer />
-                <MudPaper Class="pa-3" Elevation="6">
-                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 380px; background-color:#261D30" Outlined="true">
-                        <MudText Style="color:white" Typo="Typo.body1" Align="Align.Right">HOTLINE : 0349485127, 0349485127</MudText>
-                        <MudText Style="color:white">Email : trangdkph46130@gmail.com</MudText>
-                    </MudGrid>
-                </MudPaper>
-            </MudPaper>
-        </MudPaper>
-    </MudContainer>
-</MudPaper>
-
-
-
 @code {
+    public string SelectedOption { get; set; }
+
+    private void Reset()
+    {
+        SelectedOption = null;
+    }
+    PaymentMethodDto _paymentDto = new()
+    {
+            CustomerName = "A",
+            PhoneNumber = "0123456789",
+            TotalPrice = 150000,
+            Email = "A2@gmail.com",
+            Code = "2A",
+    };
+    List<PaymentMethodDto> _lst = new()
+    {
+        new PaymentMethodDto(){Name="VNPay"},
+        new PaymentMethodDto(){Name="AiPay"},
+        new PaymentMethodDto(){Name="BMPay"},
+    };
+    FilmDto _filmDto = new()
+    {
+        UrlImage="https://media.loveitopcdn.com/3807/co-viet-nam-qua-cac-thoi-ky01.png",
+        Title="Daddy",
+        Script="2D lồng tiếng",
+        Genres="Hành động",
+        Duration="150",
+        ShowDates = new()
+        {
+            DateTime.UtcNow
+        },
+        ShowTimes = new()
+        {
+            DateTime.UtcNow
+        }
+    };
+    DepartmentDto _departmentDto = new()
+    {
+        Name="Thanh xuân có mấy"
+    };
+    RoomDto _roomDto = new()
+    {
+        Code="Phòng bố"
+    };
+    SeatDto _seatDto = new()
+    {
+        Code="A1"
+    };
 
 }

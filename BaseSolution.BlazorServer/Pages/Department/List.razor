@@ -1,69 +1,143 @@
-﻿@page "/listdepartment"
+﻿@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.BlazorServer.Components.Department;
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
-@inject IDialogService DialogService
+
+@page "/department/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
 
 <MudGrid>
- <MudItem xs="8">
+    <MudItem xs="8">
         <MudText  Class="mt-3" Typo="Typo.h4">Danh sách rạp</MudText>
     </MudItem>
     <MudItem xs="4">
-        <MudTextField  @bind-Value="Search" Label="Tìm kiếm"   Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+        <MudTextField @bind-Value="searchString" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
     </MudItem>
- </MudGrid>
-<MudButton  @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+</MudGrid>
 
- <MudTable Items="@lst" Class="mt-4">
-         <HeaderContent>
-        <MudTh>STT</MudTh>
-         <MudTh>Mã Rạp</MudTh>
-        <MudTh>Tên Rạp</MudTh>
-        <MudTh>Địa chỉ</MudTh>
-        <MudTh>Số điện thoại</MudTh>
-         <MudTh>Email</MudTh>
-        <MudTh>Chức năng</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="STT">@(lst.IndexOf(context) + 1)</MudTd>
-            <MudTd DataLabel="Mã Rạp">@context.Code</MudTd>
-                  <MudTd DataLabel="Tên Rạp">@context.Name</MudTd>
-                  <MudTd DataLabel="Địa chỉ">@context.Address</MudTd>
-            <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
+<MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+@if (_lst == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    if (_lst.Count == 0)
+    {
+        <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+    }
+    else
+    {
+         <MudTable Items="@_lst" Class="mt-4">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+                <MudTh>Mã Rạp</MudTh>
+                <MudTh>Tên Rạp</MudTh>
+                <MudTh>Địa chỉ</MudTh>
+                <MudTh>Số điện thoại</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Chức năng</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="STT">@(_lst.IndexOf(context) + 1)</MudTd>
+                <MudTd DataLabel="Mã Rạp">@context.Code</MudTd>
+                <MudTd DataLabel="Tên Rạp">@context.Name</MudTd>
+                <MudTd DataLabel="Địa chỉ">@context.Address</MudTd>
+                <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
                 <MudTd DataLabel="Email">@context.Email</MudTd>
-            <MudTd>
-                        <MudIconButton @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                        <MudIconButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" aria-label="delete"> Delete </MudIconButton>
-            </MudTd>
-        </RowTemplate>
-             <PagerContent>
+                <MudTd>
+                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
                 <MudTablePager />
             </PagerContent>
-    </MudTable>
+        </MudTable>
+        <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+            <MessageContent>
+                Xác nhận xóa rạp!
+            </MessageContent>
+            <YesButton>
+                <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+                    Xác nhận
+                </MudButton>
+            </YesButton>
+        </MudMessageBox>
+    }
+}
+
 @code {
-    public string Search { get; set; }
-    List<DepartmentEntity> lst = new List<DepartmentEntity>()
-    {
-        new DepartmentEntity() {Code = "R01", Name = "Rạp Maditech", Address = "Số 1 Kim Chung - Thanh Xuân - Hà Nội", PhoneNumber = "0345263866", Email = "Maditech@gmail.com", AddressCodeFormat = "DC01"  },
-        new DepartmentEntity() {Code = "R02", Name = "Rạp Exsodia", Address = "Số 10 Kim Chung - Thanh Xuân - Hà Nội", PhoneNumber = "0345263866", Email = "Exodia@gmail.com", AddressCodeFormat = "DC02" },
-        new DepartmentEntity() {Code = "R03", Name = "Rạp Megalondon", Address = "Số 20 Kim Chung - Thanh Xuân - Hà Nội", PhoneNumber = "0345263866", Email = "Megalondon@gmail.com", AddressCodeFormat = "DC03" }
-};
-    private void OpenDialog()
+    [Inject]
+    public IDepartmentRepo _departmentRepo { get; set; }
+
+    public List<DepartmentDto>? _lst { get; set; }
+
+    public ViewDepartmentWithPaginationRequest obj = new();
+    public DepartmentDeleteRequest _departmentDelete = new();
+
+    string searchString = string.Empty;
+    [Parameter]
+    public Guid idDepartment { set; get; }
+
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-        DialogService.Show<Create>("Thêm Mới Rạp Chiếu", closeOnEscapeKey);
+
+        _dialogService.Show<Create>("Thêm mới rạp", closeOnEscapeKey);
+        await LoadData();
     }
-    private void OpenDialogg()
+
+    private async Task UpdateDialog(Guid Id)
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-        DialogService.Show<Update>("Sửa Thông Tin Rạp", closeOnEscapeKey);
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.idDepartment, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin rạp", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData();
+        }
     }
-    private void DeleteUser()
+
+    private async Task OnDeleteClicked(Guid Id)
     {
-        var parameters = new DialogParameters<Delete>();
-        parameters.Add(x => x.ContentText, "bạn có chắc chắn muốn xóa Rạp không?");
-        parameters.Add(x => x.ButtonText, "Xóa");
-        parameters.Add(x => x.Color, Color.Error);
-        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
-        DialogService.Show<Delete>("Xóa Rạp", parameters, options);
+        var user = await _departmentRepo.GetByIdAsync(Id);
+        var data = user.Data;
+        _departmentDelete.Id = data.Id;
+        _departmentDelete.DeletedTime = DateTime.Now;
+        bool? result = await _mbox.Show();
+        StateHasChanged();
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        var removeConfirm = await _departmentRepo.RemoveAsync(_departmentDelete);
+        if (removeConfirm.Success)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+        }
+        await Task.Delay(2000);
+        await LoadData();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _departmentRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
     }
 }

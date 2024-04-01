@@ -1,96 +1,124 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Customer
+@using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
+@using BaseSolution.BlazorServer.Data.ValueObjects.Common
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
 @using static MudBlazor.CategoryTypes
+
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
 
-<MudCard >
-    <MudForm Model="@depart" @ref="@from" ValidationDelay="0" Style="width:auto;padding:15px;">
+<MudDialog>
+    <DialogContent>
         <MudGrid>
-            <MudItem xs="6">
-                <MudTextField @bind-Value="depart.Code"
-                              For="@(() => depart.Code)"
-                              Immediate="true"
-                              Label="Mã Rạp"/>
-                <MudTextField @bind-Value="depart.Address"
-                              For="@(() => depart.Address)"
-                              Immediate="true" 
-                              Label="Địa chỉ" />
-                <MudTextField @bind-Value="depart.Email"
-                              For="@(() => depart.Email)"
-                              Immediate="true"
-                              Label="Email" />
-          </MudItem>
-            <MudItem xs="6">
-                <MudTextField @bind-Value="depart.Name"
-                      For="@(() => depart.Name)"
-                      Immediate="true" 
-                      Label="Tên Rạp" />
-                <MudTextField @bind-Value="depart.PhoneNumber"
-                              For="@(() => depart.PhoneNumber)"
-                              Immediate="true" 
-                              Label="Số điện thoại" />
-          </MudItem>
-        </MudGrid>
-    </MudForm> 
-    <DialogActions>
-         <MudGrid>
-                <MudItem xs="7">
-
-                </MudItem>
-                <MudItem xs="5">
-                     <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-            <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.Code" Label="Mã khách hàng*" />
             </MudItem>
-            </MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.Name" Label="Họ và tên*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Label="Số điện thoại*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.Email" Label="Email*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.Address" Label="Địa chỉ*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.AddressCode" Label="Tên tài khoản*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_departmentDto.AddressCodeFormat" Label="Mật khẩu*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_departmentDto.Status" For="@(() => _departmentDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
     </DialogActions>
-</MudCard>
+</MudDialog>
 
 @code {
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject]
+    public IDepartmentRepo _departmentRepo { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-    IList<IBrowserFile> files = new List<IBrowserFile>();
-    private void UploadFiles(IBrowserFile file)
+    public DepartmentDto _departmentDto = new();
+    private List<DepartmentDto> _lstDepartment { get; set; }
+
+    public DepartmentCreateRequest obj = new();
+    public ViewDepartmentWithPaginationRequest department_ = new();
+
+
+    private async Task OnButtonClicked()
     {
-        files.Add(file);
-    }
-    [Inject] private IDialogService dialogService { get; set; }
-    private async void OnButtonClicked()
-    {
-        bool? result = await _dialogService.ShowMessageBox(
+        obj.Code = _departmentDto.Code;
+        obj.Name = _departmentDto.Name;
+        obj.AddressCode = _departmentDto.AddressCode;
+        obj.PhoneNumber = _departmentDto.PhoneNumber;
+        obj.Email = _departmentDto.Email;
+        obj.Address = _departmentDto.Address;
+        obj.AddressCodeFormat = _departmentDto.AddressCodeFormat;
+        obj.Status= _departmentDto.Status;
+        bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc thêm mới?",
      yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        if (confirm == true)
         {
-            _snackbar.Add("Thêm mới rạp thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
-        }
-        else
-        {
-            _snackbar.Add("Thêm mới rạp thất bại!", Severity.Error);
+            var result = await _departmentRepo.AddAsync(obj);
+            if (result == true)
+            {
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Thêm thành công", Severity.Success);
+                _navigate.NavigateTo("/department/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Thêm thất bại",
+                        Severity.Error
+                );
+            }
         }
     }
-    MudForm from;
-    DepartModel depart = new DepartModel();
-
-    public class DepartModel
+    protected override async Task OnInitializedAsync()
     {
-        public string Code { get; set; }
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string AddressCode { get; set; }
-        public string AddressCodeFormat { get; set; }
-        public string Address { get; set; }
-
+        await LoadData();
     }
+
+    private async Task LoadData()
+    {
+
+        var result = await _departmentRepo.GetAllActive(department_);
+        if (result != null)
+        {
+            _lstDepartment = result.Data.Data.ToList();
+        }
+    }
+
+
+    void Cancel() => _mudDialog.Cancel();
 }

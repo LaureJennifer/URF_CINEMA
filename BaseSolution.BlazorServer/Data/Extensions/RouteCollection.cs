@@ -9,52 +9,52 @@
         }
         public class Bill
         {
-            public static string List = "/lstbill";
+            public static string List = "/bill/list";
 
         }
         public class Customer
         {
-            public static string List = "/lstcustomer";
+            public static string List = "/customer/list";
 
         }
         public class Department
         {
-            public static string List = "/listdepartment";
+            public static string List = "/department/list";
 
         }
         public class Film
         {
-            public static string List = "/listfilm";
+            public static string List = "/film/list";
 
         }
-        public class FilmSchematic
+        public class FilmSchedule
         {
-            public static string List = "/listfilmschedule";
+            public static string List = "/filmschedule/list";
 
         }
         public class Room
         {
-            public static string List = "/listroom";
+            public static string List = "/room/list";
 
         }
         public class Ticket
         {
-            public static string List = "/listticket";
+            public static string List = "/ticket/list";
 
         }
         public class User
         {
-            public static string List = "/listuser";
+            public static string List = "/user/list";
 
         }
         public class PaymentMethod
         {
-            public static string Payment = "/Payment";
+            public static string Payment = "/payment";
 
         }
         public class Transaction
         {
-            public static string CaseHítory = "/casehistory";
+            public static string CaseHistory = "/casehistory";
 
         }
         

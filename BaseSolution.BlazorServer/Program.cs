@@ -1,6 +1,12 @@
-﻿using BaseSolution.BlazorServer.Data;
+﻿using Autofac.Core;
+using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
+using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
+using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Implements;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
+using BaseSolution.Infrastructure.Extensions;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
@@ -19,6 +25,17 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
+
+            builder.Services.AddTransient<IBookingRepo, BookingRepo>();
+            builder.Services.AddTransient<IFilmRepo, FilmRepo>();
+            builder.Services.AddTransient<IUserRepo, UserRepo>();
+            builder.Services.AddTransient<IRoleRepo, RoleRepo>();
+            builder.Services.AddTransient<ICustomerRepo, CustomerRepo>();
+            builder.Services.AddTransient<ITicketRepo, TicketRepo>();
+            builder.Services.AddTransient<IBillRepo, BillRepo>();
+            builder.Services.AddTransient<IRoomRepo, RoomRepo>();
+            builder.Services.AddTransient<IDepartmentRepo, DepartmentRepo>();
+            builder.Services.AddTransient<IFilmDetailRepo, FilmDetailRepo>();
             builder.Services.AddTransient<IBookingFilmRepo, BookingFilmRepo>();
             builder.Services.AddTransient<IFilmRepositories, FilmRepositories>();
             builder.Services.AddTransient<IRoomLayoutRepo, RoomLayoutRepo>();

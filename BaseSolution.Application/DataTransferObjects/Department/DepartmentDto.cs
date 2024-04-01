@@ -9,6 +9,7 @@ namespace BaseSolution.Application.DataTransferObjects.Department
 {
     public class DepartmentDto
     {
+        public Guid Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -17,6 +18,7 @@ namespace BaseSolution.Application.DataTransferObjects.Department
         public string AddressCodeFormat { get; set; }
         public string Address { get; set; }
 
+        public DateTimeOffset DeletedTime {  get; set; }
         public EntityStatus Status { get; set; }
     }
 }

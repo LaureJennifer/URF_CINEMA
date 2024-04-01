@@ -12,10 +12,10 @@ namespace BaseSolution.Application.DataTransferObjects.Bill.Request
     {
         public Guid CustomerId { get; set; }
         public Guid DepartmentId { get; set; }
-
         public int TicketQuantity { get; set; }
         public string Description { get; set; }
         public double TotalPrice { get; set; }
+        public DateTimeOffset CreatedTime { get; set; }
         public EntityStatus Status { get; set; }
        
     }
