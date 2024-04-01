@@ -16,7 +16,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
                .ForMember(des => des.CustomerName, opt => opt.MapFrom(x => x.CustomerEntity.Name))
                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name))
                .ForMember(des => des.TotalPrice1, opt => opt.MapFrom(src => src.Tickets.Select(x=>x.BookingEntity).Sum(x=>x.SeatEntity.Price)))
-               .ForMember(des => des.TicketQuantity1, opt => opt.MapFrom(src => src.Tickets.Select(x => x.BookingEntity).Count()));
+               .ForMember(des => des.TicketQuantity, opt => opt.MapFrom(src => src.Tickets.Select(x => x.BookingEntity).Count()));
 
             CreateMap<BillEntity, BillStatisticForMonthDto>()
                 .ForMember(des => des.Month, opt => opt.MapFrom(x => x.CreatedTime.Month))
