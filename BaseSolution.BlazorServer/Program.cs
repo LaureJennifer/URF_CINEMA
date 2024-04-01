@@ -36,8 +36,6 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<IRoomRepo, RoomRepo>();
             builder.Services.AddTransient<IDepartmentRepo, DepartmentRepo>();
             builder.Services.AddTransient<IFilmDetailRepo, FilmDetailRepo>();
-            builder.Services.AddTransient<IBookingFilmRepo, BookingFilmRepo>();
-            builder.Services.AddTransient<IFilmRepositories, FilmRepositories>();
             builder.Services.AddTransient<IRoomLayoutRepo, RoomLayoutRepo>();
             builder.Services.AddTransient<IRoomRepo, RoomRepo>();
             builder.Services.AddTransient<IFilmScheduleRoomRepo, FilmScheduleRoomRepo>();

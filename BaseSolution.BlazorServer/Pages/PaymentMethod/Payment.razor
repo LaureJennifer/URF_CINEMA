@@ -5,6 +5,7 @@
 @using BaseSolution.Application.DataTransferObjects.PaymentMethod
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.Seat
+@using BaseSolution.Application.DataTransferObjects.Transaction
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Data.Extensions
 @using MudBlazor
@@ -31,22 +32,22 @@
                             <MudPaper>
                                 <MudGrid>
                                     <MudItem xs="4" md="4" Class="ml-5">
-                                        <MudText Color="Color.Default">Họ Và Tên: @_paymentDto.CustomerName</MudText>
+                                        <MudText Color="Color.Default">Họ Và Tên: @_transactionDto.CustomerName</MudText>
                                     </MudItem>
                                     <MudItem xs="4" md="4">
-                                        <MudText Color="Color.Default">SĐT: @_paymentDto.PhoneNumber</MudText>
+                                        <MudText Color="Color.Default">SĐT: @_transactionDto.PhoneNumber</MudText>
                                     </MudItem>
                                     <MudItem xs="3" md="3">
-                                        <MudText Color="Color.Default">Email: @_paymentDto.Email</MudText>
+                                        <MudText Color="Color.Default">Email: @_transactionDto.Email</MudText>
                                     </MudItem>
                                 </MudGrid>
                             </MudPaper>
                         </MudItem>
                         <MudItem xs="11" lg="11" md="11">
-                            <MudText Align="Align.Right" Style="color:#180F20">Tổng tiền: @_paymentDto.TotalPrice.ToString("#,##0") vnd</MudText>
+                            <MudText Align="Align.Right" Style="color:#180F20">Tổng tiền: @_transactionDto.Price.ToString("#,##0") vnd</MudText>
                         </MudItem>
                         <MudItem xs="11" lg="11" md="11">
-                            <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @_paymentDto.TotalPrice.ToString("#,##0") vnd</MudText>
+                            <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @_transactionDto.Price.ToString("#,##0") vnd</MudText>
                         </MudItem>
                         <MudDivider />
                         <MudText Align="Align.Left" Style="color:#180F20;">Phương thức thanh toán</MudText>
@@ -119,11 +120,11 @@
     {
         SelectedOption = null;
     }
-    PaymentMethodDto _paymentDto = new()
+    TransactionDto _transactionDto = new()
     {
             CustomerName = "A",
             PhoneNumber = "0123456789",
-            TotalPrice = 150000,
+            Price = 150000,
             Email = "A2@gmail.com",
             Code = "2A",
     };

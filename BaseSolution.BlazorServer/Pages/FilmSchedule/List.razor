@@ -86,7 +86,7 @@ else
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        _dialogService.Show<Create>("Thêm mới vé", closeOnEscapeKey);
+        _dialogService.Show<Create>("Thêm mới lịch chiếu", closeOnEscapeKey);
         await LoadData();
     }
 
@@ -94,7 +94,7 @@ else
     {
         var parameters = new DialogParameters<Update>();
         parameters.Add(x => x.idFilmSchedule, Id);
-        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin vé", parameters);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin lịch chiếu", parameters);
         var result = await dialog.Result;
         if (!result.Canceled)
         {

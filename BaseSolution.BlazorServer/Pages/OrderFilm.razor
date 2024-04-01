@@ -45,7 +45,7 @@ else
     [Parameter]
     public string filmId { get; set; }
     [Inject]
-    IBookingFilmRepo _bookingFilmRepo{ get; set; }
+    IBookingRepo _bookingRepo{ get; set; }
     [Inject]
     IFilmScheduleRoomRepo _filmSheduleRoomRepo { get; set; }
     FilmDto _selectedFilm { get; set; }
@@ -64,7 +64,7 @@ else
 
     private async Task GetFilmById(string filmId)
     {
-        var result = await _bookingFilmRepo.GetByIdAsync(filmId);
+        var result = await _bookingRepo.GetByIdAsync(filmId);
         _selectedFilm = result.Data;
         _showDateSelected = _selectedFilm.ShowDates[0];
         _showTimeSelected = _selectedFilm.ShowTimes[0];

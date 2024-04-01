@@ -61,7 +61,7 @@
      
     [Inject] IRoomRepo _roomRepo { get; set; }
     [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
-    [Inject] IFilmRepositories _film { get; set; }
+    [Inject] IFilmRepo _filmRepo { get; set; }
     List<FilmDto>? _lst { get; set; }
     Guid _roomLayoutDtoId { get; set; }
     RoomLayoutDto _roomLayoutDto { get; set; }
@@ -94,7 +94,7 @@
     private async Task LoadData()
     {
 
-        var result = await _film.GetAllActive();
+        var result = await _filmRepo.GetAll();
         _lst = result.Data.Data.ToList();
     }
 

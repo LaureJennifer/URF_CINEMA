@@ -65,7 +65,7 @@
     [Inject]
     public ICustomerRepo _customerRepo { get; set; }
     [Inject]
-    public IRoleRepo _roleRespo { get; set; }
+    public IRoleRepo _roleRepo { get; set; }
 
     public CustomerDto _customerDto = new();
 
@@ -75,7 +75,7 @@
     public string imageUrl { get; set; } = "";
 
     [Parameter]
-    public Guid IdCustomer { set; get; }
+    public Guid idCustomer { set; get; }
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
     ImageHandle imageHandle = new();
@@ -129,7 +129,7 @@
     private async Task LoadData()
     {
 
-        var result = await _customerRepo.GetByIdAsync(IdCustomer);
+        var result = await _customerRepo.GetByIdAsync(idCustomer);
         _customerDto = result.Data!;
     }
 
