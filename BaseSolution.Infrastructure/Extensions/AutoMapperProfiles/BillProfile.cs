@@ -28,21 +28,25 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<BillEntity, BillStatisticForQuarterDto>()
                 .ForMember(des => des.Quarter, opt => opt.MapFrom(x => (x.CreatedTime.Month - 1) / 3 + 1))
                 .ForMember(des => des.Year, opt => opt.MapFrom(x => x.CreatedTime.Year))
-                .ForMember(des => des.Revenue, opt => opt.MapFrom(x => x.TotalPrice));
+                .ForMember(des => des.Revenue, opt => opt.MapFrom(x => x.TotalPrice))
+                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name));
 
             CreateMap<BillEntity, BillStatisticForYearDto>()
                .ForMember(des => des.Year, opt => opt.MapFrom(x => x.CreatedTime.Year))
-               .ForMember(des => des.Revenue, opt => opt.MapFrom(x => x.TotalPrice));
+               .ForMember(des => des.Revenue, opt => opt.MapFrom(x => x.TotalPrice))
+               .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name));
 
             CreateMap<BillEntity, TicketStatisticForMonthDto>()
                .ForMember(des => des.Month, opt => opt.MapFrom(x => x.CreatedTime.Month))
                .ForMember(des => des.Year, opt => opt.MapFrom(x => x.CreatedTime.Year))
-               .ForMember(des => des.Quantity, opt => opt.MapFrom(x => x.TicketQuantity));
+               .ForMember(des => des.Quantity, opt => opt.MapFrom(src => src.Tickets.Select(x => x.BookingEntity).Count()))
+               .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name));
 
             CreateMap<BillEntity, TicketStatisticForQuarterDto>()
                 .ForMember(des => des.Quarter, opt => opt.MapFrom(x => (x.CreatedTime.Month - 1) / 3 + 1))
                 .ForMember(des => des.Year, opt => opt.MapFrom(x => x.CreatedTime.Year))
-                .ForMember(des => des.Quantity, opt => opt.MapFrom(x => x.TicketQuantity));
+                .ForMember(des => des.Quantity, opt => opt.MapFrom(src => src.Tickets.Select(x => x.BookingEntity).Count()))
+                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name));
 
             CreateMap<BillCreateRequest, BillEntity>();
             CreateMap<BillUpdateRequest, BillEntity>();

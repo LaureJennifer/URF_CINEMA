@@ -85,7 +85,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var bill_ = await GetBillByIdAsync(entity.Id, cancellationToken);
 
                 bill_!.TotalPrice = entity.TotalPrice;
-                bill_.TicketQuantity = entity.TicketQuantity;
                 bill_.Status = entity.Status;
                 bill_.ModifiedBy = entity.ModifiedBy;
                 bill_.ModifiedTime = DateTimeOffset.UtcNow;

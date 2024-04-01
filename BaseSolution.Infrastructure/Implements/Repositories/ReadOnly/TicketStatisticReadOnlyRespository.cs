@@ -43,11 +43,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
 
                     totalQuantityForMonth = ticketStatistics
-                            .GroupBy(x => new { x.Month, x.Year })
+                            .GroupBy(x => new { x.Month, x.Year, x.DepartmentName })
                             .Select(g => new TicketStatisticForMonthDto
                             {
                                 Month = g.Key.Month,
                                 Year = g.Key.Year,
+                                DepartmentName = g.Key.DepartmentName,
                                 Quantity = g.Sum(x => x.Quantity)
                             }).ToList();
 
@@ -83,11 +84,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
 
                     totalQuantityForQuarter = ticketStatistics
-                            .GroupBy(x => new { x.Quarter, x.Year })
+                            .GroupBy(x => new { x.Quarter, x.Year, x.DepartmentName })
                             .Select(g => new TicketStatisticForQuarterDto
                             {
                                 Quarter = g.Key.Quarter,
                                 Year = g.Key.Year,
+                                DepartmentName = g.Key.DepartmentName,
                                 Quantity = g.Sum(x => x.Quantity)
                             }).ToList();
 

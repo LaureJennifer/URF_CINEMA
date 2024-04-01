@@ -13,7 +13,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<FilmScheduleRoomEntity> builder)
         {
-            builder.ToTable("DepartmentRoom");
+            builder.ToTable("FilmScheduleRoom");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.HasOne(x => x.RoomEntity).WithMany(x => x.FilmScheduleRooms).HasForeignKey(x => x.RoomId).IsRequired();

@@ -85,11 +85,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
 
                     totalAmountForQuarter = billStatistics
-                            .GroupBy(x => new { x.Quarter, x.Year })
+                            .GroupBy(x => new { x.Quarter, x.Year, x.DepartmentName })
                             .Select(g => new BillStatisticForQuarterDto
                             {
                                 Quarter = g.Key.Quarter,
                                 Year = g.Key.Year,
+                                DepartmentName = g.Key.DepartmentName,
                                 Revenue = g.Sum(x => x.Revenue)
                             }).ToList();
 
@@ -124,10 +125,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 if (billStatistics != null)
                 {
 
-                    totalAmountForYear = billStatistics.GroupBy(x => x.Year)
+                    totalAmountForYear = billStatistics.GroupBy(x => new { x.Year, x.DepartmentName })
                                    .Select(g => new BillStatisticForYearDto
                                    {
-                                       Year = g.Key,
+                                       Year = g.Key.Year,
+                                       DepartmentName = g.Key.DepartmentName,
                                        Revenue = g.Sum(x => x.Revenue)
                                    }).ToList();
 
