@@ -57,6 +57,11 @@
             public static string CaseHistory = "/casehistory";
 
         }
+        public class Seat
+        {
+            public static string List = "/seat/list";
+
+        }
         
     }
 }
