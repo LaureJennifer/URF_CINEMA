@@ -85,7 +85,7 @@
     //     DialogService.Show<Login>("Đăng nhập", closeOnEscapeKey);
     // }
     [Inject] 
-    public IFilmRepositories _film { get; set; }
+    public IFilmRepo _filmRepo { get; set; }
     public ViewFilmWithPaginationRequest obj = new();
     public List<FilmDto>? _lst{ get; set; }
     private void Order(Guid IdFilm)
@@ -111,7 +111,7 @@
     private async Task LoadData()
     {
 
-        var result = await _film.GetAllActive();
+        var result = await _filmRepo.GetAll();
         _lst = result.Data.Data.ToList();
     }
 }

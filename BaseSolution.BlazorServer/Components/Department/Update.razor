@@ -66,6 +66,8 @@
     public DepartmentUpdateRequest obj = new();
     public ViewDepartmentWithPaginationRequest department_ = new();
 
+    [Parameter]
+    public Guid idDepartment{ get; set; }
 
     private async Task OnButtonClicked()
     {

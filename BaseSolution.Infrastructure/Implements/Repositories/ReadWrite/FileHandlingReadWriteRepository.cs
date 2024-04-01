@@ -86,7 +86,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                     lstMarkup.Add(new() { Message = "Thêm dữ liệu thất bại (Lỗi hệ thống hoặc dữ liệu)", IsSuccess = false });
                 }
             }
-            await _roomLayoutReadWrite.CreateRangeRoomLayoutAsync(lstRoomLayout, cancellationToken);
+            //await _roomLayoutReadWrite.CreateRangeRoomLayoutAsync(lstRoomLayout, cancellationToken);
             return SaveFile(fileExtension, "Excels/Handled");
         }
         public string SaveFile(string fileExtension, string folder)

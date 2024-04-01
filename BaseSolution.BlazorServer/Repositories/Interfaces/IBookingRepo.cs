@@ -12,7 +12,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
     {
         public Task<RequestResult<FilmDto>> GetByIdAsync(string id);
         public Task<FilmScheduleListWithPaginationViewModel> GetAllFilmSchedule(ViewFilmScheduleWithPaginationRequest request);
-
         public Task<BookingListWithPaginationViewModel> GetAllActive(ViewBookingWithPaginationRequest request);
     }
 }

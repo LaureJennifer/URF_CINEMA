@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace BaseSolution.Infrastructure.Database.Configurations
 {
-    public class FilmScheduleRoomConfiguration : IEntityTypeConfiguration<FilmScheduleRoomEntity>
+    public class FilmScheduleRoomEntityConfiguration : IEntityTypeConfiguration<FilmScheduleRoomEntity>
     {
         public void Configure(EntityTypeBuilder<FilmScheduleRoomEntity> builder)
         {
-            builder.ToTable("FilmScheduleRoom");
+            builder.ToTable("DepartmentRoom");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.HasOne(x => x.RoomEntity).WithMany(x => x.FilmScheduleRooms).HasForeignKey(x => x.RoomId).IsRequired();

@@ -9,13 +9,9 @@ namespace BaseSolution.Application.DataTransferObjects.PaymentMethod
 {
     public class PaymentMethodDto
     {
-        public string CustomerName { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string Code { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public EntityStatus Status { get; set; }
-        public double TotalPrice { get; set; }
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
     }
 }

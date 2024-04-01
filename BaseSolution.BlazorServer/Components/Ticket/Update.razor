@@ -85,6 +85,9 @@
     [Inject]
     public IBookingRepo _bookingRepo { get; set; }
 
+    [Parameter]
+    public Guid idTicket{ get; set; }
+
     public FilmScheduleDto _filmscheduleDto = new();
     public TicketDto _ticketDto = new();
     private List<TicketDto> _lstTicket { get; set; }

@@ -96,7 +96,7 @@ else
     private async Task UpdateDialog(Guid Id)
     {
         var parameters = new DialogParameters<Update>();
-        parameters.Add(x => x.IdUser, Id);
+        parameters.Add(x => x.idUser, Id);
         var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin nhân viên", parameters);
         var result = await dialog.Result;
         if (!result.Canceled)
