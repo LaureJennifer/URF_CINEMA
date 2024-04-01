@@ -1,4 +1,7 @@
-﻿using BaseSolution.Domain.Enums;
+﻿using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
+using BaseSolution.Application.DataTransferObjects.Room;
+using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +25,8 @@ namespace BaseSolution.Application.DataTransferObjects.Film
         public DateTimeOffset ReleaseDate { get; set; }
         public List<DateTimeOffset> ShowDates { get; set; }
         public List<DateTimeOffset> ShowTimes { get; set; }
+        public List<string> DepartmentNames { get; set; }
+        public List<RoomDto> Rooms { get; set; }
         public string Duration { get; set; }
         public string Script { get; set; }
         public string Genres { get; set; }

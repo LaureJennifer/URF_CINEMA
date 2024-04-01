@@ -14,5 +14,7 @@ namespace BaseSolution.Application.DataTransferObjects.Booking.Request
         public Guid? SeatId { get; set; }
         public Guid? RoomId { get; set; }
         public EntityStatus? SeatStatus { get; set; }
+        public DateTimeOffset ExpiredTime { get; set; }
+
     }
 }

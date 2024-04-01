@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static BaseSolution.Application.ValueObjects.Common.LocalizationString;
 
 namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -38,15 +39,17 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
 
                 List<BillStatisticForMonthDto> totalAmountForMonth = null;
 
+
                 if (billStatistics != null)
                 {
 
                     totalAmountForMonth = billStatistics
-                            .GroupBy(x => new { x.Month, x.Year })
+                            .GroupBy(x => new { x.Month, x.Year,x.DepartmentName })
                             .Select(g => new BillStatisticForMonthDto
                             {
                                 Month = g.Key.Month,
                                 Year = g.Key.Year,
+                                DepartmentName = g.Key.DepartmentName,
                                 Revenue = g.Sum(x => x.Revenue)
                             }).ToList();
 

@@ -9,8 +9,6 @@ namespace BaseSolution.Application.DataTransferObjects.FilmSchedule
 {
     public class FilmScheduleDto
     {
-        public Guid Id { get; set; }
-        public string Title {  get; set; }
         public DateTimeOffset ShowDate { get; set; }
         public DateTimeOffset ShowTime { get; set; }
         public EntityStatus Status { get; set; }

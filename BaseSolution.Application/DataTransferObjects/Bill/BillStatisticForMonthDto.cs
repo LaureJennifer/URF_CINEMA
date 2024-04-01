@@ -13,6 +13,6 @@ namespace BaseSolution.Application.DataTransferObjects.Bill
         public int Year { get; set; }
         public double Revenue { get; set; }
         
-
+        public string DepartmentName { get; set; }
     }
 }
