@@ -15,5 +15,8 @@ namespace BaseSolution.Application.DataTransferObjects.Booking
         public string SeatCode { get; set; }
         public string RoomCode { get; set; }
         public EntityStatus SeatStatus { get; set; }
+
+        public DateTimeOffset ExpiredTime { get; set; }
+        public DateTimeOffset CreatedTime { get; set; }
     }
 }
