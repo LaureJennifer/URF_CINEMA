@@ -44,7 +44,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 var bill_ = await _appReadOnlyDbContext.BillEntities.AsNoTracking().Where(c => c.Id == idBill && !c.Deleted).ProjectTo<BillDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
                 
-                var ticketQuantity = bill_!.TicketQuantity1;
+                var ticketQuantity = bill_!.TicketQuantity;
                 var totalPrice = bill_.TotalPrice1;
 
                 // Find bill to map TicketQuantity and TotalPrice then update database
@@ -86,7 +86,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 var result = await bills.PaginateAsync(request, cancellationToken);
                 foreach ( var bill in bills)
                 {
-                    var ticketQuantity = bill!.TicketQuantity1;
+                    var ticketQuantity = bill!.TicketQuantity;
                     var totalPrice = bill.TotalPrice1;
 
                     // Find bill to map TicketQuantity and TotalPrice then update database
