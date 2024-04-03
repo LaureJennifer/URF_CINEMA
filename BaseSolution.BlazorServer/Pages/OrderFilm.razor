@@ -8,33 +8,40 @@
 @inject NavigationManager _navigationManager
 @if (_selectedFilm != null)
 {
-   
+    if (_showDateList != null)
+    {
         <MudTabs Elevation="4" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" Style="@($"color{Colors.Shades.White}; background-color:#180F20;")">
-            
-            @foreach (var date in _selectedFilm.ShowDates)
+
+            @foreach (var date in _showDateList)
             {
-            <MudTabPanel OnClick="()=>SelectDate(date)" Text="@date.ToString("dd/MM")" Style="background-color:#180F20;">
-               
+                <MudTabPanel OnClick="()=>SelectDate(date)" Text="@date.ToString("dd/MM")" Style="background-color:#180F20;">
+
                 </MudTabPanel>
-            
+
             }
 
-        <MudItem xs="12" lg="12" md="12" Class="d-flex justify-center flex-grow-1 gap-4">
-            <MudImage Src="@_selectedFilm.TrailerURL" Style="width:90%;height:50%;" Alt="Swedish Farm House" Elevation="25" />
-        </MudItem>
+            <MudItem xs="12" lg="12" md="12" Class="d-flex justify-center flex-grow-1 gap-4">
+                <MudImage Src="@_selectedFilm.TrailerURL" Style="width:90%;height:50%;" Alt="Swedish Farm House" Elevation="25" />
+            </MudItem>
         </MudTabs>
-    <MudGrid Style="background-color:#180F20" Class="border border-solid mud-border-info pa-4">
-        <MudItem xs="12" lg="12" md="12">
-            <MudText Typo="Typo.h5" Color="Color.Error">Tên phim : @_selectedFilm.Title</MudText>
-            <MudText Typo="Typo.caption" Style="color:white"><MudIcon Icon="@Icons.Material.TwoTone.Discount" Style="color:white" />@_selectedFilm.Genres</MudText>
-            <MudText Typo="Typo.subtitle1" Style="color:white">@_selectedFilm.Duration phút</MudText>
-            <MudText Typo="Typo.h6" Style="color:white">@_selectedFilm.Script</MudText>
-            @foreach(var time in _selectedFilm.ShowTimes)
-            {
-                <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Style="background-color:white">@time.ToString("hh : mm")</MudButton>
-            }
-        </MudItem>
-    </MudGrid>
+        <MudGrid Style="background-color:#180F20" Class="border border-solid mud-border-info pa-4">
+            <MudItem xs="12" lg="12" md="12">
+                <MudText Typo="Typo.h5" Color="Color.Error">Tên phim : @_selectedFilm.Title</MudText>
+                    <MudText Typo="Typo.caption" Style="color:white"><MudIcon Icon="@Icons.Material.TwoTone.Discount" Style="color:white" />@_selectedFilm.Genres</MudText>
+                    <MudText Typo="Typo.subtitle1" Style="color:white">@_selectedFilm.Duration phút</MudText>
+                <MudText Typo="Typo.h6" Style="color:white">@_selectedFilm.Script</MudText>
+
+                    @foreach (var time in _selectedFilm.ShowTimes)
+                {
+                    if (time.Date == _showDateSelected)
+                    {
+                        <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Class="mx-2" Style="background-color:white">@time.ToString("hh : mm")</MudButton>
+                    }
+                }
+            </MudItem>
+        </MudGrid>
+    }
+    
 }
 else
 {
@@ -56,6 +63,8 @@ else
     DateTimeOffset _showTimeSelected;
     Guid _roomId;
     Guid _filmScheduleId;
+    List<DateTime> _showDateList =new();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -65,14 +74,15 @@ else
     private async Task GetFilmById(string filmId)
     {
         var result = await _bookingRepo.GetByIdAsync(filmId);
-        _selectedFilm = result.Data;
-        _showDateSelected = _selectedFilm.ShowDates[0];
+        _selectedFilm = result.Data!;
         _showTimeSelected = _selectedFilm.ShowTimes[0];
+        _showDateList = _selectedFilm.ShowDates.Select(d => d.Date).Distinct().ToList();
+        _showDateSelected = _showDateList[0];
     }
 
     private async Task LoadData()
     {
-        // var result = await _bookingFilmRepo.GetAllFilmSchedule(obj);
+        // var result = await _bookingRepo.GetAllFilmSchedule(obj);
         // _selectedFilm = result.Data;
     }
 
@@ -93,7 +103,7 @@ else
         request.ShowDate = _showDateSelected;
         request.ShowTime = _showTimeSelected;
         var result = await _filmSheduleRoomRepo.GetFilmScheduleRoomByShowDateTimeAsync(request);
-        _filmScheduleId = result.Data.FilmScheduleId;
+        _filmScheduleId = result.Data!.FilmScheduleId;
         _roomId = result.Data.RoomId;
     }
 

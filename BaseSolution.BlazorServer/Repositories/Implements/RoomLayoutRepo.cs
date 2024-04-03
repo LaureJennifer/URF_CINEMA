@@ -34,9 +34,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return new();
         }
 
-        public Task<RequestResult<RoomLayoutDto>> GetByIdAsync(Guid id)
+        public async Task<RequestResult<RoomLayoutDto>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<RequestResult<RoomLayoutDto>>($"api/RoomLayouts/{id}");
+            if (obj != null)
+                return obj;
+            return null;
         }
     }
 }

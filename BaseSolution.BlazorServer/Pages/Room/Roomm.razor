@@ -33,7 +33,11 @@
         </MudCarousel>
         <MudGrid>
             <MudItem xs="10" md="10">
-                <ExcelImport filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId"></ExcelImport>
+                @if (_roomLayoutDtoId != Guid.Empty)
+                {
+                    <ExcelImport filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId"></ExcelImport>
+                }
+                
             </MudItem>
             
             <MudItem xs="2" md="2" Class="mt-6">
