@@ -14,7 +14,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
                 BaseAddress = new Uri("https://localhost:7005")
             };
 
-            var showDate = request.ShowDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+            var showDate = request.ShowTime?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             var showTime = request.ShowTime?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
 
             var url = $"/api/FilmScheduleRooms/showDateTime?ShowDate={Uri.EscapeDataString(showDate)}&ShowTime={Uri.EscapeDataString(showTime)}";

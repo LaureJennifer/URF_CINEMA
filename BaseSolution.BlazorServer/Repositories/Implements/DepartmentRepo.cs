@@ -13,9 +13,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             throw new NotImplementedException();
         }
 
-        public Task<DepartmentListWithPaginationViewModel> GetAllActive(ViewDepartmentWithPaginationRequest request)
+        public async Task<DepartmentListWithPaginationViewModel> GetAllActive(ViewDepartmentWithPaginationRequest request)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<DepartmentListWithPaginationViewModel>($"api/Departments");
+            if (obj != null)
+                return obj;
+            return new();
         }
 
         public Task<RequestResult<DepartmentDto>> GetByIdAsync(Guid id)
