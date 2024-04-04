@@ -1,10 +1,11 @@
-﻿@using BaseSolution.Application.DataTransferObjects.Ticket
+﻿@page "/ticket/list"
+@using BaseSolution.Application.DataTransferObjects.Ticket
 @using BaseSolution.Application.DataTransferObjects.Ticket.Request
 @using BaseSolution.BlazorServer.Components.Ticket;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
 
-@page "/ticket/list"
+
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
 
@@ -50,7 +51,7 @@ else
                 <MudTd DataLabel="Phòng">@context.RoomCode</MudTd>
                 <MudTd DataLabel="Ghế ngồi">@context.SeatCode</MudTd>
                 <MudTd DataLabel="Ngày chiếu">@context.ShowDate.ToString("dd/MM/yyyy")</MudTd>
-                <MudTd DataLabel="Giờ chiếu">@context.ShowTime.ToString("hh : mm")</MudTd>
+                <MudTd DataLabel="Giờ chiếu">@context.ShowTime.ToString("hh : mm tt")</MudTd>
                 <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
                 <MudTd>
                     <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
