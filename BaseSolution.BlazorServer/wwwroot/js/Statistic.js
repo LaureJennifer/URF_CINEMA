@@ -1,5 +1,5 @@
 ﻿let generalBarChart;
-let majorOverviewBarChartForYear;
+let majorOverviewBarChartForAll;
 let majorOverviewBarChart;
 
 function clearChart(chart) {
@@ -119,8 +119,8 @@ function createStatisticBarChart(colors, datasets, labels, data,id) {
     majorOverviewBarChart = new ApexCharts(ctx, options);
     majorOverviewBarChart.render();
 }
-function createStatisticBarChartForYear(colors, datasets, labels, data) {
-    const ctx = document.getElementById("bill-statistic-for-year");
+function createStatisticBarChartForAll(colors, datasets, labels, data,id) {
+    const ctx = document.getElementById(id);
 
     clearChart(majorOverviewBarChartForYear); // Clear the previous chart
 
@@ -138,7 +138,7 @@ function createStatisticBarChartForYear(colors, datasets, labels, data) {
         plotOptions: {
             bar: {
                 borderRadius: 4,
-                horizontal: false,
+                horizontal: true,
                 distributed: true,
                 dataLabels: {
                     position: 'top',
@@ -158,7 +158,7 @@ function createStatisticBarChartForYear(colors, datasets, labels, data) {
         }
     };
 
-    majorOverviewBarChartForYear = new ApexCharts(ctx, options);
-    majorOverviewBarChartForYear.render();
+    majorOverviewBarChartForAll = new ApexCharts(ctx, options);
+    majorOverviewBarChartForAll.render();
 }
 
