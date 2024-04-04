@@ -1,0 +1,276 @@
+﻿@page "/bill-statistic"
+@using BaseSolution.Application.DataTransferObjects.Bill
+@using BaseSolution.Application.DataTransferObjects.Bill.Request
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
+@using BaseSolution.Application.Interfaces.Repositories.ReadOnly
+@using BaseSolution.Application.Interfaces.Services
+@using BaseSolution.BlazorServer.Repositories.Interfaces
+@using BaseSolution.Infrastructure.ViewModels.Statistic.Bill
+
+@if (_lstDepartment != null)
+{
+    <MudGrid>
+        <MudItem xs="4" md="4">
+            <MudSelect T="string" Label="Rạp" HelperText="@(selectedYear == null ?"*Chọn năm":"")" Value="@selectedDepartmentId" ValueChanged="OnSelectedDepartment">
+                @foreach (var department in _lstDepartment)
+                {
+                    <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="4" md="4">
+            <MudSelect T="string" Label="Thống kê" Value="@selectedOption" HelperText="@(selectedDepartmentId == null ?"*Chọn cơ sở":"")" ValueChanged="(str)=>OnSelectedOption(str)">
+                <MudSelectItem T="string" Value="@("billStatisticForMonth")">theo tháng</MudSelectItem>
+                <MudSelectItem T="string" Value="@("billStatisticForQuarter")">theo quý</MudSelectItem>
+                <MudSelectItem T="string" Value="@("billStatisticForYear")">theo năm</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="4" md="4">
+            <MudSelect T="string" Label="Năm" Value="@selectedYear" ValueChanged="OnSelectedYear">
+                @foreach (var year in _lstYearForSelect)
+                {
+                    <MudSelectItem T="string" Value="@($"{year}")"></MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+}
+<MudGrid>
+    <MudItem xs="12" md="10">
+        <MudText Class="d-flex align-center" Color="Color.Default" Typo="Typo.h6">
+            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.LabelImportant"></MudIcon> Thống kê doanh thu
+        </MudText>
+    </MudItem>
+
+</MudGrid>
+
+
+<MudGrid Class="mb-3">
+    <MudItem xs="12" md="10">
+        @if (_hasError)
+        {
+            <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+        }
+        else
+        {
+
+            <MudItem xs="12" md="12">
+                <div style="height:60vh; max-height:500px;" id="bill-statistic"></div>
+            </MudItem>
+        }
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    private bool _hasError = false;
+    [Inject] IJSRuntime jsRuntime { get; set; }
+    [Inject] private IBillStatisticRepo _billStatisticRepo { get; set; }
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+    List<string> customPalette = new List<string>() { "#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#00FFFF", "#0000FF", "#8A2BE2", "#FF00FF", "#800080", "#FFC0CB", "#008000", "#800000" };
+    BillStatisticRequest _billStatisticRequest = new();
+    public ViewDepartmentWithPaginationRequest _request = new();
+    public List<DepartmentDto>? _lstDepartment { get; set; }
+    List<BillStatisticForQuarterDto> _billStatisticForQuarterDtos { get; set; }
+    List<BillStatisticForMonthDto> _billStatisticForMonthDtos { get; set; }
+    List<BillStatisticForYearDto> _billStatisticForYearDtos { get; set; }
+    List<string>? _lstYearForSelect { get; set; }
+    string? selectedDepartmentId { get; set; }
+    string? selectedDepartment { get; set; }
+    string? selectedOption = "billStatisticForMonth";
+    string? selectedYear { get; set; }
+    string label = "Doanh thu";
+    int startTime;
+    int endTime;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDepartmentForSelect();
+
+        await LoadYearForSelect();
+    }
+
+    private async Task LoadDepartmentForSelect()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data.Data.ToList();
+        selectedDepartmentId = _lstDepartment.First().Id.ToString();
+
+    }
+
+    private async Task LoadGeneral(string option)
+    {
+        switch (option)
+        {
+            case "billStatisticForMonth":
+                var resultMonth = await _billStatisticRepo.GetBillStatisticsForMonthAsync(_billStatisticRequest);
+                _billStatisticForMonthDtos = resultMonth;
+                break;
+            case "billStatisticForQuarter":
+                var resultQuarter = await _billStatisticRepo.GetBillStatisticsForQuarterAsync(_billStatisticRequest);
+                _billStatisticForQuarterDtos = resultQuarter;
+                break;    
+            case "billStatisticForYear":
+                var resultYear = await _billStatisticRepo.GetBillStatisticsForYearAsync(_billStatisticRequest);
+                _billStatisticForYearDtos = resultYear;
+                break;
+            default:
+                break;
+        }
+    }
+
+    async Task OnSelectedDepartment(string idDepartment)
+    {
+        selectedDepartmentId = idDepartment;
+        await OnSelectedOption(selectedOption);
+    }
+
+    private async Task LoadYearForSelect()
+    {
+        var result = await _billStatisticRepo.GetBillStatisticsForYearAsync(_billStatisticRequest);
+        _lstYearForSelect = result.OrderBy(x => x.Year).Select(x => x.Year.ToString()).Distinct().ToList();
+    }
+
+    async Task OnSelectedYear(string year)
+    {
+        selectedYear = year;
+        await OnSelectedOption(selectedOption);
+
+    }
+
+    async Task OnSelectedOption(string option)
+    {
+        selectedOption = option;
+        await LoadGeneral(selectedOption);
+
+        selectedDepartment = _lstDepartment.FirstOrDefault(x => x.Id == Guid.Parse(selectedDepartmentId)).Name;
+
+        switch (selectedOption)
+        {
+            case "billStatisticForMonth":
+                List<string> months = new() { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+
+                if (_billStatisticForMonthDtos != null)
+                {
+                    if (string.IsNullOrEmpty(selectedYear))
+                    {
+                        var result = Enumerable.Range(1, 12)
+                                    .GroupJoin(
+                                        _billStatisticForMonthDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == 2024),
+                                        month => month,
+                                        dto => dto.Month,
+                                        (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                    )
+                                    .ToList();
+                        await GenerChart(customPalette, months, label, result);
+
+                    }
+                    else
+                    {
+                        var result = Enumerable.Range(1, 12)
+                                    .GroupJoin(
+                                        _billStatisticForMonthDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == Convert.ToInt32(selectedYear)),
+                                        month => month,
+                                        dto => dto.Month,
+                                        (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                    )
+                                    .ToList();
+                        await GenerChart(customPalette, months, label, result);
+
+                    }
+
+                }
+                break;
+            case "billStatisticForQuarter":
+                List<string> quarters = new() { "Quý 1", "Quý 2", "quý 3", "quý 4" };
+
+                if (_billStatisticForQuarterDtos != null)
+                {
+                    if (string.IsNullOrEmpty(selectedYear))
+                    {
+                        var result = Enumerable.Range(1, 4)
+                                    .GroupJoin(
+                                        _billStatisticForQuarterDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == 2024),
+                                        quarter => quarter,
+                                        dto => dto.Quarter,
+                                        (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                    )
+                                    .ToList();
+                        await GenerChart(customPalette, quarters, label, result);
+
+                    }
+                    else
+                    {
+                        var result = Enumerable.Range(1, 4)
+                                    .GroupJoin(
+                                        _billStatisticForQuarterDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == Convert.ToInt32(selectedYear)),
+                                        quarter => quarter,
+                                        dto => dto.Quarter,
+                                        (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                    )
+                                    .ToList();
+                        await GenerChart(customPalette, quarters, label, result);
+
+                    }
+
+                }
+
+                break;      
+            case "billStatisticForYear":
+
+                selectedYear = " ";
+                if (_billStatisticForYearDtos != null)
+                {
+                    var result = _lstYearForSelect.OrderBy(year => year).Select(year => _billStatisticForYearDtos
+                      .Where(dto => dto.DepartmentName == selectedDepartment && dto.Year.ToString() == year)
+                      .Select(dto => dto.Revenue).FirstOrDefault()).ToList(); 
+
+                    await GenerChart(customPalette, _lstYearForSelect, label, result);
+                }
+                break;
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {           
+            
+            if (string.IsNullOrEmpty(selectedYear))
+            {
+                if (_lstYearForSelect != null)
+                {
+                    if (_lstYearForSelect!.Count > 0)
+                    {
+                        await OnSelectedYear(_lstYearForSelect.First().ToString());
+
+                        StateHasChanged();
+                    }
+                    if (string.IsNullOrWhiteSpace(selectedDepartment))
+                    {
+                        if (_lstDepartment != null)
+                        {
+                            if (_lstDepartment!.Count > 0)
+                            {
+                                OnSelectedDepartment(selectedDepartmentId);
+                                await OnSelectedOption(selectedOption);
+
+                                StateHasChanged();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    async Task GenerChart(List<string> customPalette, List<String> years, string label, List<double> result)
+    {
+        await jsRuntime.InvokeVoidAsync("createStatisticBarChart", customPalette, years, label, result, "bill-statistic");
+
+    }
+
+}
+

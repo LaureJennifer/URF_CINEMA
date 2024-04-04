@@ -62,6 +62,10 @@
             public static string List = "/seat/list";
 
         }
+        public class Statistic
+        {
+            public static string BillStatistic = "/bill-statistic";
+        }
         
     }
 }

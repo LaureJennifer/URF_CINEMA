@@ -25,16 +25,24 @@ namespace BaseSolution.API.Controllers.Statistic
         {
             GetBillStatisticForMonthViewModel vm = new(_billStatisticReadOnly, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-
-            return Ok(vm);
+            if (vm.Success)
+            {
+                List<BillStatisticForMonthDto> result = (List<BillStatisticForMonthDto>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("BillStatisticForQuarter")]
         public async Task<IActionResult> GetBillStatisticForQuarter([FromQuery] BillStatisticRequest request, CancellationToken cancellationToken)
         {
             GetBillStatisticForQuarterViewModel vm = new(_billStatisticReadOnly, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
-            
-            return Ok(vm);
+            if (vm.Success)
+            {
+                List<BillStatisticForQuarterDto> result = (List<BillStatisticForQuarterDto>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
         [HttpGet("BillStatisticForYear")]
         public async Task<IActionResult> GetBillStatisticForYear([FromQuery] BillStatisticRequest request, CancellationToken cancellationToken)
@@ -42,7 +50,12 @@ namespace BaseSolution.API.Controllers.Statistic
             GetBillStatisticForYearViewModel vm = new(_billStatisticReadOnly, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
 
-            return Ok(vm);
+            if (vm.Success)
+            {
+                List<BillStatisticForYearDto> result = (List<BillStatisticForYearDto>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
         }
     }
 }
