@@ -41,7 +41,7 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<ISeatRepo, SeatRepo>();
             builder.Services.AddTransient<IFilmScheduleRoomRepo, FilmScheduleRoomRepo>();
             builder.Services.AddTransient<IBillStatisticRepo, BillStatisticRepo>();
-
+            builder.Services.AddTransient<IFilmStatisticRepo, FilmStatisticRepo>();
             builder.Services.AddHttpClient("API", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["BackEndAPIURL"]!);

@@ -65,6 +65,7 @@
         public class Statistic
         {
             public static string BillStatistic = "/bill-statistic";
+            public static string FilmStatistic = "/film-statistic";
         }
         
     }
