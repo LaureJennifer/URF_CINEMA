@@ -17,7 +17,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             try
             {
-                string url = $"api/BillStatistics/BillStatisticForQuarter";
+                string url = $"api/BillStatistics/BillStatisticForQuarter?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
                 var result = await client.GetFromJsonAsync<List<BillStatisticForQuarterDto>>(url);
                 return result;
@@ -37,7 +37,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             try
             {
-                string url = $"api/BillStatistics/BillStatisticForMonth";
+                string url = $"api/BillStatistics/BillStatisticForMonth?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
                 var result = await client.GetFromJsonAsync<List<BillStatisticForMonthDto>>(url);
                 return result;
@@ -57,7 +57,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             try
             {
-                string url = $"api/BillStatistics/BillStatisticForYear";
+                string url = $"api/BillStatistics/BillStatisticForYear?PageNumber={request.PageNumber}&PageSize={request.PageSize}";
 
                 var result = await client.GetFromJsonAsync<List<BillStatisticForYearDto>>(url);
                 return result;

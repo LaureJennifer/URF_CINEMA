@@ -94,6 +94,8 @@ namespace BaseSolution.Infrastructure.Extensions
 
             services.AddTransient<IBillStatisticReadOnlyRespository, BillStatisticReadOnlyRespository>();
             services.AddTransient<ITicketStatisticReadOnlyRespository, TicketStatisticReadOnlyRespository>();
+            services.AddTransient<IFilmStatisticReadOnlyRespository, FilmStatisticReadOnlyRespository>();
+
 
             return services;
         }

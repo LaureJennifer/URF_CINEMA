@@ -12,6 +12,7 @@ namespace BaseSolution.Application.DataTransferObjects.Ticket
     {
         public Guid Id { get; set; }
         public Guid BillId { get; set; }
+        public string DepartmentName { get; set; }
         public string FilmName { get; set; }
         public string SeatCode { get; set; }
         public string RoomCode { get; set; }
@@ -20,6 +21,7 @@ namespace BaseSolution.Application.DataTransferObjects.Ticket
         public DateTimeOffset ShowTime { get; set; }
         public string Code { get; set; }
         public EntityStatus Status { get; set; }
+        public DateTimeOffset CreatedTime { get; set; }
 
     }
 }

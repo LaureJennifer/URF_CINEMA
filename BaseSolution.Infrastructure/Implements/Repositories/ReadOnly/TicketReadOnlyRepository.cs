@@ -24,11 +24,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
     public class TicketReadOnlyRepository : ITicketReadOnlyRepository
     {
         private readonly AppReadOnlyDbContext _appReadOnlyDbContext;
+        private readonly AppReadWriteDbContext _appReadWriteDbContext;
         private readonly IMapper _mapper;
         private readonly ILocalizationService _localizationService;
-        public TicketReadOnlyRepository(AppReadOnlyDbContext appReadOnlyDbContext, IMapper mapper, ILocalizationService localizationService)
+        public TicketReadOnlyRepository(AppReadOnlyDbContext appReadOnlyDbContext, AppReadWriteDbContext appReadWriteDbContext, IMapper mapper, ILocalizationService localizationService)
         {
             _appReadOnlyDbContext = appReadOnlyDbContext;
+            _appReadWriteDbContext = appReadWriteDbContext;
             _mapper = mapper;
             _localizationService = localizationService;
         }
@@ -73,6 +75,18 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     tickets = tickets.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
                 }
                 var result = await tickets.Where(x => x.Status != EntityStatus.InActive).PaginateAsync(request, cancellationToken);
+                foreach (var ticket in tickets)
+                {
+                    var createTime = ticket.CreatedTime;
+
+                    // Find bill to map TicketQuantity and TotalPrice then update database
+                    var ticketEntity_ = _appReadWriteDbContext.TicketEntities.FirstOrDefault(c => c.Id == ticket.Id);
+                    ticketEntity_!.CreatedTime = createTime;
+
+                    _appReadWriteDbContext.TicketEntities.Update(ticketEntity_);
+
+                }
+                await _appReadWriteDbContext.SaveChangesAsync();
 
                 return RequestResult<PaginationResponse<TicketDto>>.Succeed(new PaginationResponse<TicketDto>
                 {
