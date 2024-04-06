@@ -18,7 +18,6 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.HasOne(x => x.RoomLayoutEntity).WithMany(x => x.Seats).HasForeignKey(x => x.RoomLayoutId).IsRequired();
             builder.Property(x => x.Code).IsRequired();
-            builder.Property(x => x.Type).IsUnicode(true);
         }
     }
 }
