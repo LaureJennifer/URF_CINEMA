@@ -11,36 +11,44 @@
 @using System.Data;
 @using System.IO;
 @using OfficeOpenXml
-<MudPaper>
-    <MudText Typo="Typo.h5" Align="Align.Center">Front of cinema</MudText>
-    <MudGrid>
-        <MudItem xs="2" md="2"></MudItem>
-        <MudItem xs="8" md="8">
-        @foreach (DataRow row in dt.Rows)
-        {
-        <MudStack Row="true" AlignItems="AlignItems.Center" Class="ml-7 mb-2">
-                @foreach (DataColumn col in dt.Columns)
+@if (_roomLayoutDtoId != Guid.Empty)
+{
+    <MudPaper>
+        <MudText Typo="Typo.h5" Align="Align.Center">Front of cinema</MudText>
+        <MudGrid>
+            <MudItem xs="2" md="2"></MudItem>
+            <MudItem xs="8" md="8">
+                @foreach (DataRow row in dt.Rows)
                 {
-                    var cellValue = row[col.ColumnName]?.ToString();
-                    if (!string.IsNullOrEmpty(cellValue))
-                    {
-                        <MudItem xs="3" lg="3" md="3">
-                            <MudButton OnClick="()=>ChangeStatus()" Variant="Variant.Filled" Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@cellValue</MudButton>
-                            </MudItem>
-                    }
-                    else
-                    {
-                        <MudItem xs="3" lg="3" md="3">
-                            <MudButton Style="width:auto;visibility:hidden;" Square="true" Class="mt-5">@cellValue</MudButton>
-                            </MudItem>
-                    }
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="ml-7 mb-2">
+                        @foreach (DataColumn col in dt.Columns)
+                        {
+                            var cellValue = row[col.ColumnName]?.ToString();
+                            if (!string.IsNullOrEmpty(cellValue))
+                            {
+                                <MudItem xs="3" lg="3" md="3">
+                                    <MudButton OnClick="()=>ChangeStatus()" Variant="Variant.Filled" Style="width:auto;text-align:center;" Square="true" Class="pa-1 mt-5">@cellValue</MudButton>
+                                    </MudItem>
+                            }
+                            else
+                            {
+                                <MudItem xs="3" lg="3" md="3">
+                                    <MudButton Style="width:auto;visibility:hidden;" Square="true" Class="mt-5">@cellValue</MudButton>
+                                    </MudItem>
+                            }
+                        }
+                    </MudStack>
                 }
-            </MudStack>
-        }
-        </MudItem>
-        <MudItem xs="2" md="2"></MudItem>
-    </MudGrid>
-</MudPaper>
+            </MudItem>
+            <MudItem xs="2" md="2"></MudItem>
+        </MudGrid>
+    </MudPaper>
+
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
 
 @code {
     [Inject] IRoomRepo _roomRepo { get; set; }

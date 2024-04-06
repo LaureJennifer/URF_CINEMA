@@ -1,4 +1,4 @@
-﻿@using System.Text.RegularExpressions
+﻿    @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Film.Request
@@ -32,7 +32,7 @@
                 <MudTextField @bind-Value="_filmDto.Genres" Label="Thể loại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudDatePicker @bind-date="_filmDto.ReleaseDate" Label="Ngày khởi chiếu*" />
+                <MudDatePicker @bind-date="_releaseDate" Label="Ngày khởi chiếu*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_filmDto.Duration" Placeholder="phút" Label="Thời lượng*" />
@@ -112,8 +112,9 @@
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
     ImageHandle imageHandle = new();
+    DateTime? _releaseDate { get; set; }
 
-
+   
     private async Task UploadFiles(IBrowserFile file)
     {
         imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
@@ -143,8 +144,9 @@
         obj.PosterURL = posterUrl;
         obj.TrailerURL = trailerUrl;
         obj.Genres = _filmDto.Genres;
-        obj.Duration= _filmDto.Duration;
-        obj.ReleaseDate = _filmDto.ReleaseDate;
+        obj.Duration= _filmDto.Duration;    
+        DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
+        obj.ReleaseDate = releaseDATE;
         obj.Script = _filmDto.Script;
         obj.AgeRating = _filmDto.AgeRating;
 
