@@ -13,8 +13,9 @@ namespace BaseSolution.Domain.Entities
         public Guid Id { get; set; }
         public Guid RoomLayoutId { get; set; }
         public string Code {  get; set; }
-        public string SeatPosition { get; set; }
-        public string Type { get; set; }
+        public string Row { get; set; }
+        public int Column { get; set; }
+        public EntityTypeSeat Type { get; set; }
         public double Price { get; set; }  
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public RoomLayoutEntity RoomLayoutEntity { get; set; }
