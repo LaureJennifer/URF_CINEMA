@@ -1,13 +1,18 @@
-﻿using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
+﻿using BaseSolution.Application.DataTransferObjects.Account.Request;
+using BaseSolution.Application.Interfaces.Repositories;
+using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Database.AppDbContext;
+using BaseSolution.Infrastructure.Implements.Repositories;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using static BaseSolution.Application.DataTransferObjects.Account.Request.LoginInputRequest;
 
 namespace BaseSolution.Infrastructure.Extensions
 {
@@ -94,6 +99,18 @@ namespace BaseSolution.Infrastructure.Extensions
 
             services.AddTransient<IBillStatisticReadOnlyRespository, BillStatisticReadOnlyRespository>();
             services.AddTransient<ITicketStatisticReadOnlyRespository, TicketStatisticReadOnlyRespository>();
+
+            services.AddScoped<IValidator<LoginInputRequest>, LoginValication>();
+
+            services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
+            services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
+
+            services.AddTransient<ICreateRangeRoomLayoutReadWriteRepository, CreateRangeRoomLayoutReadWriteRepository>();
+            services.AddTransient<ICreateRoomLayoutReadOnlyRepository, CreateRoomLayoutReadOnlyRepository>();
+
+            services.AddTransient<ICreateRangeSeatReadWriteRepository, CreateRangeSeatReadWriteRepository>();
+            services.AddTransient<ICreateSeatReadOnlyRepository, CreateSeatReadOnlyRepository>();
+            //services.AddSingleton<IVnPayService, VnPayService>();
 
             return services;
         }
