@@ -102,14 +102,6 @@ namespace BaseSolution.Infrastructure.Extensions
 
             services.AddScoped<IValidator<LoginInputRequest>, LoginValication>();
 
-            services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
-            services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
-
-            services.AddTransient<ICreateRangeRoomLayoutReadWriteRepository, CreateRangeRoomLayoutReadWriteRepository>();
-            services.AddTransient<ICreateRoomLayoutReadOnlyRepository, CreateRoomLayoutReadOnlyRepository>();
-
-            services.AddTransient<ICreateRangeSeatReadWriteRepository, CreateRangeSeatReadWriteRepository>();
-            services.AddTransient<ICreateSeatReadOnlyRepository, CreateSeatReadOnlyRepository>();
             //services.AddSingleton<IVnPayService, VnPayService>();
 
             return services;
