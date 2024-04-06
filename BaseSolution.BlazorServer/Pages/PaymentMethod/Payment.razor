@@ -10,8 +10,9 @@
 @using BaseSolution.BlazorServer.Data.Extensions
 @using MudBlazor
 @using System.Globalization
-@inject NavigationManager manager;
+
 @inject IDialogService DialogService
+@inject NavigationManager _navigationManager
 
 <MudAppBar Style="background-color:burlywood" Fixed="false" Elevation="0">
     <MudLink Href="/room"><MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Color="Color.Inherit" Edge="Edge.Start" /></MudLink>
@@ -56,12 +57,16 @@
                     <MudGrid>
                         <MudItem xs="12" md="12" lg="12" Style="color:#180F20;">
                             <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
-                                <MudRadioGroup T="string" @bind-Value="@SelectedOption">
+                                <MudSelect T="string" @bind-Value="@SelectedOption">
                                     @foreach(var item in _lst)
                                     {
-                                        <MudRadio T="string" Style="color:#180F20;">@item.Name</MudRadio>
+                                        <MudSelectItem T="string" Style="color:#180F20;">@item.Name</MudSelectItem>
                                     }
-                                </MudRadioGroup>
+                                </MudSelect>
+                                @if(SelectedOption.Equals("Tiền mặt"))
+                                {
+                                    
+                                }
                             </MudField>
                         </MudItem>
                     </MudGrid>
@@ -101,7 +106,7 @@
                                     <MudButton Style="color:white">Quay lại</MudButton>
                                 </MudItem>
                                 <MudItem xs="3" lg="3" md="3">
-                                    <MudButton Style="color:white">Tiếp tục</MudButton>
+                                    <MudButton OnClick="()=>Pay()" Style="color:white">Tiếp tục</MudButton>
                                 </MudItem>
                                 <MudItem xs="2" lg="2" md="2"></MudItem>
                             </MudGrid>
@@ -133,6 +138,7 @@
         new PaymentMethodDto(){Name="VNPay"},
         new PaymentMethodDto(){Name="AiPay"},
         new PaymentMethodDto(){Name="BMPay"},
+        new PaymentMethodDto(){Name="Tiền mặt"},
     };
     FilmDto _filmDto = new()
     {
@@ -162,5 +168,9 @@
     {
         Code="A1"
     };
-
+    private void Pay()
+    {
+        // Chuyển hướng đến trang đặt vé với thông tin phim
+        _navigationManager.NavigateTo($"/pay/method");
+    }
 }

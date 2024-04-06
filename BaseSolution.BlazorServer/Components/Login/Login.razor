@@ -12,8 +12,8 @@
 </MudTabs>
             <MudForm >
             <MudTextField   T="string" Label="Tài khoản"/>
-            <MudTextField  T="string" Label="Mật khẩu"/> 
-                <MudGrid Class="mt-3">
+            <MudTextField T="string" Label="Mật khẩu" AdornmentIcon="@PasswordInputIcon"/>
+            <MudGrid Class="mt-3">
                     <MudItem xs="8">
                         <MudText @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"> Quên mật khẩu ? </MudText>
                     </MudItem>
@@ -33,6 +33,9 @@
 </MudDialog>
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
