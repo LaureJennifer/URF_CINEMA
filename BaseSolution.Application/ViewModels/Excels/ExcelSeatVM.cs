@@ -1,4 +1,5 @@
 ﻿using BaseSolution.Domain.Entities;
+using BaseSolution.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +12,17 @@ namespace BaseSolution.Application.ViewModels.Excels
     public class ExcelSeatVM
     {
         public string Code { get; set; }
-        public string SeatPosition { get; set; }
-        public string Type { get; set; }
+        public string Row { get; set; }
+        public int SeatColumn { get; set; }
+        public EntityTypeSeat Type { get; set; }
         public double Price { get; set; }
         public SeatEntity ConvertToEntity()
         {
             return new SeatEntity()
             {
                 Code = Code,
-                SeatPosition = SeatPosition,
+                Row = Row,
+                SeatColumn = SeatColumn,
                 Type = Type,
                 Price = Price
             };

@@ -12,7 +12,7 @@ namespace BaseSolution.Application.DataTransferObjects.Seat.Request
     {
         public string? RoomLayoutName { get; set; }
         public string? Code { get; set; }
-        public string? Type { get; set; }
+        public EntityTypeSeat? Type { get; set; }
         public double? Price { get; set; }
     }
 }
