@@ -91,7 +91,8 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 // Update value to existed Seat
                 seat_!.Code = string.IsNullOrWhiteSpace(entity.Code) ? seat_.Code : entity.Code;
                 seat_.RoomLayoutId = entity.RoomLayoutId;
-                seat_.SeatPosition = entity.SeatPosition;
+                seat_.SeatColumn = entity.SeatColumn;
+                seat_.Row = entity.Row;
                 seat_.Type = entity.Type;
                 seat_.Price = entity.Price;
                 seat_.Status = entity.Status;

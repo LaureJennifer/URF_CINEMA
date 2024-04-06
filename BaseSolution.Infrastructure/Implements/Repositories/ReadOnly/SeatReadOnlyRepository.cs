@@ -67,9 +67,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     seats = seats.Where(x => x.Code.ToLower().Contains(request.Code.ToLower()));
                 }
-                if (!string.IsNullOrWhiteSpace(request.Type))
+                if (request.Type!=null)
                 {
-                    seats = seats.Where(x => x.Type.ToLower().Contains(request.Type.ToLower()));
+                    seats = seats.Where(x => x.Type==request.Type);
                 }
                 if (request.Price != null)
                 {
