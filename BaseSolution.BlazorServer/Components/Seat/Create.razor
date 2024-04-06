@@ -6,6 +6,7 @@
 @using BaseSolution.BlazorServer.Data.ValueObjects.Common
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Enums
+@using MudBlazor
 @using static MudBlazor.CategoryTypes
 
 @inject IDialogService DialogService
@@ -28,7 +29,7 @@
                 <MudTextField @bind-Value="_seatDto.Code" Label="Mã ghế*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.SeatPosition" Label="Vị trí*" />
+                <MudTextField @bind-Value="_seatDto.Row" Label="Vị trí*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_seatDto.Type" Label="Loại*" />
@@ -76,7 +77,8 @@
     {
         obj.RoomLayoutId = _seatDto.RoomLayoutId;
         obj.Code = _seatDto.Code;
-        obj.SeatPosition = _seatDto.SeatPosition;
+        obj.Row = _seatDto.Row;
+        obj.SeatColumn = _seatDto.SeatColumn;
         obj.Type = _seatDto.Type;
         obj.Price = _seatDto.Price;
         obj.Status = _seatDto.Status;
