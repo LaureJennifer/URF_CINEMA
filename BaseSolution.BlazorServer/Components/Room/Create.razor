@@ -1,7 +1,11 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.Room.Request
+@using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.Application.DataTransferObjects.RoomLayout.Request
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
@@ -15,28 +19,55 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.Code" Label="Mã phòng*" />
+                <MudTextField @bind-Value="_roomDto.Code" Placeholder="Mã phòng*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.ScreenSize" Label="Kích thước màn hình*" />
+                <MudTextField @bind-Value="_roomDto.ScreenSize" Placeholder="Kích thước màn hình*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.Capacity" Label="Sức chứa*" />
+                <MudTextField @bind-Value="_roomDto.Capacity" Placeholder="Sức chứa*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.SoundSystem" Label="Âm thanh*" />
+                <MudTextField @bind-Value="_roomDto.SoundSystem" Placeholder="Âm thanh*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.DepartmentName" Label="Tên rạp*" />
+                @if (_lstDepartment != null)
+                {
+                    <MudSelect T="string" Placeholder="Tên rạp*" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedDepartmentId" For="@(() => _selectedDepartmentId)" Class="mb-2">
+                        @foreach (var item in _lstDepartment)
+                        {
+                            <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.DepartmentAddress" Label="Địa chỉ*" />
+                @if (_lstRoomlayout != null)
+                {
+                    <MudSelect T="string" Placeholder="Tên bố cục phòng*" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedRoomlayoutId" For="@(() => _selectedRoomlayoutId)" Class="mb-2">
+                        @foreach (var item in _lstRoomlayout)
+                        {
+                            <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="EntityStatus" Placeholder="Trạng thái*" AnchorOrigin="Origin.BottomCenter" @bind-Value="_roomDto.Status" For="@(() => _roomDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
             </MudItem>
         </MudGrid>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -45,27 +76,41 @@
     [Inject]
     public IRoomRepo _roomRepo { get; set; }
 
+    [Inject]
+    public IDepartmentRepo _departmentRepo{ get; set; }
+    [Inject]
+    public IRoomLayoutRepo _roomlayoutRepo{ get; set; }
+
     public RoomDto _roomDto = new();
     private List<RoomDto> _lstRoom { get; set; }
+    public List<DepartmentDto> _lstDepartment{ get; set; }
+    public List<RoomLayoutDto> _lstRoomlayout { get; set; }
 
     public RoomCreateRequest obj = new();
     public ViewRoomWithPaginationRequest room_ = new();
+    public ViewDepartmentWithPaginationRequest department_ = new();
+
+    private string _selectedDepartmentId { get; set; }
+    private string _selectedRoomlayoutId{ get; set; }
+
 
     private async Task OnButtonClicked()
     {
-        obj.Code = _roomDto.Code;
-        obj.Capacity = _roomDto.Capacity;
-        obj.SoundSystem = _roomDto.SoundSystem;
-        obj.ScreenSize = _roomDto.ScreenSize;
-        obj.Status = _roomDto.Status;
         obj.DepartmentId = _roomDto.DepartmentId;
         obj.RoomLayoutId = _roomDto.RoomLayoutId;
+        obj.Code = _roomDto.Code;
+        obj.ScreenSize = _roomDto.ScreenSize;
+        obj.Capacity = _roomDto.Capacity;
+        obj.SoundSystem = _roomDto.SoundSystem;
+        obj.Status = _roomDto.Status;
         bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc thêm mới?",
      yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
         {
+            obj.DepartmentId = Guid.Parse(_selectedDepartmentId);
+            obj.RoomLayoutId = Guid.Parse(_selectedRoomlayoutId);
             var result = await _roomRepo.AddAsync(obj);
             if (result == true)
             {
@@ -97,6 +142,11 @@
         {
             _lstRoom = result.Data.Data.ToList();
         }
+        var result1 = await _departmentRepo.GetAllActive(department_);
+        _lstDepartment = result1.Data.Data.ToList();
+
+        var result2 = await _roomlayoutRepo.GetAllActive();
+        _lstRoomlayout = result2.Data.Data.ToList();
     }
 
 

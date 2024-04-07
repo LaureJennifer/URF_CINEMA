@@ -14,37 +14,37 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Code" Label="Mã phim*" />
+                <MudTextField @bind-Value="_filmDto.Code" Placeholder="Mã phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Title" Label="Tên phim*" />
+                <MudTextField @bind-Value="_filmDto.Title" Placeholder="Tên phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.DirectedBy" Label="Đạo diễn*" />
+                <MudTextField @bind-Value="_filmDto.DirectedBy" Placeholder="Đạo diễn*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Actor" Label="Diễn viên*" />
+                <MudTextField @bind-Value="_filmDto.Actor" Placeholder="Diễn viên*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Language" Label="Ngôn ngữ*" />
+                <MudTextField @bind-Value="_filmDto.Language" Placeholder="Ngôn ngữ*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Genres" Label="Thể loại*" />
+                <MudTextField @bind-Value="_filmDto.Genres" Placeholder="Thể loại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.ReleaseDate" Placeholder="dd/MM/yyyy" Label="Ngày khởi chiếu*" />
+                <MudTextField @bind-Value="_filmDto.ReleaseDate" Label="dd/MM/yyyy" Placeholder="Ngày khởi chiếu*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Duration" Placeholder="phút" Label="Thời lượng*" />
+                <MudTextField @bind-Value="_filmDto.Duration" Label="phút" Placeholder="Thời lượng*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Script" Label="Định dạng phim*" />
+                <MudTextField @bind-Value="_filmDto.Script" Placeholder="Định dạng phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.AgeRating" Label="Độ tuổi*" />
+                <MudTextField @bind-Value="_filmDto.AgeRating" Placeholder="Độ tuổi*" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_filmDto.Status" For="@(() => _filmDto.Status)">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_filmDto.Status" For="@(() => _filmDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -59,7 +59,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                        <MudButton HtmlTag="Placeholder" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -74,7 +74,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadPosterFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh Bìa</MudButton>
+                        <MudButton HtmlTag="Placeholder" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh Bìa</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -89,7 +89,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadTrailerFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Trailer</MudButton>
+                        <MudButton HtmlTag="Placeholder" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Trailer</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -103,7 +103,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
     </DialogActions>
 </MudDialog>
 

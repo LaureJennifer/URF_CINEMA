@@ -101,7 +101,7 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<ITicketStatisticReadOnlyRespository, TicketStatisticReadOnlyRespository>();
             services.AddTransient<IFilmStatisticReadOnlyRespository, FilmStatisticReadOnlyRespository>();
 
-
+            services.AddTransient<EntityStatusExtensions>();
             services.AddScoped<IValidator<LoginInputRequest>, LoginValication>();
 
             //services.AddSingleton<IVnPayService, VnPayService>();

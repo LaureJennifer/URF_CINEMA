@@ -1,26 +1,44 @@
-﻿@using BaseSolution.BlazorServer.Components.Login
+﻿@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.BlazorServer.Components.Login
 @using BaseSolution.BlazorServer.Pages.Film
+@using BaseSolution.Domain.Enums
+@using BaseSolution.Infrastructure.Extensions
 ﻿@using BlazorServer.Data.Extensions;
 @inherits LayoutComponentBase
 @inject IDialogService DialogService
+@inject NavigationManager _navigationManager;
+@inject EntityStatusExtensions _entityStatusExtensions
+
 <MudThemeProvider/>
 <MudDialogProvider />
 <MudSnackbarProvider />
+
 <MudLayout>
-    <MudAppBar Style="background-color:#261D30">
-        <MudText Color="Color.Success" Typo="Typo.h6">URF CENIMAS</MudText>
-        <MudSpacer />
-        <MudLink Href="" Typo="Typo.h6">Phim</MudLink>
-        <MudSpacer />
-        <MudLink Href="/FilmSchedule" Typo="Typo.h6">Lịch chiếu</MudLink>
-        <MudSpacer />
-        <MudSelect Dense="true" T="string" Label="Rạp URF" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" AdornmentColor="Color.Success" Style="background-color:#EEEEEE; border-radius:8px;">
-            <MudSelectItem Value="@("URF Cầu Giấy")" />
-            <MudSelectItem Value="@("URF Thanh Xuân")" />
-            <MudSelectItem Value="@("URF Hoàng Mai")" />
-        </MudSelect>
-        <MudSpacer />
-        <MudIconButton @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Color="Color.Info"></MudIconButton>
+    <MudAppBar Style="background-color:#03213B">
+        <MudGrid>
+            <MudItem xs="5" md="5" lg="5">
+                <MudText Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">URF CENIMAS</MudText>
+            </MudItem>
+            <MudItem xs="1" md="1" lg="1">
+                <MudText @onclick="()=>Onclick()" Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">Phim</MudText>
+            </MudItem>
+            <MudItem xs="3" md="3" lg="3">
+                <MudText Class="mt-4" Href="/FilmSchedule" Typo="Typo.h6">Lịch chiếu</MudText>
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2" >
+                <MudSelect Class="mb-4" Dense="true" T="string" @bind-Value="SelectedValue" Label="Rạp URF" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.VN)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.CN)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.CA)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.DE)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.SG)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.US)" />
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="1" md="1" lg="1">
+                <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
+            </MudItem>
+        </MudGrid>
     </MudAppBar>
     <MudMainContent>
         @Body
@@ -32,6 +50,13 @@
 </MudLayout>
 
 @code {
+
+    public string SelectedValue{ get; set; }
+    private void Onclick()
+    {
+        // Chuyển hướng đến trang đặt vé với thông tin phim
+        _navigationManager.NavigateTo($"/");
+    }
     bool _drawerOpen = true;
 
     void DrawerToggle()

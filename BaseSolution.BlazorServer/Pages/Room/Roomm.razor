@@ -4,7 +4,7 @@
 @using BaseSolution.Application.DataTransferObjects.RoomLayout
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Repositories.Interfaces
-<MudPaper Square="true" Class="mt-3 mud-theme-dark">
+<MudPaper Square="true" Class="mt-3" Style="background-color:#04192E;">
 
     <MudContainer Fixed="true">
         <MudCarousel Style="height:200px;color:#F5F5F5;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
@@ -32,6 +32,58 @@
             </ChildContent>
         </MudCarousel>
         <MudGrid>
+            <MudItem xs="2" md="2" lg="2">
+                <MudGrid>
+                    <MudItem xs="3" md="3">
+                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
+                    </MudItem>
+                    <MudItem xs="6" md="6">
+                        <MudText Style="color:#F2FFFF">Ghế thường trống</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2">
+                <MudGrid>
+                    <MudItem xs="3" md="3">
+                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
+                    </MudItem>
+                    <MudItem xs="6" md="6">
+                        <MudText Style="color:#F2FFFF">Ghế Vip Trống</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2">
+                <MudGrid>
+                    <MudItem xs="3" md="3">
+                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
+                    </MudItem>
+                    <MudItem xs="6" md="6">
+                        <MudText Style="color:#F2FFFF">Ghế trống</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2">
+                <MudGrid>
+                    <MudItem xs="3" md="3">
+                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
+                    </MudItem>
+                    <MudItem xs="6" md="6">
+                        <MudText Style="color:#F2FFFF">Ghế trống</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2">
+                <MudGrid>
+                    <MudItem xs="3" md="3">
+                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
+                    </MudItem>
+                    <MudItem xs="6" md="6">
+                        <MudText Style="color:#F2FFFF">Ghế trống</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+        <MudGrid>
             <MudItem xs="10" md="10">
                 @if (_roomLayoutDtoId != Guid.Empty)
                 {
@@ -39,16 +91,7 @@
                 }
                 
             </MudItem>
-            
-            <MudItem xs="2" md="2" Class="mt-6">
-                <MudPaper Class="pa-2 mud-success">Your seat</MudPaper>
-                <MudPaper Class="pa-2 mud-Lighten5 mt-3">Available</MudPaper>
-                <MudPaper Class="pa-2 mud-warning mt-3">Reserved</MudPaper>
-                <MudPaper Class="pa-2 mud-error mt-3">Sold out</MudPaper>
-                <MudPaper Class="pa-2 mud-primary mt-3">Be Kept</MudPaper>
-                <MudPaper Class="pa-2 mud-info mt-6">Couple</MudPaper>
-                <MudPaper Style="background-color:#FFEE58" Class="pa-2 mt-3">Standard</MudPaper>
-                <MudPaper Style="background-color:#A1887F" Class="pa-2 mt-3">Vip</MudPaper>
+            <MudItem xs="2" md="2">
                 <MudLink Href="/Payment"> <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Procced</MudButton> </MudText></MudLink>
             </MudItem>
         </MudGrid>

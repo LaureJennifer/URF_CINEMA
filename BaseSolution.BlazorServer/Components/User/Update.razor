@@ -14,21 +14,21 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_userDto.Name" Label="Họ và tên*" />
+                <MudTextField @bind-Value="_userDto.Name" Placeholder="Họ và tên*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_userDto.PhoneNumber" Label="Số điện thoại*" />
+                <MudTextField @bind-Value="_userDto.PhoneNumber" Placeholder="Số điện thoại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_userDto.Email" Label="Email*" />
+                <MudTextField @bind-Value="_userDto.Email" Placeholder="Email*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_userDto.PassWord" Label="Mật khẩu*" />
+                <MudTextField @bind-Value="_userDto.PassWord" Placeholder="Mật khẩu*" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 @if(_lstRole != null)
                 {
-                    <MudSelect T="string" Label="Chức vụ" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedRoleId" For="@(() => _selectedRoleId)" Class="mb-2">
+                    <MudSelect T="string" Placeholder="Chức vụ*" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedRoleId" For="@(() => _selectedRoleId)" Class="mb-2">
                         @foreach (var item in _lstRole)
                         {
                             <MudSelectItem Value="@item.Id.ToString()">@item.Code</MudSelectItem>
@@ -37,7 +37,7 @@
                 }  
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_userDto.Status" For="@(() => _userDto.Status)">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_userDto.Status" For="@(() => _userDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -66,7 +66,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
     </DialogActions>
 </MudDialog>
 @code {

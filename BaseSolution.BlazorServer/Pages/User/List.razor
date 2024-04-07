@@ -8,70 +8,71 @@
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
 
-<MudGrid>
-    <MudItem xs="8">
-        <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
-    </MudItem>
-    <MudItem xs="4">
-        <MudTextField @bind-Value="searchString" Label="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
-    </MudItem>
-</MudGrid>
-<MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
-@if (_lst == null)
-{
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-}
-else
-{
-    if (_lst.Count == 0)
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
+    <MudGrid>
+        <MudItem xs="8">
+            <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+        </MudItem>
+        <MudItem xs="4">
+            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"/>
+        </MudItem>
+    </MudGrid>
+    @if (_lst == null)
     {
-        <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     }
     else
     {
-        <MudTable Items="@_lst" Class="mt-4" Hover="true" FixedHeader="true">
-            <HeaderContent>
-                <MudTh>STT</MudTh>
-                <MudTh>Mã nhân viên</MudTh>
-                <MudTh>Ảnh</MudTh>
-                <MudTh>Họ và tên</MudTh>
-                <MudTh>Số điện thoại</MudTh>
-                <MudTh>Email</MudTh>
-                <MudTh>Hành động</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
-                <MudTd DataLabel="Mã nhân viên">@context.Code</MudTd>
-                <MudTd DataLabel="Ảnh">
-                    <MudAvatar>
-                        <MudImage Src="@context.UrlImage"></MudImage>
-                    </MudAvatar>
-                </MudTd>
-                <MudTd DataLabel="Họ và Tên">@context.Name</MudTd>
-                <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
-                <MudTd DataLabel="Email">@context.Email</MudTd>
-                <MudTd>
-                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
-                </MudTd>
-            </RowTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-        </MudTable>
-        <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
-            <MessageContent>
-                Xác nhận xóa nhân viên!
-            </MessageContent>
-            <YesButton>
-                <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
-                    Xác nhận
-                </MudButton>
-            </YesButton>
-        </MudMessageBox>
+        if (_lst.Count == 0)
+        {
+            <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+        }
+        else
+        {
+            <MudTable Items="@_lst" Class="mt-4" Hover="true" FixedHeader="true">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Mã nhân viên</MudTh>
+                    <MudTh>Ảnh</MudTh>
+                    <MudTh>Họ và tên</MudTh>
+                    <MudTh>Số điện thoại</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Hành động</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
+                    <MudTd DataLabel="Mã nhân viên">@context.Code</MudTd>
+                    <MudTd DataLabel="Ảnh">
+                        <MudAvatar>
+                            <MudImage Src="@context.UrlImage"></MudImage>
+                        </MudAvatar>
+                    </MudTd>
+                    <MudTd DataLabel="Họ và Tên">@context.Name</MudTd>
+                    <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
+                    <MudTd DataLabel="Email">@context.Email</MudTd>
+                    <MudTd>
+                        <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>   
+        }
     }
-}
-
+</MudPaper>
+<MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+    <MessageContent>
+        Xác nhận xóa nhân viên!
+    </MessageContent>
+    <YesButton>
+        <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+            Xác nhận
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
 @code {
     [Inject]
     public IUserRepo _userRepo{ get; set; }

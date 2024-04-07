@@ -11,8 +11,9 @@
 @using MudBlazor
 @using System.Globalization
 
-@inject IDialogService DialogService
-@inject NavigationManager _navigationManager
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigationManager;
 
 <MudAppBar Style="background-color:burlywood" Fixed="false" Elevation="0">
     <MudLink Href="/room"><MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Color="Color.Inherit" Edge="Edge.Start" /></MudLink>
@@ -55,21 +56,21 @@
                         <MudDivider />
                     </MudGrid>
                     <MudGrid>
-                        <MudItem xs="12" md="12" lg="12" Style="color:#180F20;">
+                        <MudItem xs="12" md="12" lg="12" Style="color:darkred;">
                             <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
                                 <MudSelect T="string" @bind-Value="@SelectedOption">
                                     @foreach(var item in _lst)
                                     {
-                                        <MudSelectItem T="string" Style="color:#180F20;">@item.Name</MudSelectItem>
+                                        <MudSelectItem T="string" Style="color:darkred;">@item.Name</MudSelectItem>
                                     }
                                 </MudSelect>
-                                @if(SelectedOption.Equals("Tiền mặt"))
-                                {
-                                    
-                                }
                             </MudField>
                         </MudItem>
                     </MudGrid>
+                    @if(SelectedOption.Equals("Tiền mặt"))
+                    {
+                       @*  <paymethod/> *@
+                    }
                 </MudItem>
                 <MudItem xs="4" md="4" lg="4">
                     <MudPaper Style="background-color:#2E0E4A">
@@ -119,6 +120,12 @@
     </MudContainer>
 </MudPaper>
 @code {
+    // private async Task CreateDialog()
+    // {
+    //     DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+    //     _dialogService.Show<paymethod>("Số tiền cần thanh toán", closeOnEscapeKey);
+    // }
     public string SelectedOption { get; set; }
 
     private void Reset()

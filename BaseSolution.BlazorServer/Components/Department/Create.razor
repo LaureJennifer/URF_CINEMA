@@ -8,38 +8,37 @@
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
+@using BaseSolution.Infrastructure.Extensions
 @using static MudBlazor.CategoryTypes
 
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigate;
+@inject EntityStatusExtensions _entityStatusExtensions
 
 <MudDialog>
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Code" Label="Mã khách hàng*" />
+                <MudTextField @bind-Value="_departmentDto.Code" Placeholder="Mã rạp*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Name" Label="Họ và tên*" />
+                <MudTextField @bind-Value="_departmentDto.Name" Placeholder="Tên rạp*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Label="Số điện thoại*" />
+                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Placeholder="Số điện thoại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Email" Label="Email*" />
+                <MudTextField @bind-Value="_departmentDto.Email" Placeholder="Email*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Address" Label="Địa chỉ*" />
+                <MudTextField @bind-Value="_departmentDto.AddressCodeFormat" Placeholder="Định dạng*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.AddressCode" Label="Tên tài khoản*" />
+                <MudTextField @bind-Value="_departmentDto.Address" Placeholder="Địa chỉ*" />
             </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.AddressCodeFormat" Label="Mật khẩu*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_departmentDto.Status" For="@(() => _departmentDto.Status)">
+            <MudItem xs="12" sm="12" md="12">
+                <MudSelect T="EntityStatus" Label="Trạng thái*" Variant="Variant.Text" @bind-Value="_departmentDto.Status" For="@(() => _departmentDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -49,15 +48,102 @@
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
             </MudItem>
+            <MudItem xs="4" sm="4" md="4">
+                <MudSelect T="EntityCountry" @bind-Value="selectedCountry" Label="Quốc gia*" OnValueChanged="OnCountryChanged">
+                    @foreach (var country in Enum.GetValues(typeof(EntityCountry)).Cast<EntityCountry>())
+                    {
+                        <MudSelectItem T="EntityCountry" Value="country">@_entityStatusExtensions.ConvertForCountry(country)</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="4" sm="4" md="4">
+                <MudSelect T="EntityCity" @bind-Value="selectedCity" Label="Thành phố*" AdornmentColor="Color.Inherit" onvalueChanged="OnCityChanged">
+                    @foreach (var city in GetCitiesInSelectedCountry())
+                    {
+                        <MudSelectItem T="EntityCity" Value="city">@_entityStatusExtensions.ConvertForCity(city)</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="4" sm="4" md="4">
+                <MudSelect T="EntityDistrict" @bind-Value="selectedDistrict" Label="Quận*">
+                    @foreach (var district in GetDistrictsInSelectedCity())
+                    {
+                        <MudSelectItem T="EntityDistrict" Value="district">@_entityStatusExtensions.ConvertForDistrict(district)</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
         </MudGrid>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
+    private EntityCountry selectedCountry;
+    private EntityCity selectedCity;
+    private EntityDistrict selectedDistrict;
+
+    private List<EntityCity> GetCitiesInSelectedCountry()
+    {
+        // Trả về danh sách thành phố dựa trên quốc gia được chọn
+        switch (selectedCountry)
+        {
+            case EntityCountry.VN:
+                return new List<EntityCity> { EntityCity.HN, EntityCity.HCM, EntityCity.DN, EntityCity.TH,EntityCity.BK,EntityCity.BN,EntityCity.QN,EntityCity.QB,EntityCity.BD,EntityCity.LC,EntityCity.SL,EntityCity.CB,EntityCity.HG };
+            case EntityCountry.CN:
+                return new List<EntityCity> { EntityCity.SH, EntityCity.SZ };
+            case EntityCountry.US:
+                return new List<EntityCity> { EntityCity.NY };
+            case EntityCountry.CA:
+                return new List<EntityCity> { EntityCity.VC };
+            case EntityCountry.DE:
+                return new List<EntityCity> { EntityCity.BL };
+            case EntityCountry.SG:
+                return new List<EntityCity> { EntityCity.SG };
+            // Thêm các trường hợp cho các quốc gia khác
+            default:
+                return new List<EntityCity>();
+        }
+    }
+
+    private List<EntityDistrict> GetDistrictsInSelectedCity()
+    {
+        // Trả về danh sách quận dựa trên thành phố được chọn
+        switch (selectedCity)
+        {
+            case EntityCity.HN:
+                return new List<EntityDistrict> { EntityDistrict.CG, EntityDistrict.NTL, EntityDistrict.HBT, EntityDistrict.BD };
+            case EntityCity.HCM:
+                return new List<EntityDistrict> { EntityDistrict.TP, EntityDistrict.BT };
+            case EntityCity.DN:
+                return new List<EntityDistrict> { EntityDistrict.CL, EntityDistrict.TK};
+            case EntityCity.BD:
+                return new List<EntityDistrict> { EntityDistrict.TU, EntityDistrict.TA };
+            case EntityCity.NY:
+                return new List<EntityDistrict> { EntityDistrict.MHT};
+            case EntityCity.SG:
+                return new List<EntityDistrict> { };
+            // Thêm các trường hợp cho các thành phố khác
+            default:
+                return new List<EntityDistrict>();
+        }
+    }
+
+    private void OnCountryChanged(EntityCountry country)
+    {
+        // Đặt lại thành phố và quận khi quốc gia thay đổi
+        selectedCity = EntityCity.HN;
+        selectedDistrict = EntityDistrict.TK;
+    }
+
+    private void OnCityChanged(EntityCity city)
+    {
+        // Đặt lại quận khi thành phố thay đổi
+        selectedDistrict = EntityDistrict.TK;
+    }
+
     [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
     [Inject]
@@ -69,12 +155,23 @@
     public DepartmentCreateRequest obj = new();
     public ViewDepartmentWithPaginationRequest department_ = new();
 
+    public string AddressCode{ get; set; }
+    public void SetAddressCode()
+    {
+        string countryCodeString = ((int)selectedCountry).ToString("D2");
+        string cityCodeString = ((int)selectedCity).ToString("D2");
+        string districtCodeString = ((int)selectedDistrict).ToString("D2");
+
+        AddressCode = $"{countryCodeString}-{cityCodeString}-{districtCodeString}";
+    }
+
 
     private async Task OnButtonClicked()
     {
+        SetAddressCode();
         obj.Code = _departmentDto.Code;
         obj.Name = _departmentDto.Name;
-        obj.AddressCode = _departmentDto.AddressCode;
+        obj.AddressCode = AddressCode;
         obj.PhoneNumber = _departmentDto.PhoneNumber;
         obj.Email = _departmentDto.Email;
         obj.Address = _departmentDto.Address;
