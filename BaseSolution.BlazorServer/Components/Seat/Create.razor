@@ -17,7 +17,7 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudSelect T="string" Label="Tên bố cục phòng*" Class="mb-2"
+                <MudSelect T="string" Placeholder="Tên bố cục phòng*" Class="mb-2"
                            AnchorOrigin="Origin.BottomCenter" @bind-Value="@_roomLayoutId" For="@(() => _roomLayoutId)">
                     @foreach (var item in _lstRoomLayout)
                     {
@@ -26,19 +26,19 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Code" Label="Mã ghế*" />
+                <MudTextField @bind-Value="_seatDto.Code" Placeholder="Mã ghế*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Row" Label="Vị trí*" />
+                <MudTextField @bind-Value="_seatDto.Row" Placeholder="Vị trí*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Type" Label="Loại*" />
+                <MudTextField @bind-Value="_seatDto.Type" Placeholder="Loại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Price" Label="Giá*" />
+                <MudTextField @bind-Value="_seatDto.Price" Placeholder="Giá*" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_seatDto.Status" For="@(() => _seatDto.Status)">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_seatDto.Status" For="@(() => _seatDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -52,7 +52,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
     </DialogActions>
 </MudDialog>
 

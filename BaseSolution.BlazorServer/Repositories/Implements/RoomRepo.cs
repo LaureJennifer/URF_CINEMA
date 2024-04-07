@@ -5,6 +5,7 @@ using BaseSolution.Application.DataTransferObjects.Ticket.Request;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 
@@ -46,7 +47,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
-        public async Task<RequestResult<RoomDeleteRequest>> RemoveAsync(RoomDeleteRequest request)
+        public async Task<RequestResult<RoomDeleteRequest>> RemoveAsync([FromQuery]RoomDeleteRequest request)
         {
             var query = $"?Id={request.Id}&DeletedBy={request.DeletedBy}&DeletedDate={request.DeletedTime}";
             var client = new HttpClient

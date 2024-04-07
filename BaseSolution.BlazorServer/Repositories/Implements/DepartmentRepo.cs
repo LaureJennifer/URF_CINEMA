@@ -1,4 +1,5 @@
-﻿using BaseSolution.Application.DataTransferObjects.Department;
+﻿using BaseSolution.Application.DataTransferObjects.Bill;
+using BaseSolution.Application.DataTransferObjects.Department;
 using BaseSolution.Application.DataTransferObjects.Department.Request;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
@@ -8,9 +9,14 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
 {
     public class DepartmentRepo : IDepartmentRepo
     {
-        public Task<bool> AddAsync(DepartmentCreateRequest request)
+        public async Task<bool> AddAsync(DepartmentCreateRequest request)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.PostAsJsonAsync("api/Departments", request); ;
+            return obj.IsSuccessStatusCode;
         }
 
         public async Task<DepartmentListWithPaginationViewModel> GetAllActive(ViewDepartmentWithPaginationRequest request)
@@ -25,9 +31,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return new();
         }
 
-        public Task<RequestResult<DepartmentDto>> GetByIdAsync(Guid id)
+        public async Task<RequestResult<DepartmentDto>> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<RequestResult<DepartmentDto>>($"api/Departments/{id}");
+            if (obj != null)
+                return obj;
+            return null;
         }
 
         public Task<RequestResult<DepartmentDeleteRequest>> RemoveAsync(DepartmentDeleteRequest request)
@@ -35,9 +48,14 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             throw new NotImplementedException();
         }
 
-        public Task<bool> UpdateAsync(DepartmentUpdateRequest request)
+        public async Task<bool> UpdateAsync(DepartmentUpdateRequest request)
         {
-            throw new NotImplementedException();
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.PutAsJsonAsync("api/Departments", request); ;
+            return obj.IsSuccessStatusCode;
         }
     }
 }

@@ -14,7 +14,7 @@
 
             @foreach (var date in _showDateList)
             {
-                <MudTabPanel OnClick="()=>SelectDate(date)" Text="@date.ToString("dd/MM")" Style="background-color:#180F20;">
+                <MudTabPanel OnClick="()=>SelectDate(date)" Text="@date.ToString("dd/MM")" Style="background-color:#014380;color:#F2FFFF;">
 
                 </MudTabPanel>
 
@@ -24,18 +24,25 @@
         <iframe width="560" height="700" src="@_selectedFilm.TrailerURL"
                 title="YouTube video player" frameborder="0" allow="accelerometer; auto play; Fullscreen; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerpolicy="strict-origin-when-cross-origin"></iframe>
-        <MudGrid Style="background-color:#180F20" Class="border border-solid mud-border-info pa-4">
+        <MudGrid Style="background-color:#04192E" Class="border border-solid mud-border-info pa-4">
             <MudItem xs="12" lg="12" md="12">
-                <MudText Typo="Typo.h5" Color="Color.Error">Tên phim : @_selectedFilm.Title</MudText>
-                    <MudText Typo="Typo.caption" Style="color:white"><MudIcon Icon="@Icons.Material.TwoTone.Discount" Style="color:white" />@_selectedFilm.Genres</MudText>
-                    <MudText Typo="Typo.subtitle1" Style="color:white">@_selectedFilm.Duration phút</MudText>
-                <MudText Typo="Typo.h6" Style="color:white">@_selectedFilm.Script</MudText>
+                <MudText Class="mb-4" Typo="Typo.h3" Style="color:#014380">Tên phim : @_selectedFilm.Title</MudText>
+                <MudGrid>
+                    <MudItem><MudIcon Icon="@Icons.Material.TwoTone.Discount" Style="color:white" /></MudItem>
+                    <MudItem xs="2" md="2" lg="2"><MudText Typo="Typo.body2" Style="color:white">Thể loại: @_selectedFilm.Genres</MudText></MudItem>
+                </MudGrid>
+                <MudText Typo="Typo.body1" Style="color:white">Thời lượng: @_selectedFilm.Duration phút</MudText>
+                <MudText Typo="Typo.body1" Style="color:white">Phụ đề: @_selectedFilm.Script</MudText>
+                <MudText Typo="Typo.body1" Style="color:white">Đạo diễn: @_selectedFilm.DirectedBy</MudText>
+                <MudText Typo="Typo.body1" Style="color:white">Diễn viên: @_selectedFilm.Actor</MudText>
+                <MudText Typo="Typo.body1" Style="color:white">Độ tuổi: @_selectedFilm.AgeRating</MudText>
+                <MudText Typo="Typo.body1" Style="color:white">Nội dung: @_selectedFilm.Description</MudText>
 
                     @foreach (var time in _selectedFilm.ShowTimes)
                 {
                     if (time.Date == _showDateSelected)
                     {
-                        <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Class="mx-2" Style="background-color:white">@time.ToString("hh : mm")</MudButton>
+                        <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Class="mx-2 mt-5" Style="background-color:#CCA943">@time.ToString("hh : mm")</MudButton>
                     }
                 }
             </MudItem>

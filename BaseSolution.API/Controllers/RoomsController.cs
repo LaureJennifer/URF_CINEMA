@@ -70,7 +70,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteRoom(RoomDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteRoom([FromQuery] RoomDeleteRequest request, CancellationToken cancellationToken)
         {
             RoomDeleteViewModel vm = new(_roomReadWriteRepository, _localizationService, _mapper);
 

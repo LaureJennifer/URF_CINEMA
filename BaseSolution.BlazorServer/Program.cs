@@ -25,7 +25,11 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddMudServices();
+            builder.Services.AddAutoMapper();
+            builder.Services.AddLocalization(builder.Configuration);
 
+            builder.Services.AddEventBus(builder.Configuration);
+            builder.Services.AddFluentValidation();
             builder.Services.AddTransient<IBookingRepo, BookingRepo>();
             builder.Services.AddTransient<IFilmRepo, FilmRepo>();
             builder.Services.AddTransient<IUserRepo, UserRepo>();

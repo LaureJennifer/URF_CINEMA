@@ -16,7 +16,7 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudSelect T="string" Label="Khách hàng" Class="mb-2"
+                <MudSelect T="string" Placeholder="Khách hàng" Class="mb-2"
                            AnchorOrigin="Origin.BottomCenter" @bind-Value="@customerId" For="@(() => customerId)">
                     @foreach (var item in _lstCustomer)
                     {
@@ -25,19 +25,19 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_billDto.TotalPrice" Label="Tổng tiền*" />
+                <MudTextField @bind-Value="_billDto.TotalPrice" Placeholder="Tổng tiền*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_billDto.TicketQuantity" Label="Tổng vé*" />
+                <MudTextField @bind-Value="_billDto.TicketQuantity" Placeholder="Tổng vé*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudDatePicker Label="Ngày tạo*" DateFormat="dd/MM/yyyy" @bind-Value="_billDto.CreatedTime" />
+                <MudDatePicker Placeholder="Ngày tạo*" DateFormat="dd/MM/yyyy" @bind-Value="_billDto.CreatedTime" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_billDto.Description" Label="Mô tả*" />
+                <MudTextField @bind-Value="_billDto.Description" Placeholder="Mô tả*" />
             </MudItem>
             <MudItem xs="12" sm="6">
-                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_billDto.Status" For="@(() => _billDto.Status)">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_billDto.Status" For="@(() => _billDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -51,7 +51,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
     </DialogActions>
 </MudDialog>
 

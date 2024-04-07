@@ -21,12 +21,12 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_ticketDto.Code" Label="Mã vé*" />
+                <MudTextField @bind-Value="_ticketDto.Code" Placeholder="Mã vé*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 @if (_lstFilm != null)
                 {
-                    <MudSelect T="string" Label="Tên phim" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedFilmId" For="@(() => _selectedFilmId)" Class="mb-2">
+                    <MudSelect T="string" Placeholder="Tên phim*" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedFilmId" For="@(() => _selectedFilmId)" Class="mb-2">
                         @foreach (var item in _lstFilm)
                         {
                             <MudSelectItem Value="@item.Id.ToString()">@item.Title</MudSelectItem>
@@ -35,19 +35,19 @@
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_ticketDto.SeatCode" Label="Ghế ngồi*" />
+                <MudTextField @bind-Value="_ticketDto.SeatCode" Placeholder="Ghế ngồi*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_ticketDto.RoomCode" Label="Phòng*" />
+                <MudTextField @bind-Value="_ticketDto.RoomCode" Placeholder="Phòng*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmscheduleDto.ShowTime" Label="Giờ chiếu*" />
+                <MudTextField @bind-Value="_filmscheduleDto.ShowTime" Placeholder="Giờ chiếu*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmscheduleDto.ShowDate" Label="Ngày chiếu*" />
+                <MudTextField @bind-Value="_filmscheduleDto.ShowDate" Placeholder="Ngày chiếu*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudSelect T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_ticketDto.Status" For="@(() => _ticketDto.Status)">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_ticketDto.Status" For="@(() => _ticketDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -60,7 +60,7 @@
             <MudItem xs="6" sm="6" md="6">
                 @if (_lstBill != null)
                 {
-                    <MudSelect T="string" Label="Hóa đơn" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedBillId" For="@(() => _selectedBillId)" Class="mb-2">
+                    <MudSelect T="string" Label="Hóa đơn*" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_selectedBillId" For="@(() => _selectedBillId)" Class="mb-2">
                         @foreach (var item in _lstBill)
                         {
                             <MudSelectItem Value="@item.Id.ToString()">@item.TotalPrice</MudSelectItem>
@@ -72,7 +72,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
     </DialogActions>
 </MudDialog>
 

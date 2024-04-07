@@ -22,7 +22,7 @@
                 <MudTextField @bind-Value="_customerDto.Name" Label="Họ và tên*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_customerDto.DateOfBirth" Label="Ngày sinh*" />
+                <MudDatePicker @bind-Date="_dateOfBirth" Label="Ngày sinh*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_customerDto.PhoneNumber" Label="Số điện thoại*" />
@@ -71,6 +71,8 @@
     public CustomerDto _customerDto = new();
     private List<CustomerDto> _lstCustomer { get; set; }
 
+    DateTime? _dateOfBirth { get; set; }
+
     public CustomerCreateRequest obj = new();
     public ViewCustomerWithPaginationRequest customer_ = new();
 
@@ -90,7 +92,8 @@
     {
         obj.Code = _customerDto.Code;
         obj.Name = _customerDto.Name;
-        obj.DateOfBirth = _customerDto.DateOfBirth;
+        DateTimeOffset dateOfBirth = new DateTimeOffset((DateTime)_dateOfBirth!, TimeSpan.Zero);
+        obj.DateOfBirth = dateOfBirth;
         obj.PhoneNumber = _customerDto.PhoneNumber;
         obj.Email = _customerDto.Email;
         obj.Address = _customerDto.Address;
