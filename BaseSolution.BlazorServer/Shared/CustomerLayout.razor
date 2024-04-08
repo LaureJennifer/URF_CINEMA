@@ -1,6 +1,8 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.BlazorServer.Components.Login
 @using BaseSolution.BlazorServer.Pages.Film
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Enums
 @using BaseSolution.Infrastructure.Extensions
 ﻿@using BlazorServer.Data.Extensions;
@@ -22,10 +24,10 @@
             <MudItem xs="1" md="1" lg="1">
                 <MudText @onclick="()=>Onclick()" Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">Phim</MudText>
             </MudItem>
-            <MudItem xs="3" md="3" lg="3">
+            <MudItem xs="1" md="1" lg="1">
                 <MudText Class="mt-4" Href="/FilmSchedule" Typo="Typo.h6">Lịch chiếu</MudText>
             </MudItem>
-            <MudItem xs="2" md="2" lg="2" >
+             <MudItem xs="2" md="2" lg="2" >
                 <MudSelect Class="mb-4" Dense="true" T="string" @bind-Value="SelectedValue" Label="Rạp URF" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.VN)" />
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.CN)" />
@@ -35,6 +37,33 @@
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.US)" />
                 </MudSelect>
             </MudItem>
+            
+                    <MudItem xs="2" md="2" lg="2">
+                <MudSelect T="string" Label="Rạp" Value="SelectedDepartment" ValueChanged="()=>OnSelectedDepartment(SelectedDepartment)">
+            @if(_lstDepartment == null)
+            {
+                
+            }
+            else
+            {
+                @if (_lstDepartment.Count<=0)
+                {
+                    <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+                }
+                else
+                {
+                            @foreach (var department in _lstDepartment)
+                            {
+                                <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                            }
+                           
+                        
+                }
+                
+            }
+                </MudSelect>
+            </MudItem>
+            
             <MudItem xs="1" md="1" lg="1">
                 <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
             </MudItem>
@@ -50,8 +79,29 @@
 </MudLayout>
 
 @code {
-
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+    List<DepartmentDto>? _lstDepartment { get; set; }
+    ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
+    public string SelectedDepartment { get; set; }
     public string SelectedValue{ get; set; }
+    private async Task LoadDepartmentForSelect()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data.Data.ToList();
+        
+    }
+    void OnSelectedDepartment(string idDepartment)
+    {
+        SelectedDepartment = idDepartment;
+        _navigationManager.NavigateTo($"/home/{idDepartment}");
+
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await LoadDepartmentForSelect();
+        SelectedDepartment = _lstDepartment.First().Id.ToString();
+    }
+
     private void Onclick()
     {
         // Chuyển hướng đến trang đặt vé với thông tin phim

@@ -11,7 +11,13 @@ namespace BaseSolution.Application.DataTransferObjects.Booking.Request
 {
     public class ViewBookingWithPaginationRequest : PaginationRequest
     {
+        public Guid? Id { get; set; }
         public Guid? SeatId { get; set; }
         public Guid? RoomId { get; set; }
+        public Guid? DepartmentId { get; set; }
+        public EntityStatus? SeatStatus { get; set; }
+
+        public DateTimeOffset? ExpiredTime { get; set; }
+        public DateTimeOffset? CreatedTime { get; set; }
     }
 }

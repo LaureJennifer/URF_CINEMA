@@ -127,7 +127,7 @@
     string? selectedMonth { get; set; } = "1";
     string? selectedQuarter { get; set; }
     FilmStatisticRequest _filmStatisticRequest = new() { PageSize = 100 };
-    ViewDepartmentWithPaginationRequest _request = new();
+    ViewDepartmentWithPaginationRequest _request = new(){PageSize = 50};
     List<FilmStatistic> filmStatistics = new();
     bool _showListMonth { get; set; } = true;
     bool _showListQuarter { get; set; } = false;

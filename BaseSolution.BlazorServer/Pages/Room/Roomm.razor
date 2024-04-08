@@ -1,10 +1,10 @@
-﻿@page "/room/{filmId}/{filmScheduleId}/{roomId}"
+﻿@page "/room/{departmentId}/{filmId}/{filmScheduleId}/{roomId}"
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.RoomLayout
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Repositories.Interfaces
-<MudPaper Square="true" Class="mt-3" Style="background-color:#04192E;">
+<MudPaper Square="true" Style="background-color:#04192E">
 
     <MudContainer Fixed="true">
         <MudCarousel Style="height:200px;color:#F5F5F5;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
@@ -15,7 +15,7 @@
                 }
                 else
                 {
-                    if (_lst == null)
+                    if (_lst.Count<=0)
                     {
                         <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
                     }
@@ -32,67 +32,12 @@
             </ChildContent>
         </MudCarousel>
         <MudGrid>
-            <MudItem xs="2" md="2" lg="2">
-                <MudGrid>
-                    <MudItem xs="3" md="3">
-                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
-                    </MudItem>
-                    <MudItem xs="6" md="6">
-                        <MudText Style="color:#F2FFFF">Ghế thường trống</MudText>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="2" md="2" lg="2">
-                <MudGrid>
-                    <MudItem xs="3" md="3">
-                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
-                    </MudItem>
-                    <MudItem xs="6" md="6">
-                        <MudText Style="color:#F2FFFF">Ghế Vip Trống</MudText>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="2" md="2" lg="2">
-                <MudGrid>
-                    <MudItem xs="3" md="3">
-                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
-                    </MudItem>
-                    <MudItem xs="6" md="6">
-                        <MudText Style="color:#F2FFFF">Ghế trống</MudText>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="2" md="2" lg="2">
-                <MudGrid>
-                    <MudItem xs="3" md="3">
-                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
-                    </MudItem>
-                    <MudItem xs="6" md="6">
-                        <MudText Style="color:#F2FFFF">Ghế trống</MudText>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="2" md="2" lg="2">
-                <MudGrid>
-                    <MudItem xs="3" md="3">
-                        <MudIcon Icon="@Icons.Material.Filled.Chair" Style="color:#F2FFFF"></MudIcon>
-                    </MudItem>
-                    <MudItem xs="6" md="6">
-                        <MudText Style="color:#F2FFFF">Ghế trống</MudText>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-        </MudGrid>
-        <MudGrid>
-            <MudItem xs="10" md="10">
+            <MudItem xs="12" md="12">
                 @if (_roomLayoutDtoId != Guid.Empty)
                 {
-                    <RoomLayout filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId"></RoomLayout>
+                    <TestFE filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId" createdTime="@createdTime" departmentId="@departmentId"></TestFE>
                 }
-                
-            </MudItem>
-            <MudItem xs="2" md="2">
-                <MudLink Href="/Payment"> <MudText Align="Align.Center"> <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mt-3">Procced</MudButton> </MudText></MudLink>
+
             </MudItem>
         </MudGrid>
 
@@ -104,11 +49,13 @@
     [Parameter]
     public string filmScheduleId { get; set; }
     [Parameter]
-    public string roomId { get; set; }    
-     
+    public string roomId { get; set; }
+    [Parameter] 
+    public string departmentId { get; set; }
     [Inject] IRoomRepo _roomRepo { get; set; }
     [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
     [Inject] IFilmRepo _filmRepo { get; set; }
+    DateTimeOffset createdTime = DateTimeOffset.UtcNow;
     List<FilmDto>? _lst { get; set; }
     Guid _roomLayoutDtoId { get; set; }
     RoomLayoutDto _roomLayoutDto { get; set; }

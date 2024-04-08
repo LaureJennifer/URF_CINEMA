@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using BaseSolution.Application.DataTransferObjects.Bill;
+using BaseSolution.Application.DataTransferObjects.Booking;
 using BaseSolution.Application.DataTransferObjects.Booking.Request;
 using BaseSolution.Application.DataTransferObjects.Seat.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Application.ValueObjects.Pagination;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
 using BaseSolution.Infrastructure.ViewModels.Booking;
@@ -36,8 +39,13 @@ namespace BaseSolution.API.Controllers
             BookingListWithPaginationViewModel vm = new(_bookingReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(request, cancellationToken);
-
-            return Ok(vm);
+            if (vm.Success)
+            {
+                PaginationResponse<BookingDto> result = (PaginationResponse<BookingDto>)vm.Data;
+                return Ok(result);
+            }
+            return BadRequest(vm);
+            
         }
 
         [HttpGet("{id}")]

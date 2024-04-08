@@ -13,9 +13,11 @@ namespace BaseSolution.Domain.Entities
         public Guid Id { get; set; }
         public Guid SeatId { get; set; }
         public Guid RoomId { get; set; }
+        public Guid DepartmentId { get; set; }
         public DateTimeOffset ExpiredTime { get; set; }
         public EntityStatus SeatStatus { get; set; } = EntityStatus.Active;
         public RoomEntity RoomEntity { get; set; }
+        public DepartmentEntity DepartmentEntity { get; set; }
         public SeatEntity SeatEntity { get; set; }
     }
 }
