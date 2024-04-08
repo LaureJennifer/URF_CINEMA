@@ -4,6 +4,7 @@ using BaseSolution.Application.DataTransferObjects.Department.Request;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
+using BaseSolution.BlazorServer.ValueObjects.Pagination;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
@@ -25,7 +26,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<DepartmentListWithPaginationViewModel>($"api/Departments");
+            var obj = await client.GetFromJsonAsync<DepartmentListWithPaginationViewModel>($"api/Departments?PageSize={request.PageSize}");
             if (obj != null)
                 return obj;
             return new();

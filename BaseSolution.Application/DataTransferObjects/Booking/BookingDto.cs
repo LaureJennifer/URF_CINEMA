@@ -13,6 +13,7 @@ namespace BaseSolution.Application.DataTransferObjects.Booking
         public Guid Id { get; set; }
         public Guid SeatId { get; set; }
         public Guid RoomId { get; set; }
+        public Guid DepartmentId { get; set; }
         public string SeatCode { get; set; }
         public string RoomCode { get; set; }
         public EntityStatus SeatStatus { get; set; }

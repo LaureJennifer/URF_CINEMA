@@ -29,8 +29,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         public async Task<RequestResult<Guid>> AddBookingAsync(BookingEntity entity, CancellationToken cancellationToken)
         {
             try
-            {
-                entity.CreatedTime = DateTimeOffset.UtcNow;
+            {               
 
                 await _dbContext.BookingEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync();
@@ -55,7 +54,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 var booking_ = await GetBookingByIdAsync(request.Id, cancellationToken);
-
+                
                 booking_!.Deleted = true;
                 booking_.DeletedTime = DateTimeOffset.UtcNow;
                 booking_.SeatStatus = EntityStatus.Deleted;
@@ -82,10 +81,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 var booking_ = await GetBookingByIdAsync(entity.Id, cancellationToken);
-
-                booking_!.SeatStatus = entity.SeatStatus == EntityStatus.Available ? EntityStatus.Available : entity.SeatStatus;
-                booking_.SeatId = entity.SeatId;
-                booking_.RoomId = entity.RoomId;
+                booking_!.SeatStatus = entity.SeatStatus;
                 booking_.ModifiedBy = entity.ModifiedBy;
                 booking_.ModifiedTime = DateTimeOffset.UtcNow;
 

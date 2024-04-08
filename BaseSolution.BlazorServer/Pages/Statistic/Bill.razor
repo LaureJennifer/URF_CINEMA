@@ -74,7 +74,7 @@
     [Inject] private IBillStatisticRepo _billStatisticRepo { get; set; }
     [Inject] public IDepartmentRepo _departmentRepo { get; set; }
     BillStatisticRequest _billStatisticRequest = new(){PageSize = 100};
-    ViewDepartmentWithPaginationRequest _request = new();
+    ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
     List<DepartmentDto>? _lstDepartment { get; set; }
     List<BillStatisticForQuarterDto> _billStatisticForQuarterDtos { get; set; }
     List<BillStatisticForMonthDto> _billStatisticForMonthDtos { get; set; }

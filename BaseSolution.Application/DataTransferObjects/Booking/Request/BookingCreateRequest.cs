@@ -12,9 +12,11 @@ namespace BaseSolution.Application.DataTransferObjects.Booking.Request
     {
         public Guid SeatId { get; set; }
         public Guid RoomId { get; set; }
+        public Guid DepartmentId { get; set; }
         public EntityStatus SeatStatus { get; set; }
 
         public DateTimeOffset ExpiredTime { get; set; }
+        public DateTimeOffset CreatedTime { get; set; }
 
     }
 }

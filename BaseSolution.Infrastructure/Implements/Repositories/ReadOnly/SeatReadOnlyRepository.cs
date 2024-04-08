@@ -59,6 +59,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var seats = _appReadOnlyDbContext.SeatEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<SeatDto>(_mapper.ConfigurationProvider);
+                if (request.RoomLayoutId != null)
+                {
+                    seats = seats.Where(x => x.RoomLayoutId == request.RoomLayoutId);
+                }
                 if (!string.IsNullOrWhiteSpace(request.RoomLayoutName))
                 {
                     seats = seats.Where(x => x.RoomLayoutName.ToLower().Contains(request.RoomLayoutName.ToLower()));

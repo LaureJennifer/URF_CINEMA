@@ -58,7 +58,13 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var bookings = _appReadOnlyDbContext.BookingEntities.AsNoTracking().ProjectTo<BookingDto>(_mapper.ConfigurationProvider);
-
+                if (request.Id!=null){
+                    bookings = bookings.Where(x => x.Id == request.Id);
+                }
+                if (request.DepartmentId != null)
+                {
+                    bookings = bookings.Where(x => x.DepartmentId == request.DepartmentId);
+                }
                 if (request.SeatId!=null)
                 {
                     bookings = bookings.Where(x => x.SeatId==request.SeatId);
@@ -67,7 +73,19 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     bookings = bookings.Where(x => x.RoomId == request.RoomId);
                 }
-                var result = await bookings.Where(x => x.SeatStatus != EntityStatus.InActive).PaginateAsync(request, cancellationToken);
+                if (request.ExpiredTime != null)
+                {
+                    bookings = bookings.Where(x => x.ExpiredTime == request.ExpiredTime);
+                }
+                if (request.CreatedTime != null)
+                {
+                    bookings = bookings.Where(x => x.CreatedTime == request.CreatedTime);
+                }
+                if (request.SeatStatus != null)
+                {
+                    bookings = bookings.Where(x => x.SeatStatus == request.SeatStatus);
+                }
+                var result = await bookings.Where(x => x.SeatStatus != EntityStatus.Deleted).PaginateAsync(request, cancellationToken);
                 
                 return RequestResult<PaginationResponse<BookingDto>>.Succeed(new PaginationResponse<BookingDto>
                 {

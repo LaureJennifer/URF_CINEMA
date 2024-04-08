@@ -2,6 +2,7 @@
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.Application.DataTransferObjects.Department;
 using BaseSolution.BlazorServer.Data;
+using BaseSolution.BlazorServer.ValueObjects.Pagination;
 
 namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {
@@ -12,5 +13,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> UpdateAsync(DepartmentUpdateRequest request);
         public Task<RequestResult<DepartmentDto>> GetByIdAsync(Guid id);
         public Task<DepartmentListWithPaginationViewModel> GetAllActive(ViewDepartmentWithPaginationRequest request);
+       
     }
 }

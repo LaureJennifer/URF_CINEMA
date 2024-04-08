@@ -59,8 +59,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         public async Task<RequestResult<PaginationResponse<DepartmentFilmDto>>> GetDepartmentFilmWithPaginationByAdminAsync(ViewDepartmentFilmWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try
-            {
+            {              
                 var departmentFilms = _appReadOnlyDbContext.DepartmentFilmEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<DepartmentFilmDto>(_mapper.ConfigurationProvider);
+                if (request.DepartmentId != null)
+                {
+                    departmentFilms = departmentFilms.Where(x => x.DepartmentId==request.DepartmentId);
+                }
                 if (!string.IsNullOrWhiteSpace(request.DepartmentName))
                 {
                     departmentFilms = departmentFilms.Where(x => x.DepartmentName.ToLower().Contains(request.DepartmentName.ToLower()));
