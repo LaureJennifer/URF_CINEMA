@@ -42,7 +42,7 @@
                 {
                     if (time.Date == _showDateSelected)
                     {
-                        <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Class="mx-2 mt-5" Style="background-color:#CCA943">@time.ToString("hh : mm")</MudButton>
+                        <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Class="mx-2 mt-5" Style="background-color:#CCA943">@time.ToString("hh : mm tt")</MudButton>
                     }
                 }
             </MudItem>
@@ -83,6 +83,7 @@ else
     private async Task GetFilmById(string filmId)
     {
         var result = await _bookingRepo.GetByIdAsync(filmId);
+
         _selectedFilm = result.Data!;
         _showTimeSelected = _selectedFilm.ShowTimes[0];
         _showDateList = _selectedFilm.ShowDates.Select(d => d.Date).Distinct().ToList();

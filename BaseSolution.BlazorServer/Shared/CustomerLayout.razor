@@ -60,15 +60,7 @@
                 }
                 
             }
-                            @foreach (var department in _lstDepartment)
-                            {
-                                <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
-                            }
-
-
-                        }
-
-                    }
+                          
                 </MudSelect>
                 
                       
@@ -120,8 +112,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadDepartmentForSelect();
+
         await LoadData();
-        await LoadDepartmentForSelect();     
     }
 
     async Task LoadData()
