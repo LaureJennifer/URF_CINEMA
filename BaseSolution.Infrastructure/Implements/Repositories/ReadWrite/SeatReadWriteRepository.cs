@@ -50,6 +50,34 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
+        public async Task<RequestResult<List<Guid>>> CreateRangeSeatAsync(List<SeatEntity> requests, CancellationToken cancellationToken)
+        {
+            try
+            {
+                foreach(var entity in requests)
+                {
+                    entity.CreatedTime = DateTimeOffset.UtcNow;                   
+                }
+
+                await _dbContext.SeatEntities.AddRangeAsync(requests);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<List<Guid>>.Succeed(requests.Select(x=>x.Id).ToList());
+            }
+            catch (Exception e)
+            {
+                return RequestResult<List<Guid>>.Fail(_localizationService["Unable to create range seat"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "range seat"
+                    }
+                });
+            }
+        
+        }
+
         public async Task<RequestResult<int>> DeleteSeatAsync(SeatDeleteRequest request, CancellationToken cancellationToken)
         {
             try
@@ -63,7 +91,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 seat_.DeletedTime = DateTimeOffset.UtcNow;
                 seat_.Status = EntityStatus.Deleted;
 
-                _dbContext.SeatEntities.Update(seat_);
+            _dbContext.SeatEntities.Update(seat_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return RequestResult<int>.Succeed(1);
@@ -122,5 +150,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
 
             return seat_;
         }
+        
     }
 }

@@ -10,8 +10,5 @@ namespace BaseSolution.Application.DataTransferObjects.RoomLayout.Request
     public class RoomLayoutCreateRequest
     {
         public string Name { get; set; }
-
-        public DateTimeOffset CreatedTime { get; set; }
-        public EntityStatus Status { get; set; }
     }
 }

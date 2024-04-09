@@ -4,8 +4,10 @@ using BaseSolution.Application.DataTransferObjects.RoomLayout.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.ViewModels.Film;
 using BaseSolution.Infrastructure.ViewModels.RoomLayout;
+using BaseSolution.Infrastructure.ViewModels.Seat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,6 +47,15 @@ namespace BaseSolution.API.Controllers
             RoomLayoutViewModel vm = new(_roomLayoutReadOnlyRepository, _localizationService);
 
             await vm.HandleAsync(id, cancellationToken);
+
+            return Ok(vm);
+        }
+        [HttpGet("name")]
+        public async Task<IActionResult> GetRoomLayoutByName(string RoomLayoutName, CancellationToken cancellationToken)
+        {
+            RoomlLayoutByNameViewModel vm = new(_roomLayoutReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(RoomLayoutName, cancellationToken);
 
             return Ok(vm);
         }

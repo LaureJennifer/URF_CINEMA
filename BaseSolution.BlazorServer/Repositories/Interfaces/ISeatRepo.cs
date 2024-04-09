@@ -12,5 +12,7 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> UpdateAsync(SeatUpdateRequest request);
         public Task<RequestResult<SeatDto>> GetByIdAsync(Guid id);
         public Task<SeatListWithPaginationViewModel> GetAllActive(ViewSeatWithPaginationRequest request);
+
+        public Task<bool> AddRangeAsync(List<SeatCreateRangeRequest> request);
     }
 }
