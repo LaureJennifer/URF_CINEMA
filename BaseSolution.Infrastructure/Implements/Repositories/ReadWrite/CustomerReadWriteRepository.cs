@@ -1,4 +1,5 @@
-﻿using BaseSolution.Application.DataTransferObjects.Customer.Request;
+﻿using BaseSolution.Application.DataTransferObjects.Account;
+using BaseSolution.Application.DataTransferObjects.Customer.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
@@ -77,6 +78,30 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToDelete + "customer"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<Guid>> RegisterCustomerAsync(CustomerEntity request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                request.CreatedTime = DateTimeOffset.UtcNow;
+
+                await _dbContext.CustomerEntities.AddAsync(request);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<Guid>.Succeed(request.Id);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<Guid>.Fail(_localizationService["Unable to register customer"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "customer"
                     }
                 });
             }
