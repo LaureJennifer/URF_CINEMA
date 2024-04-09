@@ -59,7 +59,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var rooms = _appReadOnlyDbContext.RoomEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<RoomDto>(_mapper.ConfigurationProvider);
-               
+                if (request.DepartmentId!=null)
+                {
+                    rooms = rooms.Where(x => x.DepartmentId==request.DepartmentId);
+                }
                 if (!string.IsNullOrWhiteSpace(request.RoomLayoutName))
                 {
                     rooms = rooms.Where(x => x.RoomLayoutName.ToLower().Contains(request.RoomLayoutName.ToLower()));

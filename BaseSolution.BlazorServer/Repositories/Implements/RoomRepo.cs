@@ -47,6 +47,18 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
+        public async Task<RoomListWithPaginationViewModel> GetRoomByDepartment(ViewRoomWithPaginationRequest request)
+        {
+            var client = new HttpClient 
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<RoomListWithPaginationViewModel>($"api/Rooms?DepartmentId={request.DepartmentId}&PageSize={request.PageSize}");
+            if (obj != null)
+                return obj;
+            return new();
+        }
+
         public async Task<RequestResult<RoomDeleteRequest>> RemoveAsync([FromQuery]RoomDeleteRequest request)
         {
             var query = $"?Id={request.Id}&DeletedBy={request.DeletedBy}&DeletedDate={request.DeletedTime}";

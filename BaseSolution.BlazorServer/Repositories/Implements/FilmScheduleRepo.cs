@@ -33,6 +33,18 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return new();
         }
 
+        public async Task<RequestResult<FilmScheduleDto>> GetFilmScheduleByIdAsync(Guid id)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<RequestResult<FilmScheduleDto>>($"api/FilmSchedules/{id}");
+            if (obj != null)
+                return obj;
+            return null;
+        }
+
         public async Task<RequestResult<FilmDetailDto>> GetByIdAsync(Guid id)
         {
             var client = new HttpClient
@@ -43,6 +55,18 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             if (obj != null)
                 return obj;
             return null;
+        }
+
+        public async Task<FilmDetailListWithPaginationViewModel> GetFilmScheduleByFilm(ViewFilmDetailWithPaginationRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<FilmDetailListWithPaginationViewModel>($"api/FilmDetails?FilmId={request.FilmId}&PageSize={request.PageSize}");
+            if (obj != null)
+                return obj;
+            return new();
         }
 
         public async Task<RequestResult<FilmDetailDeleteRequest>> RemoveAsync([FromQuery] FilmDetailDeleteRequest request)

@@ -13,5 +13,8 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> UpdateAsync(RoomUpdateRequest request);
         public Task<RequestResult<RoomDto>> GetByIdAsync(Guid id);
         public Task<RoomListWithPaginationViewModel> GetAllActive(ViewRoomWithPaginationRequest request);
+
+        public Task<RoomListWithPaginationViewModel> GetRoomByDepartment(ViewRoomWithPaginationRequest request);
+
     }
 }

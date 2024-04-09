@@ -1,6 +1,11 @@
 ﻿@page "/booking/{departmentId}/{filmId}"
 @using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.FilmDetail
+@using BaseSolution.Application.DataTransferObjects.FilmDetail.Request
 @using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom
+@using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request
+@using BaseSolution.Application.DataTransferObjects.Room
+@using BaseSolution.Application.DataTransferObjects.Room.Request
 @using BaseSolution.BlazorServer.Data.DataTransferObjects.Film.Request
 @using BaseSolution.BlazorServer.Data.DataTransferObjects.FilmSchedule.Request
 @using BaseSolution.BlazorServer.Repositories.Implements
@@ -38,9 +43,9 @@
                 <MudText Typo="Typo.body1" Style="color:white">Độ tuổi: @_selectedFilm.AgeRating</MudText>
                 <MudText Typo="Typo.body1" Style="color:white">Nội dung: @_selectedFilm.Description</MudText>
 
-                    @foreach (var time in _selectedFilm.ShowTimes)
+                    @foreach (var time in _showTimeList)
                 {
-                    if (time.Date == _showDateSelected)
+                    if (time.Date == _showDateSelected.Date)
                     {
                         <MudButton OnClick="()=>SelectTime(time)" Variant="Variant.Filled" Class="mx-2 mt-5" Style="background-color:#CCA943">@time.ToString("hh : mm tt")</MudButton>
                     }
@@ -62,38 +67,65 @@ else
     public string departmentId { get; set; }
     [Inject]
     IBookingRepo _bookingRepo{ get; set; }
+    [Inject] public IRoomRepo _roomRepo { get; set; }
+    [Inject] public IFilmScheduleRoomRepo _filmScheduleRoomRepo { get; set; }
+    [Inject]public IFilmDetailRepo _filmDetailRepo { get; set; }
     [Inject]
+    IRoomByFilmScheduleRepo _roomByFilmScheduleRepo{ get; set; }
     IFilmScheduleRoomRepo _filmSheduleRoomRepo { get; set; }
+
     FilmDto _selectedFilm { get; set; }
     ViewFilmScheduleWithPaginationRequest obj = new();
-    FilmScheduleRoomFindByDateTimeRequest request = new();
+    ViewFilmScheduleRoomWithPaginationRequest _viewFilmScheduleRoomWithPaginationRequest = new();
+    FilmScheduleRoomFindByDateTimeRequest _filmScheduleRoomFindByDateTimeRequest = new();
+    ViewRoomWithPaginationRequest _viewRoomWithPaginationRequest = new();
+    ViewFilmDetailWithPaginationRequest _viewFilmDetailWithPaginationRequest = new();
+    ViewRoomByFilmScheduleWithPaginationRequest _viewRoomByFilmScheduleWithPaginationRequest = new();
     List<FilmDto> _lstFilm = new();    
     DateTimeOffset _showDateSelected;
     DateTimeOffset _showTimeSelected;
     Guid _roomId;
     Guid _filmScheduleId;
-    List<DateTime> _showDateList =new();
-
-
+    List<DateTimeOffset> _showDateList = new();
+    List<DateTimeOffset> _showTimeList = new();
+    List<RoomDto> _lstRoomByDepartment { get; set; } = new();
+    List<Guid> _lstFilmScheduleIdRoom { get; set; } = new();
+    List<Guid> _lstFilmScheduleIdFilm { get; set; } = new();
+    IEnumerable<Guid> _lstSchedule { get; set; }
+    List<Guid> _lstScheduleId { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
+        await LoadRoomByDepartment(departmentId);
+
         await GetFilmById(filmId);
     }
 
     private async Task GetFilmById(string filmId)
     {
         var result = await _bookingRepo.GetByIdAsync(filmId);
+        _selectedFilm = result.Data;
+        _viewFilmDetailWithPaginationRequest.PageSize = 50;
+        _viewFilmDetailWithPaginationRequest.FilmId = Guid.Parse(filmId);
+        var result1 = await _filmDetailRepo.GetFilmScheduleByFilm(_viewFilmDetailWithPaginationRequest);
+        _lstFilmScheduleIdFilm = result1.Data.Data.Select(x => x.FilmScheduleId).ToList();
 
-        _selectedFilm = result.Data!;
-        _showTimeSelected = _selectedFilm.ShowTimes[0];
-        _showDateList = _selectedFilm.ShowDates.Select(d => d.Date).Distinct().ToList();
+        _lstSchedule = _lstFilmScheduleIdFilm.Intersect(_lstFilmScheduleIdRoom);
+        foreach (var item in _lstSchedule)
+        {
+            var rs = await _filmDetailRepo.GetFilmScheduleByIdAsync(item);
+            var x = rs.Data;
+            if (x != null)
+            {
+                _showTimeList.Add(x.ShowTime);
+                _lstScheduleId.Add(item);
+            }
+
+        }
+        _showDateList = _showTimeList.DistinctBy(x => x.Date).ToList();
+
+        _showTimeSelected = _showDateList[0];    
         _showDateSelected = _showDateList[0];
-    }
 
-    private async Task LoadData()
-    {
-        // var result = await _bookingRepo.GetAllFilmSchedule(obj);
-        // _selectedFilm = result.Data;
     }
 
     private void SelectDate(DateTimeOffset date)
@@ -104,22 +136,46 @@ else
     private void SelectTime(DateTimeOffset time)
     {
         _showTimeSelected = time;
-        NavigateToRoom();
+        var position = _showDateList.IndexOf(_showTimeSelected);
+        var IdFilmSchedule = _lstScheduleId[position];
+        NavigateToRoom(IdFilmSchedule.ToString());
     }
 
-    private async Task FindFilmScheduleRoomByDateTime()
+    private async Task FindFilmScheduleRoomByDateTime(string idFilmSchedule)
     {
+        
+        _viewRoomByFilmScheduleWithPaginationRequest.FilmScheduleId = Guid.Parse(idFilmSchedule);
+        _viewRoomByFilmScheduleWithPaginationRequest.PageSize = 50;
+        var result = await _roomByFilmScheduleRepo.GetRoomByFilmScheduleAsync(_viewRoomByFilmScheduleWithPaginationRequest);
 
-        request.ShowDate = _showDateSelected;
-        request.ShowTime = _showTimeSelected;
-        var result = await _filmSheduleRoomRepo.GetFilmScheduleRoomByShowDateTimeAsync(request);
-        _filmScheduleId = result.Data!.FilmScheduleId;
-        _roomId = result.Data.RoomId;
+        _roomId = result.Data.Data.ToList().First().RoomId;
     }
 
-    private async void NavigateToRoom()
+
+    private async Task LoadRoomByDepartment(string idDepartment)
     {
-        await FindFilmScheduleRoomByDateTime();
-        _navigationManager.NavigateTo($"/room/{departmentId}/{filmId}/{_filmScheduleId.ToString()}/{_roomId.ToString()}");
+        _viewRoomWithPaginationRequest.PageSize = 50;
+        _viewRoomWithPaginationRequest.DepartmentId = Guid.Parse(idDepartment);
+        var result = await _roomRepo.GetRoomByDepartment(_viewRoomWithPaginationRequest);
+        _lstRoomByDepartment = result.Data.Data.ToList();
+        foreach(var item in _lstRoomByDepartment)
+        {
+            await LoadFilmScheduleByRoom(item.Id.ToString());
+        }
     }
+    private async Task LoadFilmScheduleByRoom(string idRoom)
+    {
+        _viewFilmScheduleRoomWithPaginationRequest.PageSize = 50;
+        _viewFilmScheduleRoomWithPaginationRequest.RoomId = Guid.Parse(idRoom);
+        var result = await _filmScheduleRoomRepo.GetFilmScheduleRoomByRoomAsync(_viewFilmScheduleRoomWithPaginationRequest);
+        var lst = result.Data.Data.Select(x => x.FilmScheduleId).ToList();
+        _lstFilmScheduleIdRoom.AddRange(lst);
+
+    }
+    private async void NavigateToRoom(string idFilmSchedule)
+    {
+        await FindFilmScheduleRoomByDateTime(idFilmSchedule);
+        _navigationManager.NavigateTo($"/room/{departmentId}/{filmId}/{idFilmSchedule.ToString()}/{_roomId.ToString()}");
+    }
+
 }
