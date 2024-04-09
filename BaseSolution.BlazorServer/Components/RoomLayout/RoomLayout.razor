@@ -15,14 +15,14 @@
             
                 <MudText Class="mb-3">@_lstseatSelecteds.Count() Ghế</MudText>
                 <MudGrid>
-                <MudItem xs="1" md="1"></MudItem>
+                
                 @foreach (var seat in _lstseatSelecteds)
                 {
                     <MudItem>
                         <MudPaper Class="pa-1" Style="background-color:#012C57;color:#B3B07D">@seat.Code</MudPaper>
                     </MudItem>
                 }
-                <MudItem xs="1" md="1"></MudItem>
+                
                 </MudGrid>
             
                 <MudGrid>
@@ -148,7 +148,7 @@
                                                 else
                                                 {
 
-                                                    <MudButton Style="visibility:hidden;">
+                                                    <MudButton Style="visibility:hidden;" Class="mx-1">
                                                         @seat.Code
                                                     </MudButton>
                                                 }
@@ -185,7 +185,7 @@
     List<SeatDto> _lstSeat { get; set; } = new();
     List<BookingDto> _lstBooking { get; set; } = new();
     List<BookingDto> _lstBookingForCompare { get; set; } = new();
-    ViewBookingWithPaginationRequest _bookingRequest = new(){PageSize=100};
+    ViewBookingWithPaginationRequest _bookingRequest = new(){PageSize=int.MaxValue-1};
     HashSet<SeatDto> clickedSeats = new HashSet<SeatDto>();
     List<SeatDto> _lstseatSelecteds = new List<SeatDto>();
     Guid _roomLayoutDtoId { get; set; }
@@ -209,7 +209,7 @@
     async Task LoadListSeat(Guid roomlayoutId)
     {
         request.RoomLayoutId = roomlayoutId;
-        request.PageSize = 50;
+        request.PageSize = int.MaxValue - 1;
         var result = await _seatRepo.GetAllActive(request);
         _lstSeat = result.Data.Data.ToList();
     }
@@ -357,6 +357,7 @@
     {       
         _bookingRequest.RoomId = Guid.Parse(roomId);
         _bookingRequest.DepartmentId = Guid.Parse(departmentId);
+
         var result = await _bookingRepo.GetAllForCompare(_bookingRequest);
         _lstBookingForCompare = result.Data.ToList();
     }

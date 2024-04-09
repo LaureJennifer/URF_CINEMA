@@ -48,6 +48,8 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<IFilmStatisticRepo, FilmStatisticRepo>();
             builder.Services.AddTransient<IDepartmentFilmRepo, DepartmentFilmRepo>();
 
+            builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
+            builder.Services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
             builder.Services.AddHttpClient("API", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["BackEndAPIURL"]!);

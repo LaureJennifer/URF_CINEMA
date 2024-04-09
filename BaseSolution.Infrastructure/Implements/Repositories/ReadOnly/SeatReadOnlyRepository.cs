@@ -123,5 +123,31 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 });
             }
         }
+
+        public async Task<RequestResult<List<SeatDto>>> GetListSeatByIdAsync(List<Guid> listIdSeat, CancellationToken cancellationToken)
+        {
+            try
+            {
+                List<SeatDto> listSeat = new();
+                foreach (var item in listIdSeat)
+                {
+                    var seat = await _appReadOnlyDbContext.SeatEntities.AsNoTracking().Where(c => c.Id == item && !c.Deleted).ProjectTo<SeatDto>(_mapper.ConfigurationProvider)
+                   .FirstOrDefaultAsync(cancellationToken);
+                    listSeat.Add(seat);
+                }
+                return RequestResult<List<SeatDto>>.Succeed(listSeat);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<List<SeatDto>>.Fail(_localizationService["List seat is not found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "List seat"
+                    }
+                });
+            }
+        }
     }
 }

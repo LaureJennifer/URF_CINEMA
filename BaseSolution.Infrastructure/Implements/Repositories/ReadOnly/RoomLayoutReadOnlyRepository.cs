@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using BaseSolution.Application.DataTransferObjects.Film;
 using BaseSolution.Application.DataTransferObjects.RoomLayout;
 using BaseSolution.Application.DataTransferObjects.RoomLayout.Request;
+using BaseSolution.Application.DataTransferObjects.Seat;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Application.ValueObjects.Common;
@@ -85,6 +86,28 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         Error= e.Message,
                         FieldName = LocalizationString.Common.FailedToGet + "list of room layout"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<RoomLayoutDto>> GetSeatByNameAsync(string roomLayoutName, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var roomLayout = await _appReadOnlyDbContext.RoomLayoutEntities.AsNoTracking().Where(x => x.Name.ToLower() == roomLayoutName.ToLower()).ProjectTo<RoomLayoutDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<RoomLayoutDto>.Succeed(roomLayout);
+
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<RoomLayoutDto>.Fail(_localizationService["Room layout is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "Room layout"
                     }
                 });
             }
