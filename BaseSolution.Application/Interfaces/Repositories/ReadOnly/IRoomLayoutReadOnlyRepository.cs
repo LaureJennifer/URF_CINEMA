@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BaseSolution.Application.DataTransferObjects.RoomLayout;
 using BaseSolution.Application.DataTransferObjects.RoomLayout.Request;
+using BaseSolution.Application.DataTransferObjects.Seat;
 
 namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
 {
@@ -17,5 +18,8 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadOnly
         Task<RequestResult<RoomLayoutDto?>> GetRoomLayoutByIdAsync(Guid idRoomLayout, CancellationToken cancellationToken);
         Task<RequestResult<PaginationResponse<RoomLayoutDto>>> GetRoomLayoutWithPaginationByAdminAsync(
             ViewRoomLayoutWithPaginationRequest request, CancellationToken cancellationToken);
+
+        Task<RequestResult<RoomLayoutDto>> GetSeatByNameAsync(string roomLayoutName, CancellationToken cancellationToken);
+
     }
 }

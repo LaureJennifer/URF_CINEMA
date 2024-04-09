@@ -45,5 +45,17 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
                 return obj;
             return null;
         }
+
+        public async Task<RequestResult<RoomLayoutDto>> GetByNameAsync(string roomLayoutName)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<RequestResult<RoomLayoutDto>>($"api/RoomLayouts/name?RoomLayoutName={roomLayoutName}");
+            if (obj != null)
+                return obj;
+            return null;
+        }
     }
 }

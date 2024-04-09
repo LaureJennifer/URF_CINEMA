@@ -68,6 +68,15 @@ namespace BaseSolution.API.Controllers
 
             return Ok(vm);
         }
+        [HttpPost("CreateRangeSeat")]
+        public async Task<IActionResult> CreateRangeSeat([FromBody]List<SeatCreateRangeRequest> request, CancellationToken cancellationToken)
+        {
+            SeatCreateRangeViewModel vm = new(_seatReadWriteRepository, _seatReadOnlyRepository, _localizationService, _mapper);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpPut]
         public async Task<IActionResult> UpdateSeat(SeatUpdateRequest request, CancellationToken cancellationToken)

@@ -67,6 +67,9 @@
             public static string BillStatistic = "/bill-statistic";
             public static string FilmStatistic = "/film-statistic";
         }
-        
+        public class RoomLayout
+        {
+            public static string ExcelImport = "/admin-excel-import";
+        }
     }
 }

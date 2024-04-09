@@ -10,5 +10,7 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> AddAsync(RoomLayoutCreateRequest request);
         public Task<RoomLayoutListWithPaginationViewModel> GetAllActive();
         public Task<RequestResult<RoomLayoutDto>> GetByIdAsync(Guid id);
+        public Task<RequestResult<RoomLayoutDto>> GetByNameAsync(string roomLayoutName);
+
     }
 }

@@ -40,7 +40,7 @@
             </MudItem>
             
                     <MudItem xs="2" md="2" lg="2">
-                <MudSelect T="string" Label="Rạp" Value="SelectedDepartment" ValueChanged="()=>OnSelectedDepartment(SelectedDepartment)">
+                <MudSelect T="string" Label="Rạp" Value="SelectedDepartment" ValueChanged="OnSelectedDepartment">
             @if(_lstDepartment == null)
             {
                 
@@ -60,7 +60,18 @@
                 }
                 
             }
+                            @foreach (var department in _lstDepartment)
+                            {
+                                <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                            }
+
+
+                        }
+
+                    }
                 </MudSelect>
+                
+                      
             </MudItem>
             <AuthorizeView>
                 <Authorized>
@@ -99,6 +110,8 @@
     ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
     public string SelectedDepartment { get; set; }
     public string SelectedValue{ get; set; }
+    public string Search { get; set; }
+    bool _drawerOpen = true;
     private async Task LoadDepartmentForSelect()
     {
         var result = await _departmentRepo.GetAllActive(_request);
@@ -108,6 +121,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
+        await LoadDepartmentForSelect();     
     }
 
     async Task LoadData()
@@ -120,8 +134,7 @@
     void OnSelectedDepartment(string idDepartment)
     {
         SelectedDepartment = idDepartment;
-        _navigationManager.NavigateTo($"/home/{idDepartment}");
-
+        _navigationManager.NavigateTo($"/home/{idDepartment}", forceLoad: true);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -129,19 +142,21 @@
         await LoadDepartmentForSelect();
         SelectedDepartment = _lstDepartment.First().Id.ToString();
     }
+    
+
 
     private void Onclick()
     {
         // Chuyển hướng đến trang đặt vé với thông tin phim
         _navigationManager.NavigateTo($"/");
     }
-    bool _drawerOpen = true;
+    
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
-    public string Search { get; set; }
+    
     private void OpenDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
