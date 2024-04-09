@@ -2,12 +2,15 @@
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.BlazorServer.Data;
+using BaseSolution.BlazorServer.Repositories;
 using BaseSolution.BlazorServer.Repositories.Implements;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
 using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor.Services;
@@ -27,9 +30,11 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddMudServices();
             builder.Services.AddAutoMapper();
             builder.Services.AddLocalization(builder.Configuration);
-
+            builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddEventBus(builder.Configuration);
             builder.Services.AddFluentValidation();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
             builder.Services.AddTransient<IBookingRepo, BookingRepo>();
             builder.Services.AddTransient<IFilmRepo, FilmRepo>();
             builder.Services.AddTransient<IUserRepo, UserRepo>();
@@ -47,6 +52,10 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<IBillStatisticRepo, BillStatisticRepo>();
             builder.Services.AddTransient<IFilmStatisticRepo, FilmStatisticRepo>();
             builder.Services.AddTransient<IDepartmentFilmRepo, DepartmentFilmRepo>();
+            builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
+            builder.Services.AddTransient<IPaymentMethodRepo, PaymentMethodRepo>();
+
+            builder.Services.AddTransient<ILoginRepo, LoginRepo>();
 
             builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
             builder.Services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();

@@ -69,7 +69,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteTransaction(TransactionDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteTransaction([FromQuery]TransactionDeleteRequest request, CancellationToken cancellationToken)
         {
             TransactionDeleteViewModel vm = new(_transactionReadWriteRepository, _localizationService, _mapper);
 

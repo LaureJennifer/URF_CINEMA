@@ -9,6 +9,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation.Results;
 using FluentValidation.AspNetCore;
+using BaseSolution.Domain.Entities;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.Extensions.Options;
+using BaseSolution.Application.DataTransferObjects;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using BaseSolution.Infrastructure.Database.AppDbContext;
+using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 
 namespace BaseSolution.API.Controllers
 {
@@ -20,32 +30,22 @@ namespace BaseSolution.API.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
         private readonly IValidator<LoginInputRequest> _validator;
+        private readonly IOptionsMonitor<Appsetting> _appsetting;
 
-        public LoginsController(ILoginService loginService, ILocalizationService localizationService, IMapper mapper, IValidator<LoginInputRequest> validator)
+        public LoginsController(ILoginService loginService, ILocalizationService localizationService, IMapper mapper, IValidator<LoginInputRequest> validator,IOptionsMonitor<Appsetting> monitor)
         {
             _loginService = loginService;
             _localizationService = localizationService;
             _mapper = mapper;
             _validator = validator;
+            _appsetting = monitor;
         }
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginInputRequest request, CancellationToken cancellationToken)
         {
-            ValidationResult validate = await _validator.ValidateAsync(request);
-            if (!validate.IsValid)
-            {
-                validate.AddToModelState(ModelState);
-                return BadRequest(ModelState);
-            }
-
-            LoginViewModel vm = new(_loginService, _localizationService);
-            await vm.HandleAsync(request, cancellationToken);
-            if (vm.Success)
-            {
-                ViewLoginInput result = (ViewLoginInput)vm.Data;
-                return Ok(result);
-            }
-            return BadRequest(vm);
+            LoginViewModel vm = new(_loginService, _localizationService,_appsetting);
+                await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
         }
     }
 }

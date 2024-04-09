@@ -10,6 +10,8 @@ namespace BaseSolution.Application.DataTransferObjects.FilmDetail.Request
 {
     public class ViewFilmDetailWithPaginationRequest :PaginationRequest
     {
+        public Guid FilmId { get; set; }
+        public Guid FilmSchedule { get; set; }
         public string? FilmName { get; set; }
         public EntityStatus? Status { get; set; }
     }

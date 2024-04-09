@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="EPPlus" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.16" />
@@ -30,7 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\" />
     <Folder Include="Data\DataTransferObjects\Bill\Request\" />
     <Folder Include="Data\DataTransferObjects\Booking\Request\" />
     <Folder Include="Data\DataTransferObjects\Customer\Request\" />
@@ -59,7 +59,6 @@
     <Folder Include="Pages\RoomLayout\" />
     <Folder Include="Pages\Room\" />
     <Folder Include="Pages\Role\" />
-    <Folder Include="Pages\PaymentMethod\" />
     <Folder Include="wwwroot\image\Customer\" />
     <Folder Include="wwwroot\poster\" />
     <Folder Include="wwwroot\trailer\" />

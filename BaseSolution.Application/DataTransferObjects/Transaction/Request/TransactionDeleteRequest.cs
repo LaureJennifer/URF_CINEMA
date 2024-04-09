@@ -10,5 +10,6 @@ namespace BaseSolution.Application.DataTransferObjects.Transaction.Request
     {
         public Guid Id { get; set; }
         public Guid? DeletedBy { get; set; }
+        public DateTimeOffset DeletedTime { get; set; }
     }
 }

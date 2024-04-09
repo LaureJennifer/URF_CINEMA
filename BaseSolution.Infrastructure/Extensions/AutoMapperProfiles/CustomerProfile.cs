@@ -4,6 +4,7 @@ using BaseSolution.Application.DataTransferObjects.Booking;
 using BaseSolution.Domain.Entities;
 using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
+using BaseSolution.Application.DataTransferObjects.Account;
 
 namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
 {
@@ -15,6 +16,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<CustomerCreateRequest, CustomerEntity>();
             CreateMap<CustomerUpdateRequest, CustomerEntity>();
             CreateMap<CustomerDeleteRequest, CustomerEntity>();
+            CreateMap<RegisterRequest,CustomerEntity>();
         }
     }
 }

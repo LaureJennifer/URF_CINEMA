@@ -45,11 +45,29 @@
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
             </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                @if (!string.IsNullOrEmpty(_departmentDto.AddressCode))
-                {
-                    <MudTextField Value="@GetAddressDetails(_departmentDto.AddressCode)" Label="Địa chỉ*" />
-                }
+            <MudItem xs="4" sm="4" md="4">
+                <MudSelect T="string" @bind-Value="selectedCountry" Label="Quốc gia*">
+                    @foreach (var country in _lstDepartment.Select(x=>x.AddressCode).ToList())
+                    {
+                        <MudSelectItem T="string" Value="country">@ConvertForCountry(country.Substring(0, 2))</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="4" sm="4" md="4">
+                <MudSelect T="string" @bind-Value="selectedCity" Label="Thành phố*">
+                    @foreach (var country in _lstDepartment.Select(x=>x.AddressCode).ToList())
+                    {
+                        <MudSelectItem T="string" Value="country">@ConvertForCity(country.Substring(3, 2))</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="4" sm="4" md="4">
+                <MudSelect T="string" @bind-Value="selectedDistrict" Label="Quận*">
+                    @foreach (var country in _lstDepartment.Select(x => x.AddressCode).ToList())
+                    {
+                        <MudSelectItem T="string" Value="country">@ConvertForDistrict(country.Substring(6, 2))</MudSelectItem>
+                    }
+                </MudSelect>
             </MudItem>
         </MudGrid>
     </DialogContent>
@@ -60,9 +78,9 @@
 </MudDialog>
 
 @code {
-    private EntityCountry selectedCountry;
-    private EntityCity selectedCity;
-    private EntityDistrict selectedDistrict;
+    private string selectedCountry;
+    private string selectedCity;
+    private string selectedDistrict;
 
     [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
@@ -70,7 +88,7 @@
     public IDepartmentRepo _departmentRepo { get; set; }
 
     public DepartmentDto _departmentDto = new();
-    private List<DepartmentDto> _lstDepartment { get; set; }
+    private List<DepartmentDto> _lstDepartment { get; set; } = new();
 
     public DepartmentUpdateRequest obj = new();
     public ViewDepartmentWithPaginationRequest department_ = new();
@@ -123,6 +141,8 @@
 
         var result = await _departmentRepo.GetByIdAsync(idDepartment);
         _departmentDto = result.Data!;
+        var result1 = await _departmentRepo.GetAllActive(department_);
+        _lstDepartment = result1.Data.Data.ToList();
     }
 
     public string GetAddressDetails(string addressCode)
@@ -136,7 +156,7 @@
                 string city = ConvertForCity(parts[1]);
                 string district = ConvertForDistrict(parts[2]);
 
-                return ($" {country} - {city} - {district}");
+                return ($" quận {district} - thành phố {city} - quốc gia {country}");
             }
             else
             {
