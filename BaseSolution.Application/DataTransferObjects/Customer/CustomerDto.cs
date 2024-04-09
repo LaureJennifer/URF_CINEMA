@@ -17,8 +17,9 @@ namespace BaseSolution.Application.DataTransferObjects.Customer
         public string Address { get; set; }
         public string UrlImage { get; set; }
         public string UserName { get; set; }
-
+        public string IdentificationNumber { get; set; } = string.Empty;
         public string PassWord { get; set; }
+        public string ConfirmPassword { get; set; }
         public EntityStatus Status { get; set; }
         public DateTimeOffset DateOfBirth { get; set; }
         

@@ -6,7 +6,7 @@ using BaseSolution.BlazorServer.Repositories.Interfaces;
 using BaseSolution.BlazorServer.ValueObjects.Pagination;
 
 
-    public class DepartmentFilmRepo : IDepartmentFilmRepo
+public class DepartmentFilmRepo : IDepartmentFilmRepo
 {
     public async Task<DepartmentFilmWithPaginationViewModel> GetAllActive(ViewDepartmentFilmWithPaginationRequest request)
     {

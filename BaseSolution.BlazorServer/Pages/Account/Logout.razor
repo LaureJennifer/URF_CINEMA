@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@using BaseSolution.BlazorServer.Repositories.Interfaces
+
+
+@inject ILoginRepo _loginRepo
+@inject NavigationManager _navigate
+
+@code {
+    protected async override Task OnInitializedAsync()
+    {
+        await _loginRepo.Logout();
+        _navigate.NavigateTo("/");
+    }
+}

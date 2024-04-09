@@ -71,7 +71,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeletePaymentMethod(PaymentMethodDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeletePaymentMethod([FromQuery]PaymentMethodDeleteRequest request, CancellationToken cancellationToken)
         {
             PaymentMethodDeleteViewModel vm = new(_paymentMethodReadWriteRepository, _localizationService, _mapper);
 

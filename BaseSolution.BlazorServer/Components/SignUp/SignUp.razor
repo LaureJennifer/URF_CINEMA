@@ -1,66 +1,165 @@
-﻿@using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
-@using BaseSolution.BlazorServer.Components.Login;
+﻿@using BaseSolution.Application.DataTransferObjects.Account
+@using BaseSolution.Application.DataTransferObjects.Customer
+@using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.BlazorServer.Data.ValueObjects.Common
+@using BaseSolution.BlazorServer.Repositories.Interfaces
+
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
+
 <MudDialog>
     <DialogContent>
         <MudCard>
             <MudForm>
-                 <MudCardContent>
-                     <MudGrid>
-                       <MudItem xs="6">
-                                <MudTextField T="string" Label="Họ tên"/>
-                                <MudTextField T="string" Label="Email"/> 
-                                <MudTextField T="string" Label="Mật khẩu"/> 
-                                  <div class="d-flex">
-                             <MudRadioGroup T="string" Required="true" RequiredError="">
-                                        <MudRadio Option="@("Nam")">Nam</MudRadio>
-                                        <MudRadio Option="@("Nữ")">Nữ</MudRadio>
-                             </MudRadioGroup>
-                                </div>
-                              </MudItem>
-                       <MudItem xs="6">
-                                 <MudDatePicker Label="ngày sinh" />
-                                 <MudTextField T="string" Label="Số điện thoại"/> 
-                                 <MudTextField T="string" Label="xác nhận Mật khẩu"/> 
-                       </MudItem>
-                                <div class="d-flex align-center justify-space-between">
-                                    <MudCheckBox T="bool" Required="true" RequiredError="yêu cầu đồng ý" Label="Tôi cam kết tuấn theo chính sách bảo mật và điều khoản sử dụng Của URF CENIMAS"  />
-                                </div>               
-                  </MudGrid>
-              </MudCardContent> 
+                <MudCardContent>
+                    <MudGrid>
+                        <MudItem xs="12">
+                            <MudTextField T="string" @bind-Value="_customerDto.UserName" Label="Tên tài khoản*" />
+                            <MudTextField T="string" @bind-Value="_customerDto.PassWord" Label="Mật khẩu*" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PasswordInputIcon" />
+                            <MudTextField T="string" @bind-Value="_customerDto.ConfirmPassword" Label="Xác nhận mật khẩu*" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PasswordInputIcon" />
+                            <MudTextField T="string" @bind-Value="_customerDto.Name" Label="Họ tên*" />
+                            <MudTextField T="string" @bind-Value="_customerDto.Email" Label="Email*"/>
+                            <MudDatePicker @bind-date="_dateOfBirth" Label="Ngày sinh*" />
+                            <MudTextField T="string" @bind-Value="_customerDto.PhoneNumber" Label="Số điện thoại*"/>
+                            <MudTextField T="string" @bind-Value="_customerDto.Address" Label="Địa chỉ*"/>
+                        </MudItem>
+                        <MudGrid Class="mt-3">
+                            <MudItem xs="6" sm="6" md="6">
+                                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                                    <ButtonTemplate>
+                                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                                    </ButtonTemplate>
+                                </MudFileUpload>
+                            </MudItem>
+                            @if (imageUrl != null)
+                            {
+                                <MudItem xs="6" sm="6" md="6">
+                                    <MudImage Style="width:60%;" Src="@imageUrl" />
+                                </MudItem>
+                            }
+                        </MudGrid>
+                        <MudItem xs="6">
+                        </MudItem>
+                        <div class="d-flex align-center justify-space-between">
+                            <MudCheckBox T="bool" Required="true" RequiredError="yêu cầu đồng ý" Label="Tôi cam kết tuấn theo chính sách bảo mật và điều khoản sử dụng Của URF CENIMAS"  />
+                        </div>               
+                    </MudGrid>
+                </MudCardContent> 
             </MudForm>   
-          </MudCard>
+        </MudCard>
     </DialogContent>
-      
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
         <MudButton Color="Color.Secondary" OnClick="OnButtonClicked">Đăng ký</MudButton>
     </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-    [Inject] private IDialogService _dialogService { get; set; } = null!;
-    private async void OnButtonClicked()
+    [Inject]
+    public ICustomerRepo _customerRepo { get; set; }
+    [Inject] 
+    private IDialogService _dialogService { get; set; } = null!;
+
+    public CustomerDto _customerDto = new();
+    public List<CustomerDto> _lst = new();
+
+    public string IdCustomer { get; set; }
+
+    public RegisterRequest obj = new();
+    public ViewCustomerWithPaginationRequest customer_ = new();
+
+    bool isTrue = true;
+
+
+    [Parameter]
+    public Guid idCustomer { get; set; }
+
+    MudForm form;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    DateTime? _dateOfBirth { get; set; }
+
+    public string imageUrl { get; set; } = "";
+    private string _selectedRoleId;
+    public bool isShow;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     await LoadData();
+    // }
+
+    // private async Task LoadData()
+    // {
+
+    //     var result = await _customerRepo.GetByIdAsync(idCustomer);
+    //     _customerDto = result.Data!;
+    // }
+
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    ImageHandle imageHandle = new();
+
+    void ButtonTestclick()
     {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc muốn đăng Ký?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        @if (isShow)
         {
-            _snackbar.Add("Đăng Ký thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
         }
         else
         {
-            _snackbar.Add("Đăng ký thất bại!", Severity.Error);
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        imageUrl = @"\image\Customer\" + await imageHandle.AddImage(file, "Customer");
+        files.Add(file);
+    }
+
+
+    void Submit() => _mudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => _mudDialog.Cancel();
+
+    private async Task OnButtonClicked()
+    {
+        obj.UserName = _customerDto.UserName;
+        obj.Password = _customerDto.PassWord;
+        obj.ConfirmPassword = _customerDto.ConfirmPassword;
+        obj.Name = _customerDto.Name;
+        obj.Email = _customerDto.Email;
+        obj.PhoneNumber = _customerDto.PhoneNumber;
+        obj.Address = _customerDto.Address;
+        DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_dateOfBirth!, TimeSpan.Zero);
+        bool? confirm = await DialogService.ShowMessageBox(
+         "Xác nhận",
+         "Bạn có chắc tạo tài khoản mới?",
+         yesText: "Xác nhận", cancelText: "Hủy");
+        if (confirm == true)
+        {
+                var result = await _customerRepo.RegisterAsync(obj);
+            if (result == true)
+            {
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Đănng ký thành công", Severity.Success);
+                _navigate.NavigateTo("/seat/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Thêm thất bại",
+                        Severity.Error
+                );
+            }
         }
     }
 }

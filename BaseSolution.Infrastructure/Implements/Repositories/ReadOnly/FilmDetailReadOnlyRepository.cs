@@ -64,7 +64,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
 
                 if (!string.IsNullOrWhiteSpace(request.FilmName))
                 {
-                    filmDetails = filmDetails.Where(x => x.FilmName == request.FilmName);
+                    filmDetails = filmDetails.Where(x => x.Title == request.FilmName);
                 }
                 if (request.Status !=null)
                 {

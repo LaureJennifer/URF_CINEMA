@@ -1,10 +1,12 @@
 ﻿using BaseSolution.Application.DataTransferObjects.Account.Request;
+using BaseSolution.Application.Interfaces.Login;
 using BaseSolution.Application.Interfaces.Repositories;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Implements.Repositories;
+using BaseSolution.Infrastructure.Implements.Repositories.Login;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
@@ -102,8 +104,11 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<IFilmStatisticReadOnlyRespository, FilmStatisticReadOnlyRespository>();
 
             services.AddTransient<EntityStatusExtensions>();
-            services.AddScoped<IValidator<LoginInputRequest>, LoginValication>();
 
+            services.AddScoped<IValidator<LoginInputRequest>, LoginValication>();
+            services.AddTransient<ILoginService, LoginService>();
+
+            services.AddTransient<IEmailService, EmailService>();
             //services.AddSingleton<IVnPayService, VnPayService>();
 
             return services;

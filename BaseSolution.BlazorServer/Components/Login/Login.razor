@@ -1,41 +1,88 @@
 ﻿@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Account
+@using BaseSolution.Application.DataTransferObjects.Account.Request
+@using BaseSolution.Application.DataTransferObjects.Role
+@using BaseSolution.Application.DataTransferObjects.User
+@using BaseSolution.Application.DataTransferObjects.User.Request
 @using BaseSolution.BlazorServer.Components.SignUp;
 @using BaseSolution.BlazorServer.Components.ForgotPassword;
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
-<MudDialog Style="width:50%">
+@inject NavigationManager _navigation
+
+
+<MudDialog>
     <DialogContent>
-            <MudTabs Elevation="4" Rounded="true" Centered="true">
-    <MudTabPanel Text="Đăng nhập"/>
-    <MudTabPanel @onclick="OpenDialog" Variant="Variant.Filled" Text="Đăng ký"/>
-</MudTabs>
-            <MudForm >
-            <MudTextField   T="string" Label="Tài khoản"/>
-            <MudTextField T="string" Label="Mật khẩu" AdornmentIcon="@PasswordInputIcon"/>
+        <MudTabs Elevation="4" Rounded="true" Centered="true">
+            <MudTabPanel Text="Đăng nhập" />
+            <MudTabPanel @onclick="OpenDialog" Variant="Variant.Filled" Text="Đăng ký" />
+        </MudTabs>
+        <MudForm Model="_login" @ref="form">
+            <MudTextField T="string" @bind-Value="_login.UserName" Label="Tài khoản" />
+            <MudTextField @bind-Value="_login.Password" Label="Mật khẩu" Variant="Variant.Text" InputType="@PassWordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PassWordInputIcon" />
             <MudGrid Class="mt-3">
-                    <MudItem xs="8">
-                        <MudText @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"> Quên mật khẩu ? </MudText>
-                    </MudItem>
-              @*      <MudItem xs="6">
-                        
-                </MudItem>*@
-                    <MudItem xs="4">
-               @* <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Secondary"> Đăng Ký </MudButton>*@
+                <MudItem xs="8">
+                    <MudText @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"> Quên mật khẩu ? </MudText>
                 </MudItem>
-                </MudGrid>
-            </MudForm>   
+                <MudItem xs="4">
+                </MudItem>
+            </MudGrid>
+        </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="OnButtonClicked">Đăng nhập</MudButton>
+        <MudButton Color="Color.Success" OnClick="@LoginSuccess">Đăng nhập</MudButton>
     </DialogActions>
 </MudDialog>
+
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject]
+    public ILoginRepo _loginRepo { get; set; }
 
-    InputType PasswordInput = InputType.Password;
-    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+    bool isTrue = true;
+
+    MudForm form;
+
+    private List<UserDto> _lstUser;
+    private List<RoleDto> _lstRole;
+    LoginInputRequest _login = new();
+
+    public ViewUserWithPaginationRequest obj = new();
+
+    string? error;
+    bool _showError = false;
+
+    public ViewLoginInput _loginVM = new();
+
+    RoleDto _roleDto = new();
+
+    [Inject]
+    public IUserRepo _userRepo { get; set; }
+    [Parameter]
+    public Guid idDepartment { get; set; }
+
+    bool isShow;
+    InputType PassWordInput = InputType.Password;
+    string PassWordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ButtonTestclick()
+    {
+        @if (isShow)
+        {
+            isShow = false;
+            PassWordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PassWordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PassWordInputIcon = Icons.Material.Filled.Visibility;
+            PassWordInput = InputType.Text;
+        }
+    }
 
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
     void Cancel() => MudDialog.Cancel();
@@ -52,22 +99,19 @@
         DialogService.Show<ForgotPassword>("Quên mật khẩu", closeOnEscapeKey);
     }
     [Inject] private IDialogService _dialogService { get; set; } = null!;
-    private async void OnButtonClicked()
+
+    private async Task LoginSuccess()
     {
-        bool? result = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc muốn đăng nhập?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (result == true)
+        var result = await _loginRepo.Login(_login);
+        _snackbar.Add("Đăng nhập thành công", Severity.Success);
+
+        if (result != null)
         {
-            _snackbar.Add("Đăng nhập thành công!", Severity.Success);
-            await Task.Delay(60);
-            MudDialog.Close(DialogResult.Ok(true));
-            StateHasChanged();
+            _navigation.NavigateTo($"/home/{idDepartment}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
         }
         else
         {
-            _snackbar.Add("Đăng nhập thất bại!", Severity.Error);
+            _showError = true;
         }
     }
 }

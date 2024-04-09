@@ -1,4 +1,5 @@
-﻿using BaseSolution.Application.DataTransferObjects.Customer;
+﻿using BaseSolution.Application.DataTransferObjects.Account;
+using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
 using BaseSolution.Application.DataTransferObjects.User;
 using BaseSolution.Application.DataTransferObjects.User.Request;
@@ -44,6 +45,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             if (obj != null)
                 return obj;
             return null;
+        }
+
+        public async Task<bool> RegisterAsync(RegisterRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.PostAsJsonAsync("api/Customers/register", request); ;
+            return obj.IsSuccessStatusCode;
         }
 
         public async Task<RequestResult<CustomerDeleteRequest>> RemoveAsync([FromQuery]CustomerDeleteRequest request)

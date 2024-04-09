@@ -31,7 +31,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
         {
             try
             {
-                var result = _dbContext.UserEntities.AsNoTracking().Where(x => x.UserName == request.UserName && x.PassWord == request.Password && x.RoleId == request.UserRoleId)
+                var result = _dbContext.UserEntities.AsNoTracking().Where(x => x.UserName == request.UserName && x.PassWord == request.Password)
                  .ProjectTo<ViewLoginInput>(_mapper.ConfigurationProvider).FirstOrDefault();
                 return RequestResult<ViewLoginInput>.Succeed(result);
 

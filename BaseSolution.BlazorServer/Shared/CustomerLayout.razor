@@ -1,5 +1,6 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.Department
 @using BaseSolution.Application.DataTransferObjects.Department.Request
+@using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.BlazorServer.Components.Login
 @using BaseSolution.BlazorServer.Pages.Film
 @using BaseSolution.BlazorServer.Repositories.Interfaces
@@ -52,21 +53,26 @@
                 }
                 else
                 {
-                            @foreach (var department in _lstDepartment)
-                            {
-                                <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
-                            }
-                           
-                        
+                    @foreach (var department in _lstDepartment)
+                    {
+                        <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                    }    
                 }
                 
             }
                 </MudSelect>
             </MudItem>
-            
-            <MudItem xs="1" md="1" lg="1">
-                <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
-            </MudItem>
+            <AuthorizeView>
+                <Authorized>
+                    Xin chào, @_userDto.Name
+                    <MudLink Color="Color.Error" Href="/logout">Đăng xuất</MudLink>
+                </Authorized>
+                <NotAuthorized>
+                    <MudItem xs="1" md="1" lg="1">
+                        <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
+                    </MudItem>
+                </NotAuthorized>
+            </AuthorizeView>
         </MudGrid>
     </MudAppBar>
     <MudMainContent>
@@ -79,8 +85,17 @@
 </MudLayout>
 
 @code {
+
     [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+
+    [Inject]
+    public IUserRepo _userRepo{ get; set; }
+
+    [Parameter]
+    public Guid IdUser{ get; set; }
+
     List<DepartmentDto>? _lstDepartment { get; set; }
+    UserDto _userDto = new();
     ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
     public string SelectedDepartment { get; set; }
     public string SelectedValue{ get; set; }
@@ -88,14 +103,27 @@
     {
         var result = await _departmentRepo.GetAllActive(_request);
         _lstDepartment = result.Data.Data.ToList();
-        
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    async Task LoadData()
+    {
+        var result = await _userRepo.GetByIdAsync(IdUser);
+        _userDto = result.Data!;
+    }
+
+
     void OnSelectedDepartment(string idDepartment)
     {
         SelectedDepartment = idDepartment;
         _navigationManager.NavigateTo($"/home/{idDepartment}");
 
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await LoadDepartmentForSelect();
@@ -118,7 +146,7 @@
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-        DialogService.Show<Login>("Đăng nhập", closeOnEscapeKey);
+        DialogService.Show<Login>("", closeOnEscapeKey);
     }
 }
 
