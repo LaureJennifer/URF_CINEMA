@@ -61,6 +61,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var filmScheduleRooms = _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider);
+                if (request.RoomId != null)
+                {
+                    filmScheduleRooms = filmScheduleRooms.Where(x => x.RoomId == request.RoomId);
+                }
+                if (request.FilmScheduleId != null)
+                {
+                    filmScheduleRooms = filmScheduleRooms.Where(x => x.FilmScheduleId == request.FilmScheduleId);
+                }
                 if (request.ShowDate != null)
                 {
                     filmScheduleRooms = filmScheduleRooms.Where(x => x.ShowDate == request.ShowDate);
@@ -114,6 +122,40 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         Error = e.Message,
                         FieldName = LocalizationString.Common.FailedToGet + "film schedule room"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<PaginationResponse<FilmScheduleRoomDto>>> GetRoomByFilmScheduleWithPaginationByAdminAsync(ViewRoomByFilmScheduleWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var filmScheduleRooms = _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(x => x.Status != EntityStatus.Deleted).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider);
+               
+                if (request.FilmScheduleId != null)
+                {
+                    filmScheduleRooms = filmScheduleRooms.Where(x => x.FilmScheduleId == request.FilmScheduleId);
+                }
+               
+                var result = await filmScheduleRooms.PaginateAsync(request, cancellationToken);
+                return RequestResult<PaginationResponse<FilmScheduleRoomDto>>.Succeed(new PaginationResponse<FilmScheduleRoomDto>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<FilmScheduleRoomDto>>.Fail(_localizationService["List of film schedule room are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of film schedule room"
                     }
                 });
             }

@@ -39,6 +39,15 @@ namespace BaseSolution.API.Controllers
 
             return Ok(vm);
         }
+        [HttpGet("getRoomIdByFilmSchedule")]
+        public async Task<IActionResult> GetRoomByFilmSchedule([FromQuery] ViewRoomByFilmScheduleWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            RoomByFilmScheduleListWithPaginationViewModel vm = new(_filmScheduleRoomReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFilmScheduleRoomById(Guid id, CancellationToken cancellationToken)
