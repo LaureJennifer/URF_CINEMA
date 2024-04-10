@@ -16,7 +16,9 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
     {
         public FilmScheduleProfile()
         {
-            CreateMap<FilmScheduleEntity, FilmScheduleDto>();
+            CreateMap<FilmScheduleEntity, FilmScheduleDto>()
+            .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => src.FilmScheduleRooms.Select(fs => fs.RoomEntity)));
+
             CreateMap<FilmScheduleCreateRequest, FilmScheduleEntity>();
             CreateMap<FilmScheduleUpdateRequest, FilmScheduleEntity>();
         }

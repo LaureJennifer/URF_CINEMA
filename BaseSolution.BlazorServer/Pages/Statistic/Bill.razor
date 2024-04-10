@@ -41,32 +41,37 @@
         }
 
     </MudGrid>
+    <MudGrid>
+        <MudItem xs="12" md="10">
+            <MudText Class="d-flex align-center" Color="Color.Default" Typo="Typo.h6">
+                <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.LabelImportant"></MudIcon> Thống kê doanh thu
+            </MudText>
+        </MudItem>
+
+    </MudGrid>
+
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" md="10">
+            @if (_hasError)
+            {
+                <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+            }
+            else
+            {
+
+                <MudItem xs="12" md="12">
+                    <div style="height:60vh; max-height:500px;" id="bill-statistic"></div>
+                </MudItem>
+            }
+        </MudItem>
+
+    </MudGrid>
+
 }
-<MudGrid>
-    <MudItem xs="12" md="10">
-        <MudText Class="d-flex align-center" Color="Color.Default" Typo="Typo.h6">
-            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.LabelImportant"></MudIcon> Thống kê doanh thu
-        </MudText>
-    </MudItem>
-
-</MudGrid>
-
-<MudGrid Class="mb-3">
-    <MudItem xs="12" md="10">
-        @if (_hasError)
-        {
-            <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
-        }
-        else
-        {
-
-            <MudItem xs="12" md="12">
-                <div style="height:60vh; max-height:500px;" id="bill-statistic"></div>
-            </MudItem>
-        }
-    </MudItem>
-
-</MudGrid>
+else
+{
+    <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+}
 
 @code {
 
