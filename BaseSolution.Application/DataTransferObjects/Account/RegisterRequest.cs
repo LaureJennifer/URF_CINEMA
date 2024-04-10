@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BaseSolution.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -33,5 +34,6 @@ namespace BaseSolution.Application.DataTransferObjects.Account
         public string UrlImage { get; set; }
         [Required(ErrorMessage = "Xác nhận mật khẩu không được để trống!")]
         public string ConfirmPassword { get; set; }
+        public EntityStatus Status { get; set; }
     }
 }

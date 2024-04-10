@@ -47,5 +47,26 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
 });
             }
         }
+
+        public async Task<RequestResult<ViewLoginInput>> LoginCustomer(LoginInputRequest request)
+        {
+            try
+            {
+                var result = _dbContext.CustomerEntities.AsNoTracking().Where(x => x.UserName == request.UserName && x.PassWord == request.Password)
+                 .ProjectTo<ViewLoginInput>(_mapper.ConfigurationProvider).FirstOrDefault();
+                return RequestResult<ViewLoginInput>.Succeed(result);
+
+            }
+            catch (Exception e)
+            {
+                return RequestResult<ViewLoginInput>.Fail(_localizationService["Login fail"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                    }
+});
+            }
+        }
     }
 }

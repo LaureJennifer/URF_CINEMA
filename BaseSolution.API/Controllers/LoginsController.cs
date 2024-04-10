@@ -19,6 +19,7 @@ using System.Security.Claims;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
+using BaseSolution.Infrastructure.ViewModels.Customer;
 
 namespace BaseSolution.API.Controllers
 {
@@ -45,6 +46,13 @@ namespace BaseSolution.API.Controllers
         {
             LoginViewModel vm = new(_loginService, _localizationService,_appsetting);
                 await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
+        }
+        [HttpPost("Customer")]
+        public async Task<IActionResult> LoginCustomer([FromBody] LoginInputRequest request, CancellationToken cancellationToken)
+        {
+            LoginCustomerViewModel vm = new(_loginService, _localizationService, _appsetting);
+            await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
     }

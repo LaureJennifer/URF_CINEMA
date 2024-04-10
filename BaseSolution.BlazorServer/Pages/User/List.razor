@@ -15,7 +15,7 @@
             <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
         <MudItem xs="4">
-            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"/>
+            <MudTextField T="string" @bind-Value="searchString" OnKeyUp="SearchTask" Label="Tìm kiếm" Placeholder="Theo tên" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"></MudTextField>
         </MudItem>
     </MudGrid>
     @if (_lst == null)
@@ -131,9 +131,23 @@
         await LoadData();
     }
 
+    public async Task SearchTask()
+    {
+        obj.Name = string.IsNullOrWhiteSpace(searchString) ? null : searchString;
+
+        await LoadData();
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
+    }
+
+    private async Task LoadDataSearch()
+    {
+
+        var result = await _userRepo.GetByIdAsync();
+        _lst = result.Data.Data.ToList();
     }
 
     private async Task LoadData()

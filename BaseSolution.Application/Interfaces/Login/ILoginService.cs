@@ -12,5 +12,6 @@ namespace BaseSolution.Application.Interfaces.Login
     public interface ILoginService
     {
         Task<RequestResult<ViewLoginInput>> Login(LoginInputRequest request);
+        Task<RequestResult<ViewLoginInput>> LoginCustomer(LoginInputRequest request);
     }
 }

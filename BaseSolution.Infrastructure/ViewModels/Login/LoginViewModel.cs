@@ -65,8 +65,6 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
                     new Claim("Id",userEntity.Id.ToString()),
 
                     new Claim(ClaimTypes.Role,roles),
-
-                    new Claim("TokenId",Guid.NewGuid().ToString())
                 }),
                     Expires = DateTime.UtcNow.AddDays(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey
@@ -79,8 +77,7 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
 
             return new TokenModel
             {
-                AccessToken = accessToken,
-                RefreshToken = GenerateRefreshToken()
+                AccessToken = accessToken
             };
         }
 
