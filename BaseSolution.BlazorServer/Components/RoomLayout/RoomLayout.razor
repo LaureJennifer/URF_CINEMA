@@ -359,7 +359,8 @@
     {       
         _bookingRequest.RoomId = Guid.Parse(roomId);
         _bookingRequest.DepartmentId = Guid.Parse(departmentId);
-
+        _bookingRequest.FilmId = Guid.Parse(filmId); 
+        _bookingRequest.FilmScheduleId = Guid.Parse(filmScheduleId);
         var result = await _bookingRepo.GetAllForCompare(_bookingRequest);
         _lstBookingForCompare = result.Data.ToList();
     }

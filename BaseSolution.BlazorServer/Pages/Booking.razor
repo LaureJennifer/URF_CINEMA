@@ -166,9 +166,12 @@ else
                     return;
                 }
             }
-            
+
+        }else
+        {
+            _roomId = lstRoomForSelect.First();
         }
-        
+
     }
     async Task GetListBooking(string roomId)
     {
