@@ -61,7 +61,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var filmDetails = _appReadOnlyDbContext.FilmDetailEntities.AsNoTracking().ProjectTo<FilmDetailDto>(_mapper.ConfigurationProvider);
-
+                if (request.FilmId!=null)
+                {
+                    filmDetails = filmDetails.Where(x => x.FilmId == request.FilmId);
+                }
+                if (request.FilmScheduleId != null)
+                {
+                    filmDetails = filmDetails.Where(x => x.FilmScheduleId == request.FilmScheduleId);
+                }
                 if (!string.IsNullOrWhiteSpace(request.FilmName))
                 {
                     filmDetails = filmDetails.Where(x => x.Title == request.FilmName);

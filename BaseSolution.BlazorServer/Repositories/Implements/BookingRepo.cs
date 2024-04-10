@@ -62,7 +62,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<FilmScheduleListWithPaginationViewModel>($"api/FilmSchedules");
+            var obj = await client.GetFromJsonAsync<FilmScheduleListWithPaginationViewModel>($"api/FilmSchedules?PageSize={request.PageSize}");
             if (obj != null)
                 return obj;
             return new();

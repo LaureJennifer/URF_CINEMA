@@ -11,6 +11,7 @@ namespace BaseSolution.Application.DataTransferObjects.FilmDetail
     public class FilmDetailDto
     {
         public Guid Id { get; set; }
+        public Guid FilmId {get;set;}
         public Guid FilmScheduleId { get; set; }
         public string Code { get; set; }
         public string Title { get; set; }

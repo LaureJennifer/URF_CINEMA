@@ -9,15 +9,14 @@
 
 <MudPaper Class="pa-5">
     <MudGrid>
-        <MudItem xs="8">
+        <MudItem xs="8" md="9">
             <MudText Class="mt-3" Typo="Typo.h4">Danh sách ghế ngồi</MudText>
         </MudItem>
-        <MudItem xs="4">
-            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" Class="mr-3" />
-        </MudItem>
+        <MudItem xs="4" md="3">
+            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo mã" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" Class="ml-5"></MudInput>
+            </MudItem>
     </MudGrid>
-@*     <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
- *@    @if (_lst == null)
+   @if (_lst == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     }
@@ -73,10 +72,10 @@
 
     public List<SeatDto>? _lst { get; set; }
 
-    public ViewSeatWithPaginationRequest obj = new();
+    public ViewSeatWithPaginationRequest _viewSeatWithPaginationRequest = new(){PageSize = int.MaxValue-1};
     public SeatDeleteRequest _seatDelete = new();
 
-    string searchString = string.Empty;
+    string? searchString = "";
 
     MudMessageBox _mbox { get; set; }
 
@@ -85,7 +84,7 @@
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
         _dialogService.Show<Create>("Thêm mới ghế", closeOnEscapeKey);
-        await LoadData();
+        await LoadData(searchString);
     }
 
     private async Task UpdateDialog(Guid Id)
@@ -96,44 +95,53 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await LoadData();
+            await LoadData(searchString);
         }
     }
 
     private async Task OnDeleteClicked(Guid Id)
     {
         var seat = await _seatRepo.GetByIdAsync(Id);
-        var data = seat.Data;
-        _seatDelete.Id = data.Id;
-        _seatDelete.DeletedTime = DateTime.Now;
+        _seatDelete.Id = seat.Data.Id;
+
         bool? result = await _mbox.Show();
         StateHasChanged();
     }
 
     public async Task OnConfirmDelete()
     {
+         
         var removeConfirm = await _seatRepo.RemoveAsync(_seatDelete);
-        if (removeConfirm.Success)
+        if (removeConfirm)
         {
             _snackbar.Add("Xóa thành công", Severity.Success);
         }
         else
         {
-            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+            _snackbar.Add("Xóa thất bại",Severity.Error);
         }
         await Task.Delay(1000);
-        await LoadData();
+        await LoadData(searchString);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadData(searchString);
+        
     }
 
-    private async Task LoadData()
+    private async Task LoadData(string textSearch)
     {
-
-        var result = await _seatRepo.GetAllActive(obj);
+        
+        _viewSeatWithPaginationRequest.Code = textSearch;
+        
+        var result = await _seatRepo.GetAllActive(_viewSeatWithPaginationRequest);
         _lst = result.Data.Data.ToList();
+        
+    }
+    private async Task OnSearch(string textSearch)
+    {
+        await LoadData(textSearch);
+        StateHasChanged();
     }
 }

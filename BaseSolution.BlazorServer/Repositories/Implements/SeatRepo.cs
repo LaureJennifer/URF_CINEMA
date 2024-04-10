@@ -7,6 +7,7 @@ using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
@@ -38,7 +39,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<SeatListWithPaginationViewModel>($"api/Seats?RoomLayoutId={request.RoomLayoutId}&PageSize={request.PageSize}");
+            var obj = await client.GetFromJsonAsync<SeatListWithPaginationViewModel>($"api/Seats?Code={request.Code}&PageSize={request.PageSize}");
             if (obj != null)
                 return obj;
             return new();
@@ -56,16 +57,20 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
-        public async Task<RequestResult<SeatDeleteRequest>> RemoveAsync(SeatDeleteRequest request)
+        public async Task<bool> RemoveAsync(SeatDeleteRequest request)
         {
-            var query = $"?Id={request.Id}&DeletedBy={request.DeletedBy}&DeletedDate={request.DeletedTime}";
+           
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.DeleteAsync($"api/Seats/{query}").Result.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<RequestResult<SeatDeleteRequest>>(obj);
-            return result;
+            string url = $"/api/Seats?Id={request.Id}";
+            if (!string.IsNullOrWhiteSpace(request.DeletedBy.ToString()))
+            {
+                url += $"&DeletedBy={request.DeletedBy}";
+            }
+            var result = await client.DeleteAsync(url);
+            return result.IsSuccessStatusCode;
         }
 
         public async Task<bool> UpdateAsync(SeatUpdateRequest request)

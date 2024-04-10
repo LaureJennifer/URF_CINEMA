@@ -1,4 +1,6 @@
 ﻿@page "/booking/{departmentId}/{filmId}"
+@using BaseSolution.Application.DataTransferObjects.Booking
+@using BaseSolution.Application.DataTransferObjects.Booking.Request
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.FilmDetail
 @using BaseSolution.Application.DataTransferObjects.FilmDetail.Request
@@ -10,6 +12,7 @@
 @using BaseSolution.BlazorServer.Data.DataTransferObjects.FilmSchedule.Request
 @using BaseSolution.BlazorServer.Repositories.Implements
 @using BaseSolution.BlazorServer.Repositories.Interfaces
+@using BaseSolution.Domain.Enums
 @inject NavigationManager _navigationManager
 @if (_selectedFilm != null)
 {
@@ -73,7 +76,7 @@ else
     [Inject]
     IRoomByFilmScheduleRepo _roomByFilmScheduleRepo{ get; set; }
     IFilmScheduleRoomRepo _filmSheduleRoomRepo { get; set; }
-
+    ViewBookingWithPaginationRequest _bookingRequest = new() { PageSize = int.MaxValue - 1 };
     FilmDto _selectedFilm { get; set; }
     ViewFilmScheduleWithPaginationRequest obj = new();
     ViewFilmScheduleRoomWithPaginationRequest _viewFilmScheduleRoomWithPaginationRequest = new();
@@ -93,6 +96,8 @@ else
     List<Guid> _lstFilmScheduleIdFilm { get; set; } = new();
     IEnumerable<Guid> _lstSchedule { get; set; }
     List<Guid> _lstScheduleId { get; set; } = new();
+    List<BookingDto> _lstBookingForCompare { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         await LoadRoomByDepartment(departmentId);
@@ -136,21 +141,43 @@ else
     private void SelectTime(DateTimeOffset time)
     {
         _showTimeSelected = time;
-        var position = _showDateList.IndexOf(_showTimeSelected);
+        var position = _showTimeList.IndexOf(_showTimeSelected);
         var IdFilmSchedule = _lstScheduleId[position];
         NavigateToRoom(IdFilmSchedule.ToString());
     }
 
     private async Task FindFilmScheduleRoomByDateTime(string idFilmSchedule)
     {
-        
+
         _viewRoomByFilmScheduleWithPaginationRequest.FilmScheduleId = Guid.Parse(idFilmSchedule);
         _viewRoomByFilmScheduleWithPaginationRequest.PageSize = 50;
         var result = await _roomByFilmScheduleRepo.GetRoomByFilmScheduleAsync(_viewRoomByFilmScheduleWithPaginationRequest);
-
-        _roomId = result.Data.Data.ToList().First().RoomId;
+        var listRoom = result.Data.Data.ToList();
+        var lstRoomForSelect = listRoom.Select(x => x.RoomId).Intersect(_lstRoomByDepartment.Select(x => x.Id));
+        if (lstRoomForSelect.Count() != 1)
+        {
+            foreach (var room in lstRoomForSelect)
+            {
+                await GetListBooking(room.ToString());
+                var rom_ = await _roomRepo.GetByIdAsync(room); 
+                if (_lstBookingForCompare.Count(x => x.SeatStatus == EntityStatus.SoldOut || x.SeatStatus == EntityStatus.YourSeat) <= rom_.Data!.Capacity - 2)
+                {
+                    _roomId = room;
+                    return;
+                }
+            }
+            
+        }
+        
     }
+    async Task GetListBooking(string roomId)
+    {
+        _bookingRequest.RoomId = Guid.Parse(roomId);
+        _bookingRequest.DepartmentId = Guid.Parse(departmentId);
 
+        var result = await _bookingRepo.GetAllForCompare(_bookingRequest);
+        _lstBookingForCompare = result.Data.ToList();
+    }
 
     private async Task LoadRoomByDepartment(string idDepartment)
     {
