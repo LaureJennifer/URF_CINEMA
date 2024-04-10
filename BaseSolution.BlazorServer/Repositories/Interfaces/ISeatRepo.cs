@@ -8,7 +8,7 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
     public interface ISeatRepo
     {
         public Task<bool> AddAsync(SeatCreateRequest request);
-        public Task<RequestResult<SeatDeleteRequest>> RemoveAsync(SeatDeleteRequest request);
+        public Task<bool> RemoveAsync(SeatDeleteRequest request);
         public Task<bool> UpdateAsync(SeatUpdateRequest request);
         public Task<RequestResult<SeatDto>> GetByIdAsync(Guid id);
         public Task<SeatListWithPaginationViewModel> GetAllActive(ViewSeatWithPaginationRequest request);

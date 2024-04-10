@@ -89,7 +89,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteSeat(SeatDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteSeat([FromQuery]SeatDeleteRequest request, CancellationToken cancellationToken)
         {
             SeatDeleteViewModel vm = new(_seatReadWriteRepository, _localizationService, _mapper);
 
