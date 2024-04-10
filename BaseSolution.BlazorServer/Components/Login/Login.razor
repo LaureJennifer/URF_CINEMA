@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @using BaseSolution.Application.DataTransferObjects.Account
 @using BaseSolution.Application.DataTransferObjects.Account.Request
+@using BaseSolution.Application.DataTransferObjects.Customer
 @using BaseSolution.Application.DataTransferObjects.Role
 @using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.Application.DataTransferObjects.User.Request
@@ -12,43 +13,48 @@
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigation
 
+@if (!showLogin)
+{
+    <MudDialog>
+        <DialogContent>
+            <MudTabs Elevation="4" Rounded="true" Centered="true">
+                <MudTabPanel Text="Đăng nhập" />
+                <MudTabPanel @onclick="OpenDialog" Variant="Variant.Filled" Text="Đăng ký" />
+            </MudTabs>
+            <MudForm Model="_userDto" @ref="form">
+                <MudTextField T="string" @bind-Value="_login.UserName" Label="Tài khoản" />
+                <MudTextField @bind-Value="_login.Password" Label="Mật khẩu" Variant="Variant.Text" InputType="@PassWordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PassWordInputIcon" />
+                <MudGrid Class="mt-3">
+                    <MudItem xs="8">
+                        <MudText @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"> Quên mật khẩu ? </MudText>
+                    </MudItem>
+                    <MudItem xs="4">
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+            <MudButton Color="Color.Success" OnClick="@LoginSuccess">Đăng nhập</MudButton>
+        </DialogActions>
+    </MudDialog>
 
-<MudDialog>
-    <DialogContent>
-        <MudTabs Elevation="4" Rounded="true" Centered="true">
-            <MudTabPanel Text="Đăng nhập" />
-            <MudTabPanel @onclick="OpenDialog" Variant="Variant.Filled" Text="Đăng ký" />
-        </MudTabs>
-        <MudForm Model="_login" @ref="form">
-            <MudTextField T="string" @bind-Value="_login.UserName" Label="Tài khoản" />
-            <MudTextField @bind-Value="_login.Password" Label="Mật khẩu" Variant="Variant.Text" InputType="@PassWordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PassWordInputIcon" />
-            <MudGrid Class="mt-3">
-                <MudItem xs="8">
-                    <MudText @onclick="OpenDialogg" Variant="Variant.Filled" Color="Color.Warning"> Quên mật khẩu ? </MudText>
-                </MudItem>
-                <MudItem xs="4">
-                </MudItem>
-            </MudGrid>
-        </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Success" OnClick="@LoginSuccess">Đăng nhập</MudButton>
-    </DialogActions>
-</MudDialog>
+}
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Inject]
     public ILoginRepo _loginRepo { get; set; }
 
-    bool isTrue = true;
-
     MudForm form;
+
+    UserDto _userDto = new();
 
     private List<UserDto> _lstUser;
     private List<RoleDto> _lstRole;
     LoginInputRequest _login = new();
+    CustomerDto _customerDto = new();
+    private bool showLogin = false;
 
     public ViewUserWithPaginationRequest obj = new();
 
@@ -100,18 +106,54 @@
     }
     [Inject] private IDialogService _dialogService { get; set; } = null!;
 
-    private async Task LoginSuccess()
+    private async Task LoginUser()
     {
-        var result = await _loginRepo.Login(_login);
-        _snackbar.Add("Đăng nhập thành công", Severity.Success);
-
-        if (result != null)
+        bool loginSuccessful = false;
+        foreach (var item in _lstUser)
         {
-            _navigation.NavigateTo($"/home/{idDepartment}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            if (_userDto.UserName == item.UserName && _userDto.PassWord == item.PassWord)
+            {
+                if (item.Role != null)
+                {
+                    await LoginSuccess();
+                    loginSuccessful = true;
+                    break;
+                }
+                else
+                {
+                    _snackbar.Add("Tài khoản hoặc mật khẩu không đúng!", Severity.Error);
+                } 
+            }
+        }
+    }
+
+    private async Task LoginSuccessCustomer()
+    {
+        var result = await _loginRepo.LoginCustomer(_login);
+        if (result == true)
+        {
+            _snackbar.Add("Đăng nhập thành công", Severity.Success);
+            _navigation.NavigateTo("/"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            showLogin = true;
         }
         else
         {
-            _showError = true;
+            _navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task LoginSuccess()
+    {
+        var result = await _loginRepo.Login(_login);
+        if (result != null)
+        {
+            _snackbar.Add("Đăng nhập thành công", Severity.Success);
+            _navigation.NavigateTo($"/film/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            showLogin = true;
+        }
+        else
+        {
+            _navigation.NavigateTo("/");
         }
     }
 }

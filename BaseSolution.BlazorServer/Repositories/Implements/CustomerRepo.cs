@@ -53,7 +53,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.PostAsJsonAsync("api/Customers/register", request); ;
+            var obj = await client.PostAsJsonAsync("api/Customers/register", request);
             return obj.IsSuccessStatusCode;
         }
 

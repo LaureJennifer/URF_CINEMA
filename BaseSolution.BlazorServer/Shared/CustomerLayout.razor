@@ -19,16 +19,16 @@
 <MudLayout>
     <MudAppBar Style="background-color:#03213B">
         <MudGrid>
-            <MudItem xs="5" md="5" lg="5">
+            <MudItem xs="3" md="3" lg="3">
                 <MudText Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">URF CENIMAS</MudText>
             </MudItem>
             <MudItem xs="1" md="1" lg="1">
                 <MudText @onclick="()=>Onclick()" Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">Phim</MudText>
             </MudItem>
-            <MudItem xs="1" md="1" lg="1">
+            <MudItem xs="2" md="2" lg="2">
                 <MudText Class="mt-4" Href="/FilmSchedule" Typo="Typo.h6">Lịch chiếu</MudText>
             </MudItem>
-             <MudItem xs="2" md="2" lg="2" >
+            @*  <MudItem xs="2" md="2" lg="2" >
                 <MudSelect Class="mb-4" Dense="true" T="string" @bind-Value="SelectedValue" Label="Rạp URF" AnchorOrigin="Origin.BottomCenter">
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.VN)" />
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.CN)" />
@@ -37,9 +37,9 @@
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.SG)" />
                     <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.US)" />
                 </MudSelect>
-            </MudItem>
+            </MudItem> *@
             
-                    <MudItem xs="2" md="2" lg="2">
+            <MudItem xs="3" md="3" lg="3">
                 <MudSelect T="string" Label="Rạp" Value="SelectedDepartment" ValueChanged="OnSelectedDepartment">
             @if(_lstDepartment == null)
             {
@@ -65,18 +65,21 @@
                 
                       
             </MudItem>
-            <AuthorizeView>
-                <Authorized>
-                    Xin chào, @_userDto.Name
-                    <MudLink Color="Color.Error" Href="/logout">Đăng xuất</MudLink>
-                </Authorized>
-                <NotAuthorized>
-                    <MudItem xs="1" md="1" lg="1">
-                        <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
+           
+                @* <AuthorizeView>
+                    <Authorized> *@
+                    <MudItem xs="2" md="2" lg="2">
+                        <MudLink Color="Color.Error" Href="/logout">Đăng xuất</MudLink>
                     </MudItem>
-                </NotAuthorized>
-            </AuthorizeView>
-        </MudGrid>
+                   @*  </Authorized>
+                    <NotAuthorized> *@
+                        <MudItem xs="1" md="1" lg="1">
+                            <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
+                        </MudItem>
+                 @*    </NotAuthorized>
+                </AuthorizeView> *@
+                 </MudGrid>
+       
     </MudAppBar>
     <MudMainContent>
         @Body
@@ -130,11 +133,11 @@
         _navigationManager.NavigateTo($"/home/{idDepartment}", forceLoad: true);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await LoadDepartmentForSelect();
-        SelectedDepartment = _lstDepartment.First().Id.ToString();
-    }
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     await LoadDepartmentForSelect();
+    //     SelectedDepartment = _lstDepartment.First().Id.ToString();
+    // }
     
 
 

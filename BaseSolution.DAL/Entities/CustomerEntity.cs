@@ -19,6 +19,7 @@ namespace BaseSolution.Domain.Entities
         public string UrlImage { get; set; }
         public string UserName { get; set; }
         public string IdentificationNumber { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; }
         public string PassWord { get; set; }
         public DateTimeOffset DateOfBirth { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;

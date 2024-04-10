@@ -3,6 +3,7 @@
 @using BaseSolution.Application.DataTransferObjects.Customer.Request
 @using BaseSolution.BlazorServer.Data.ValueObjects.Common
 @using BaseSolution.BlazorServer.Repositories.Interfaces
+@using BaseSolution.Domain.Enums
 
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
@@ -21,24 +22,7 @@
                             <MudTextField T="string" @bind-Value="_customerDto.Name" Label="Họ tên*" />
                             <MudTextField T="string" @bind-Value="_customerDto.Email" Label="Email*"/>
                             <MudDatePicker @bind-date="_dateOfBirth" Label="Ngày sinh*" />
-                            <MudTextField T="string" @bind-Value="_customerDto.PhoneNumber" Label="Số điện thoại*"/>
-                            <MudTextField T="string" @bind-Value="_customerDto.Address" Label="Địa chỉ*"/>
                         </MudItem>
-                        <MudGrid Class="mt-3">
-                            <MudItem xs="6" sm="6" md="6">
-                                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-                                    <ButtonTemplate>
-                                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
-                                    </ButtonTemplate>
-                                </MudFileUpload>
-                            </MudItem>
-                            @if (imageUrl != null)
-                            {
-                                <MudItem xs="6" sm="6" md="6">
-                                    <MudImage Style="width:60%;" Src="@imageUrl" />
-                                </MudItem>
-                            }
-                        </MudGrid>
                         <MudItem xs="6">
                         </MudItem>
                         <div class="d-flex align-center justify-space-between">
@@ -65,8 +49,6 @@
     public CustomerDto _customerDto = new();
     public List<CustomerDto> _lst = new();
 
-    public string IdCustomer { get; set; }
-
     public RegisterRequest obj = new();
     public ViewCustomerWithPaginationRequest customer_ = new();
 
@@ -83,20 +65,19 @@
     DateTime? _dateOfBirth { get; set; }
 
     public string imageUrl { get; set; } = "";
-    private string _selectedRoleId;
     public bool isShow;
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     await LoadData();
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
 
-    // private async Task LoadData()
-    // {
+    private async Task LoadData()
+    {
 
-    //     var result = await _customerRepo.GetByIdAsync(idCustomer);
-    //     _customerDto = result.Data!;
-    // }
+        var result = await _customerRepo.GetAllActive(customer_);
+        _lst = result.Data.Data.ToList();
+    }
 
 
     IList<IBrowserFile> files = new List<IBrowserFile>();
@@ -138,18 +119,20 @@
         obj.PhoneNumber = _customerDto.PhoneNumber;
         obj.Address = _customerDto.Address;
         DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_dateOfBirth!, TimeSpan.Zero);
+        obj.DateOfBirth = releaseDATE; 
         bool? confirm = await DialogService.ShowMessageBox(
          "Xác nhận",
          "Bạn có chắc tạo tài khoản mới?",
          yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
         {
-                var result = await _customerRepo.RegisterAsync(obj);
+            obj.Status = EntityStatus.Active;
+            var result = await _customerRepo.RegisterAsync(obj);
             if (result == true)
             {
                 _mudDialog.Close(DialogResult.Ok(true));
-                _snackbar.Add("Đănng ký thành công", Severity.Success);
-                _navigate.NavigateTo("/seat/list");
+                _snackbar.Add("Đăng ký thành công", Severity.Success);
+                _navigate.NavigateTo("/");
                 StateHasChanged();
             }
             else
