@@ -73,6 +73,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     bookings = bookings.Where(x => x.RoomId == request.RoomId);
                 }
+                if (request.FilmId != null)
+                {
+                    bookings = bookings.Where(x => x.FilmId == request.FilmId);
+                }
+                if (request.FilmScheduleId != null)
+                {
+                    bookings = bookings.Where(x => x.FilmScheduleId == request.FilmScheduleId);
+                }
                 if (request.ExpiredTime != null)
                 {
                     bookings = bookings.Where(x => x.ExpiredTime == request.ExpiredTime);

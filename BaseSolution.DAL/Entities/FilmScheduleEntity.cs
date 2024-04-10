@@ -16,5 +16,7 @@ namespace BaseSolution.Domain.Entities
         public EntityStatus Status { get; set; } = EntityStatus.Active;
         public List<FilmDetailEntity> FilmDetails { get; set; }
         public List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
+        public List<BookingEntity> Bookings { get; set; }
+
     }
 }

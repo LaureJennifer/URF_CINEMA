@@ -39,7 +39,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             var expiredTime = request.ExpiredTime?.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz");
             var createdTime = request.CreatedTime?.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz");
-            var obj = await client.GetFromJsonAsync<ValueObjects.Pagination.PaginationResponse<BookingDto>>($"api/Bookings?SeatId={request.SeatId}&RoomId={request.RoomId}&DepartmentId={request.DepartmentId}&SeatStatus={request.SeatStatus}&ExpiredTime={Uri.EscapeDataString(expiredTime)}&CreatedTime={Uri.EscapeDataString(createdTime)}&PageSize={request.PageSize}");
+            var obj = await client.GetFromJsonAsync<ValueObjects.Pagination.PaginationResponse<BookingDto>>($"api/Bookings?SeatId={request.SeatId}&RoomId={request.RoomId}&DepartmentId={request.DepartmentId}&FilmId={request.FilmId}&FilmScheduleId={request.FilmScheduleId}&SeatStatus={request.SeatStatus}&ExpiredTime={Uri.EscapeDataString(expiredTime)}&CreatedTime={Uri.EscapeDataString(createdTime)}&PageSize={request.PageSize}");
             if (obj != null)
                 return obj;
             return new();
@@ -50,7 +50,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<ValueObjects.Pagination.PaginationResponse<BookingDto>>($"api/Bookings?RoomId={request.RoomId}&DepartmentId={request.DepartmentId}&PageSize={request.PageSize}");
+            var obj = await client.GetFromJsonAsync<ValueObjects.Pagination.PaginationResponse<BookingDto>>($"api/Bookings?RoomId={request.RoomId}&DepartmentId={request.DepartmentId}&FilmId={request.FilmId}&FilmScheduleId={request.FilmScheduleId}&PageSize={request.PageSize}");
             if (obj != null)
                 return obj;
             return new();

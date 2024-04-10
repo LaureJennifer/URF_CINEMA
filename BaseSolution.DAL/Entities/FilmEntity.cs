@@ -30,5 +30,7 @@ namespace BaseSolution.Domain.Entities
         public List<DepartmentFilmEntity> DepartmentFilms { get; set;}
         public List<FilmDetailEntity> FilmDetails{ get; set;}
         public List<TicketEntity> Tickets { get; set;}
+        public List<BookingEntity> Bookings { get; set; }
+
     }
 }

@@ -11,7 +11,7 @@
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Infrastructure.ViewModels.Statistic.Bill
 
-@if (_lstDepartmentForSelect != null && _lstMonthForSelect != null)
+@if (_lstDepartmentForSelect != null && _lstMonthForSelect != null && _lstYearForSelect!=null)
 {
     <MudGrid>
         <MudItem xs="3" md="3">
@@ -105,7 +105,10 @@
         <MudItem xs="12" md="1"></MudItem>
     </MudGrid>
 }
-
+else
+{
+    <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+}
 
 @code {
     [Inject] private IFilmStatisticRepo _filmStatisticRepo { get; set; }
