@@ -53,7 +53,7 @@
                     </MudGrid>
 
                 <MudItem Style="text-align:center">
-                    <MudButton OnClick="()=>OrderSeat()" Style="background-color:#d1a647;color:black;" FullWidth>Thanh toán</MudButton>
+                    <MudButton OnClick="()=>OrderSeat()" Style="background-color:#d1a647;color:black;" FullWidth>Thanh toán(Tiếp theo)</MudButton>
             </MudItem>
             
         </MudItem>
@@ -173,7 +173,16 @@ else
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 
-}
+}<MudMessageBox @ref="_mbox" Title="Có ghế đã được thanh toán, mời chọn lại!">
+    <MessageContent>
+        
+    </MessageContent>
+    <YesButton>
+        <MudButton Color="Color.Primary" OnClick="NavigateToRoom">
+            Chọn lại
+        </MudButton>       
+    </YesButton>
+</MudMessageBox>
 @code {
     [Parameter] public string filmId { get; set; }
     [Parameter] public string filmScheduleId { get; set; }
@@ -188,11 +197,14 @@ else
     BookingUpdateRequest _bookingUpdateRequest = new();
     ViewSeatWithPaginationRequest request = new();
     List<SeatDto> _lstSeat { get; set; } = new();
+    List<BookingDto> _lstBookingSold { get; set; } = new();
     List<BookingDto> _lstBooking { get; set; } = new();
     List<BookingDto> _lstBookingForCompare { get; set; } = new();
     ViewBookingWithPaginationRequest _bookingRequest = new(){PageSize=int.MaxValue-1};
     HashSet<SeatDto> clickedSeats = new HashSet<SeatDto>();
     List<SeatDto> _lstseatSelecteds = new List<SeatDto>();
+    MudMessageBox _mbox { get; set; }
+    string @meses { get; set; } = "";
     Guid _roomLayoutDtoId { get; set; }
     double Total { get; set; } = 0;
 
@@ -201,6 +213,7 @@ else
         await GetRoomById(roomId);
         await LoadListSeat(_roomLayoutDtoId);
         await GetListBooking();
+        StateHasChanged();
     }
 
     private async Task GetRoomById(string roomId)
@@ -222,18 +235,62 @@ else
     {
         if (_lstseatSelecteds.Count > 0)
         {
-            foreach (var seat in _lstseatSelecteds)
+            await GetListBooking();
+            foreach (var booking in _lstBooking)
             {
-                await UpdateBookingSeat(seat, EntityStatus.SoldOut);
+                var x = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == booking.SeatId && x.SeatStatus == EntityStatus.SoldOut && x.CreatedTime != createdTime);
+                if (x!=null)
+                {
+                    _lstBookingSold.Add(booking);
+                    var rs = _lstseatSelecteds.FirstOrDefault(y=>y.Id==x.SeatId);
+                    if (rs != null)
+                    {
+                        _lstseatSelecteds.Remove(rs!);
+                        Total -= rs!.Price;
+                    }
+                    
+                }
+            }
+
+            if (_lstBookingSold.Count()!=0){
+
+                bool? result = await _mbox.Show();
+            }
+            else {
+                foreach (var seat in _lstseatSelecteds)
+                {                    
+                    await UpdateBookingSeat(seat, EntityStatus.SoldOut);
+                }
+                _navigate.NavigateTo($"/home/{departmentId}");
+
             }
             // _navigate.NavigateTo($"/payment/{departmentId}/{customerId}");
         }
         else
             _snackBar.Add("Bạn chưa chọn ghế nào!", Severity.Warning);
+        StateHasChanged();
     }    
+
+    public async Task NavigateToRoom()
+    {
+
+        foreach (var booking in _lstBookingSold)
+        {
+            _lstBooking.Remove(booking);
+        }
+        _lstBookingSold.Clear();
+        await Task.Delay(100);
+        
+        
+       
+        
+
+
+    }
 
     Variant GetButtonVariant(SeatDto seat)
     {
+        
         var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
         if (soldSeat != null)
         {
@@ -253,6 +310,7 @@ else
     }
     Color GetButtonColor(SeatDto seat)
     {
+        
         var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
         if (soldSeat != null)
         {
@@ -282,6 +340,7 @@ else
 
     async Task HandleSeatClick(SeatDto seat)
     {
+        
         var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
         var keptSeat = _lstBookingForCompare.Where(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.YourSeat && x.CreatedTime != createdTime).OrderByDescending(x => x.ExpiredTime).FirstOrDefault();
 
@@ -344,7 +403,7 @@ else
     }
     async Task UpdateBookingSeat(SeatDto seat, EntityStatus status)
     {
-        var bookingUpdate = _lstBooking.FirstOrDefault(x => x.SeatId == seat.Id && x.RoomId.ToString() == roomId && x.DepartmentId.ToString() == departmentId && x.FilmId.ToString() == filmId && x.FilmScheduleId.ToString() == filmScheduleId);
+        var bookingUpdate = _lstBooking.FirstOrDefault(x => x.SeatId == seat.Id && x.RoomId.ToString() == roomId && x.DepartmentId.ToString() == departmentId && x.FilmId.ToString() == filmId && x.FilmScheduleId.ToString() == filmScheduleId && x.SeatStatus!=EntityStatus.SoldOut);
         if (bookingUpdate != null)
         {
             _bookingUpdateRequest.Id = bookingUpdate!.Id;
@@ -358,6 +417,7 @@ else
         }
         else
             _snackBar.Add("Cập nhật thất bại!", Severity.Error);
+        StateHasChanged();
 
     }
     async Task GetListBooking()
@@ -368,6 +428,7 @@ else
         _bookingRequest.FilmScheduleId = Guid.Parse(filmScheduleId);
         var result = await _bookingRepo.GetAllForCompare(_bookingRequest);
         _lstBookingForCompare = result.Data.ToList();
+        
     }
 
 }

@@ -59,14 +59,18 @@ else
                     <MudGrid Class="mt-4 ml-4 mb-5">
                         @foreach (var item in _lst)
                         {
-                            <MudItem xs="3" lg="3" md="3">
-                                <MudImage Src="@item.UrlImage" @onclick="OpenDialog" Style="width:70%;" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
-                                <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Tên Phim: @item.Title</MudText>
-                                <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thời gian : @item.Duration phút</MudText>
-                                <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToString("dd/MM/yyyy")</MudText>
-                                <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thể loại : @item.Genres</MudText>
-                                <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4"><MudButton @onclick="() => Order(item.Id)" Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" Class="mt-3">Đặt vé</MudButton> </MudText>
-                            </MudItem>
+                            @if (item.ReleaseDate.ToLocalTime().DayOfYear == DateTimeOffset.UtcNow.ToLocalTime().DayOfYear)
+                            {
+                                <MudItem xs="3" lg="3" md="3">
+                                    <MudImage Src="@item.UrlImage" @onclick="OpenDialog" Style="width:70%;" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Tên Phim: @item.Title</MudText>
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thời gian : @item.Duration phút</MudText>
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToLocalTime().ToString("dd/MM/yyyy")</MudText>
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thể loại : @item.Genres</MudText>
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4"><MudButton @onclick="() => Order(item.Id)" Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" Class="mt-3">Đặt vé</MudButton> </MudText>
+                                </MudItem>
+                            }
+                            
                         }
                     </MudGrid>
                     <MudSpacer />
@@ -75,13 +79,16 @@ else
                     <MudGrid Class="mt-4 ml-4">
                         @foreach (var item in _lst)
                         {
-                            <MudItem xs="3" lg="3" md="3">
-                                <MudImage Src="@item.UrlImage" Style="width:70%;" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                            @if (item.ReleaseDate.ToLocalTime().DayOfYear > DateTimeOffset.UtcNow.ToLocalTime().DayOfYear)
+                            {
+                                <MudItem xs="3" lg="3" md="3">
+                                    <MudImage Src="@item.UrlImage" Style="width:70%;" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
                                 <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Tên Phim: @item.Title</MudText>
                                 <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thời gian : @item.Duration phút</MudText>
-                                <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToString("dd/MM/yyyy")</MudText>
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToLocalTime().ToString("dd/MM/yyyy")</MudText>
                                 <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4 mb-5">Thể loại : @item.Genres</MudText>
                             </MudItem>
+                            }
                         }
                     </MudGrid>
                 }
