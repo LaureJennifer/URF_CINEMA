@@ -26,7 +26,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return result.IsSuccessStatusCode;
         }
 
-        public Task<bool> DeleteAsync(BookingDeleteRequest request)
+        public  Task<bool> DeleteAsync(BookingDeleteRequest request)
         {
             throw new NotImplementedException();
         }
@@ -90,6 +90,18 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             var result = await client.PutAsJsonAsync("/api/Bookings", request);
             return result.IsSuccessStatusCode;
+        }
+
+        public async Task<RequestResult<BookingDto>> GetBookingSeatByIdAsync(string id)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.GetFromJsonAsync<RequestResult<BookingDto>>($"api/Bookings/{id}");
+            if (obj != null)
+                return obj;
+            return null;
         }
     }
 }
