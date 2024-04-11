@@ -14,9 +14,13 @@
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Enums
 @inject NavigationManager _navigationManager
-@if (_selectedFilm != null)
+@if (_selectedFilm == null)
 {
-    if (_showDateList != null)
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+if (_showDateList != null)
     {
         <MudTabs Elevation="0" Style="color : white; background-color:#014380;">
 
@@ -56,11 +60,12 @@
             </MudItem>
         </MudGrid>
     }
-    
-}
-else
-{
-    <p>Không tìm thấy thông tin phim.</p>
+    else
+    {
+        <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+
+    }
+
 }
 
 @code {
