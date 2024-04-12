@@ -19,15 +19,15 @@
                             <MudTextField T="string" @bind-Value="_customerDto.UserName" Label="Tên tài khoản*" />
                             <MudTextField T="string" @bind-Value="_customerDto.PassWord" Label="Mật khẩu*" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PasswordInputIcon" />
                             <MudTextField T="string" @bind-Value="_customerDto.ConfirmPassword" Label="Xác nhận mật khẩu*" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PasswordInputIcon" />
-                            <MudTextField T="string" @bind-Value="_customerDto.Name" Label="Họ tên*" />
+                          @*   <MudTextField T="string" @bind-Value="_customerDto.Name" Label="Họ tên*" /> *@
                             <MudTextField T="string" @bind-Value="_customerDto.Email" Label="Email*"/>
-                            <MudDatePicker @bind-date="_dateOfBirth" Label="Ngày sinh*" />
+                        @*     <MudDatePicker @bind-date="_dateOfBirth" Label="Ngày sinh*" /> *@
                         </MudItem>
-                        <MudItem xs="6">
+                       @*  <MudItem xs="6">
                         </MudItem>
                         <div class="d-flex align-center justify-space-between">
                             <MudCheckBox T="bool" Required="true" RequiredError="yêu cầu đồng ý" Label="Tôi cam kết tuấn theo chính sách bảo mật và điều khoản sử dụng Của URF CENIMAS"  />
-                        </div>               
+                        </div>   *@             
                     </MudGrid>
                 </MudCardContent> 
             </MudForm>   
@@ -114,12 +114,12 @@
         obj.UserName = _customerDto.UserName;
         obj.Password = _customerDto.PassWord;
         obj.ConfirmPassword = _customerDto.ConfirmPassword;
-        obj.Name = _customerDto.Name;
+        // obj.Name = _customerDto.Name;
         obj.Email = _customerDto.Email;
-        obj.PhoneNumber = _customerDto.PhoneNumber;
-        obj.Address = _customerDto.Address;
-        DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_dateOfBirth!, TimeSpan.Zero);
-        obj.DateOfBirth = releaseDATE; 
+        // obj.PhoneNumber = _customerDto.PhoneNumber;
+        // obj.Address = _customerDto.Address;
+        // DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_dateOfBirth!, TimeSpan.Zero);
+        // obj.DateOfBirth = releaseDATE; 
         bool? confirm = await DialogService.ShowMessageBox(
          "Xác nhận",
          "Bạn có chắc tạo tài khoản mới?",

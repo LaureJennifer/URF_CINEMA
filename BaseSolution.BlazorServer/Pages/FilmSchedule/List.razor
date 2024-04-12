@@ -45,7 +45,7 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="STT">@(_lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Tên phim">@context.FilmName</MudTd>
+                    <MudTd DataLabel="Tên phim">@context.Title</MudTd>
                     <MudTd DataLabel="Ngày Chiếu">@context.ShowDate.ToString("dd/MM/yyyy")</MudTd>
                     <MudTd DataLabel="Thời gian chiếu">@context.ShowTime.ToString("hh : mm")</MudTd>
                     <MudTd>

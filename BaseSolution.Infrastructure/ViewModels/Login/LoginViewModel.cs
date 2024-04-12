@@ -64,7 +64,7 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
                     new Claim("UserName",userEntity.UserName),
                     new Claim("Id",userEntity.Id.ToString()),
 
-                    new Claim(ClaimTypes.Role,roles),
+                    new Claim(ClaimTypes.Role, roles?.ToString()),
                 }),
                     Expires = DateTime.UtcNow.AddDays(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey

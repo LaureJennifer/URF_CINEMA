@@ -7,26 +7,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static BaseSolution.Application.ValueObjects.Common.LocalizationString;
 
 namespace BaseSolution.Infrastructure.ViewModels.Customer
 {
-    public class CustomerEmailViewModel : ViewModelBase<string>
+    public class CustomerNameViewModel : ViewModelBase<string>
     {
         public readonly ICustomerReadOnlyRepository _customerReadOnlyRepository;
         private readonly ILocalizationService _localizationService;
 
-        public CustomerEmailViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ILocalizationService localizationService)
+        public CustomerNameViewModel(ICustomerReadOnlyRepository customerReadOnlyRepository, ILocalizationService localizationService)
         {
             _customerReadOnlyRepository = customerReadOnlyRepository;
             _localizationService = localizationService;
         }
 
-        public override async Task HandleAsync(string email, CancellationToken cancellationToken)
+        public override async Task HandleAsync(string data, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _customerReadOnlyRepository.GetCustomerByEmailAsync(email, cancellationToken);
+                var result = await _customerReadOnlyRepository.GetCustomerByNameAsync(data, cancellationToken);
 
                 Data = result.Data!;
                 Success = result.Success;
