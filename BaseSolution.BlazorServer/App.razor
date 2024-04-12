@@ -1,16 +1,18 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-            <NotAuthorized>
-                <LayoutView Layout="@typeof(MainLayout)">
-                    <h6>Quyền truy cập bị từ chối (Not Authorized).</h6>
-                </LayoutView>
-            </NotAuthorized>
-        </AuthorizeRouteView>
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(CustomerLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(CustomerLayout)">
+                <NotAuthorized>
+                    <LayoutView Layout="@typeof(CustomerLayout)">
+                        <h6>Quyền truy cập bị từ chối (Not Authorized).</h6>
+                    </LayoutView>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <LayoutView Layout="@typeof(CustomerLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

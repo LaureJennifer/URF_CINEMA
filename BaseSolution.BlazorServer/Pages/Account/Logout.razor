@@ -9,6 +9,6 @@
     protected async override Task OnInitializedAsync()
     {
         await _loginRepo.Logout();
-        _navigate.NavigateTo("/");
+        _navigate.NavigateTo("/home");
     }
 }

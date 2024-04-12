@@ -1,0 +1,27 @@
+﻿@using MudBlazor
+@page "/pay/query"
+<MudContainer>
+    <MudForm>
+            <MudItem xs="12" Class="form-group">
+                <MudInputLabel For="orderId">Mã giao dịch "vnp_TxnRef"(*)</MudInputLabel>
+                <MudTextField @bind-Value="orderId" Id="orderId" Class="form-control" />
+            </MudItem>
+            <MudItem xs="12" Class="form-group">
+                <MudInputLabel For="payDate">Ngày thanh toán "vnp_TransactionDate"(*)</MudInputLabel>
+                <MudTextField @bind-Value="payDate" Id="payDate" Placeholder="yyyyMMddHHmmss" Class="form-control" />
+            </MudItem>
+            <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="btnQuery_Click">QueryDr</MudButton>
+        <MudPaper>@displayResult</MudPaper>
+    </MudForm>
+</MudContainer>
+
+@code {
+    private string orderId;
+    private string payDate;
+    private string displayResult;
+
+    private void btnQuery_Click()
+    {
+        // Xử lý sự kiện khi nhấp vào nút QueryDr
+    }
+}

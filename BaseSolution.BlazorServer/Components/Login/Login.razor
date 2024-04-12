@@ -3,6 +3,10 @@
 @using BaseSolution.Application.DataTransferObjects.Account
 @using BaseSolution.Application.DataTransferObjects.Account.Request
 @using BaseSolution.Application.DataTransferObjects.Customer
+@using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.Film.Request
 @using BaseSolution.Application.DataTransferObjects.Role
 @using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.Application.DataTransferObjects.User.Request
@@ -21,7 +25,7 @@
                 <MudTabPanel Text="Đăng nhập" />
                 <MudTabPanel @onclick="OpenDialog" Variant="Variant.Filled" Text="Đăng ký" />
             </MudTabs>
-            <MudForm Model="_userDto" @ref="form">
+            <MudForm Model="_login" @ref="form">
                 <MudTextField T="string" @bind-Value="_login.UserName" Label="Tài khoản" />
                 <MudTextField @bind-Value="_login.Password" Label="Mật khẩu" Variant="Variant.Text" InputType="@PassWordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PassWordInputIcon" />
                 <MudGrid Class="mt-3">
@@ -32,10 +36,17 @@
                     </MudItem>
                 </MudGrid>
             </MudForm>
+            <MudRadioGroup @bind-SelectedOption="@option" ReadOnly="ReadOnly">
+                @foreach (var role in _lstOption)
+                {
+                    <MudRadio Option="role.Name">@role.Name</MudRadio>
+                }
+
+            </MudRadioGroup>
         </DialogContent>
         <DialogActions>
             <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-            <MudButton Color="Color.Success" OnClick="@LoginSuccess">Đăng nhập</MudButton>
+            <MudButton OnClick="HandleValidSubmit" Color="Color.Success">Đăng nhập</MudButton>
         </DialogActions>
     </MudDialog>
 
@@ -50,6 +61,7 @@
 
     UserDto _userDto = new();
 
+
     private List<UserDto> _lstUser;
     private List<RoleDto> _lstRole;
     LoginInputRequest _login = new();
@@ -57,7 +69,7 @@
     private bool showLogin = false;
 
     public ViewUserWithPaginationRequest obj = new();
-
+    public ViewCustomerWithPaginationRequest Obj = new();
     string? error;
     bool _showError = false;
 
@@ -65,14 +77,35 @@
 
     RoleDto _roleDto = new();
 
+    public class Option
+    {
+        public string Name { get; set; }
+    }
+    public bool ReadOnly { get; set; }
+    public List<Option> _lstOption = new List<Option>
+{
+    new Option { Name = "nhân viên" },
+    new Option { Name = "khách hàng" }
+};
+
     [Inject]
     public IUserRepo _userRepo { get; set; }
+    [Inject]
+    public ICustomerRepo _customerRepo { get; set; }
     [Parameter]
     public Guid idDepartment { get; set; }
 
+    private string customer_ = "Khách hàng";
+    private string employee_ = "nhân viên";
+
+    [Parameter]public string customerid{ get; set; }
+    public List<CustomerDto> _lst;
+    public string departmentid{ get; set; }
     bool isShow;
     InputType PassWordInput = InputType.Password;
     string PassWordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    public string option { get; set; }
 
     void ButtonTestclick()
     {
@@ -106,24 +139,19 @@
     }
     [Inject] private IDialogService _dialogService { get; set; } = null!;
 
-    private async Task LoginUser()
+    private async Task HandleValidSubmit()
     {
-        bool loginSuccessful = false;
-        foreach (var item in _lstUser)
+        if (option.ToLower() == "nhân viên")
         {
-            if (_userDto.UserName == item.UserName && _userDto.PassWord == item.PassWord)
-            {
-                if (item.Role != null)
-                {
-                    await LoginSuccess();
-                    loginSuccessful = true;
-                    break;
-                }
-                else
-                {
-                    _snackbar.Add("Tài khoản hoặc mật khẩu không đúng!", Severity.Error);
-                } 
-            }
+            await LoginSuccess();
+        }
+        else if (option.ToLower() == "khách hàng")
+        {
+            await LoginSuccessCustomer();
+        }
+        else
+        {
+            _snackbar.Add("Cần phải chọn vai trò phía đăng nhập");
         }
     }
 
@@ -133,22 +161,22 @@
         if (result == true)
         {
             _snackbar.Add("Đăng nhập thành công", Severity.Success);
-            _navigation.NavigateTo("/"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            _navigation.NavigateTo($"/home/{departmentid}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            // LoadData();
             showLogin = true;
         }
         else
         {
-            _navigation.NavigateTo("/");
+            // _navigation.NavigateTo("/");
         }
     }
-
     private async Task LoginSuccess()
     {
         var result = await _loginRepo.Login(_login);
         if (result != null)
         {
             _snackbar.Add("Đăng nhập thành công", Severity.Success);
-            _navigation.NavigateTo($"/film/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            _navigation.NavigateTo($"/user/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
             showLogin = true;
         }
         else

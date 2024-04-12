@@ -1,13 +1,23 @@
-﻿@page "/payment"
+﻿@page "/payment/{departmentid}"
 @using BaseSolution.Application.DataTransferObjects.Bill
+@using BaseSolution.Application.DataTransferObjects.Booking
+@using BaseSolution.Application.DataTransferObjects.Booking.Request
+@using BaseSolution.Application.DataTransferObjects.Customer
+@using BaseSolution.Application.DataTransferObjects.Customer.Request
 @using BaseSolution.Application.DataTransferObjects.Department
 @using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.FilmDetail
+@using BaseSolution.Application.DataTransferObjects.FilmDetail.Request
+@using BaseSolution.Application.DataTransferObjects.FilmSchedule
 @using BaseSolution.Application.DataTransferObjects.PaymentMethod
+@using BaseSolution.Application.DataTransferObjects.PaymentMethod.Request
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.Seat
+@using BaseSolution.Application.DataTransferObjects.Seat.Request
 @using BaseSolution.Application.DataTransferObjects.Transaction
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Data.Extensions
+@using BaseSolution.BlazorServer.Repositories.Interfaces
 @using MudBlazor
 @using System.Globalization
 
@@ -32,45 +42,56 @@
                         </MudItem>
                         <MudItem xs="12" md="12" lg="12">
                             <MudPaper>
-                                <MudGrid>
-                                    <MudItem xs="4" md="4" Class="ml-5">
-                                        <MudText Color="Color.Default">Họ Và Tên: @_transactionDto.CustomerName</MudText>
-                                    </MudItem>
-                                    <MudItem xs="4" md="4">
-                                        <MudText Color="Color.Default">SĐT: @_transactionDto.PhoneNumber</MudText>
-                                    </MudItem>
-                                    <MudItem xs="3" md="3">
-                                        <MudText Color="Color.Default">Email: @_transactionDto.Email</MudText>
-                                    </MudItem>
-                                </MudGrid>
+                                @foreach(var item in _lstCustomer)
+                                {
+                                    <MudGrid>
+                                        <MudItem xs="4" md="4" Class="ml-5">
+                                            <MudText Color="Color.Default">Họ Và Tên: @item.Name</MudText>
+                                        </MudItem> 
+                                        <MudItem xs="4" md="4" Class="ml-5">
+                                            <MudText Style="visibility:hidden;" Color="Color.Default">@item.Id</MudText>
+                                        </MudItem>
+                                        <MudItem xs="4" md="4">
+                                            <MudText Color="Color.Default">SĐT: @item.PhoneNumber</MudText>
+                                        </MudItem>
+                                        <MudItem xs="3" md="3">
+                                            <MudText Color="Color.Default">Email: @item.Email</MudText>
+                                        </MudItem>
+                                    </MudGrid>
+                                }
                             </MudPaper>
                         </MudItem>
-                        <MudItem xs="11" lg="11" md="11">
-                            <MudText Align="Align.Right" Style="color:#180F20">Tổng tiền: @_transactionDto.Price.ToString("#,##0") vnd</MudText>
+                       @*  <MudItem xs="11" lg="11" md="11">
+                            <MudText Align="Align.Right" Style="color:#180F20">Tổng tiền: @_seatDto.Price.ToString("#,##0") vnd</MudText>
                         </MudItem>
                         <MudItem xs="11" lg="11" md="11">
-                            <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @_transactionDto.Price.ToString("#,##0") vnd</MudText>
-                        </MudItem>
+                            <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @_seatDto.Price.ToString("#,##0") vnd</MudText>
+                        </MudItem> *@
                         <MudDivider />
                         <MudText Align="Align.Left" Style="color:#180F20;">Phương thức thanh toán</MudText>
                         <MudDivider />
                     </MudGrid>
                     <MudGrid>
                         <MudItem xs="12" md="12" lg="12" Style="color:darkred;">
-                            <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
+                            @* <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
                                 <MudSelect T="string" @bind-Value="@SelectedOption">
-                                    @foreach(var item in _lst)
+                                    @foreach (var item in _lstPayment)
                                     {
                                         <MudSelectItem T="string" Style="color:darkred;">@item.Name</MudSelectItem>
                                     }
                                 </MudSelect>
-                            </MudField>
+                            </MudField> *@
+                            <MudPaper Style="background-color:#180F20;width:auto;height:auto;">
+                                <MudContainer Fixed="true">
+                                    <div>
+                                        <MudButton OnClick="Pay">Thanh toán</MudButton>
+                                        <MudButton OnClick="QueryDR">Truy vấn</MudButton>
+@*                                         <MudButton OnClick="Refund">Hoàn tiền</MudButton> *@
+                                    </div>
+                                </MudContainer>
+                            </MudPaper>
                         </MudItem>
                     </MudGrid>
-                    @if(SelectedOption.Equals("Tiền mặt"))
-                    {
-                       @*  <paymethod/> *@
-                    }
                 </MudItem>
                 <MudItem xs="4" md="4" lg="4">
                     <MudPaper Style="background-color:#2E0E4A">
@@ -89,14 +110,8 @@
                             </MudItem>
                             <MudItem xs="12" md="12" lg="12">
                                 <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.AccountBalance" />Rạp chiếu: @_departmentDto.Name</MudText>
-                                @foreach (var item in _filmDto.ShowDates)
-                                {
-                                    <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" />Ngày chiếu: @item</MudText>
-                                }
-                                @foreach (var item in _filmDto.ShowTimes)
-                                {
-                                    <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" />Giờ chiếu: @item</MudText>
-                                }
+                                <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" />Ngày chiếu: @_filmSchedule.ShowDate</MudText>
+                                <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.CalendarMonth" />Giờ chiếu: @_filmSchedule.ShowTime</MudText>
                                 <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.Computer" />Phòng chiếu: @_roomDto.Code</MudText>
                                 <MudText Class="ml-3" Style="color:white"><MudIcon Icon="@Icons.Material.Filled.EventSeat" />Ghế ngồi: @_seatDto.Code</MudText>
                                 <MudDivider />
@@ -113,71 +128,234 @@
                             </MudGrid>
                         </MudGrid>
                     </MudPaper>
-                    <MudGrid/>
+                    <MudGrid />
                 </MudItem>
             </MudGrid>
         </MudPaper>
     </MudContainer>
 </MudPaper>
-@code {
-    // private async Task CreateDialog()
-    // {
-    //     DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
-    //     _dialogService.Show<paymethod>("Số tiền cần thanh toán", closeOnEscapeKey);
-    // }
+
+@code {
+    [Inject]
+    public IBillRepo _billRepo { get; set; }
+
+    [Inject]
+    public IPaymentMethodRepo _paymentMethodRepo { get; set; }
+
+    [Inject]
+    public IFilmRepo _filmRepo { get; set; }
+
+    [Inject]
+    public IDepartmentRepo _departmentRepo { get; set; }
+
+    [Inject]
+    public IRoomRepo _roomRepo { get; set; }
+
+    [Inject]
+    public ISeatRepo _seatRepo { get; set; }
+    [Inject]
+    public IFilmDetailRepo _filmDetailRepo { get; set; }
+    [Inject]
+    public ICustomerRepo _customerRepo { get; set; }
+    public List<BillDto> _lst = new();
+    public List<PaymentMethodDto> _lstPayment = new();
+    public FilmDto _filmDto { get; set; }
+    public DepartmentDto _departmentDto { get; set; }
+    public RoomDto _roomDto { get; set; }
+    public SeatDto _seatDto { get; set; }
+    public ViewFilmDetailWithPaginationRequest objFilmDetail = new();
+    public ViewPaymentMethodWithPaginationRequest obj = new();
+    public CustomerDto _customerDto = new();
+    public BillDto _billDto = new();
+    FilmScheduleDto _filmSchedule = new();
+    public Guid idBill { set; get; }
+    public Guid idFilm { set; get; }
+    [Parameter]
+    public string departmentid { set; get; }
+    public Guid idRoom { set; get; }
+    public Guid idSeat { set; get; }
+
+    [Parameter] public string filmId { get; set; }
+    [Parameter] public string filmScheduleId { get; set; }
+    [Parameter] public string roomId { get; set; }
+    // [Parameter] public string customerid { get; set; }
+    [Parameter] public DateTimeOffset createdTime { get; set; }
+
+    [Inject] IBookingRepo _bookingRepo { get; set; }
+
+    BookingCreateRequest _bookingCreateRequest = new();
+    BookingUpdateRequest _bookingUpdateRequest = new();
+    ViewSeatWithPaginationRequest request = new();
+    List<SeatDto> _lstSeat { get; set; } = new();
+    List<BookingDto> _lstBooking { get; set; } = new();
+    List<BookingDto> _lstBookingForCompare { get; set; } = new();
+    ViewBookingWithPaginationRequest _bookingRequest = new() { PageSize = int.MaxValue - 1 };
+    ViewCustomerWithPaginationRequest _customerRequest = new();
+
+    HashSet<SeatDto> clickedSeats = new HashSet<SeatDto>();
+    List<SeatDto> _lstseatSelecteds = new List<SeatDto>();
+    Guid _roomLayoutDtoId { get; set; }
+    double Total { get; set; } = 0;
+    string _customerId { get; set; }
+    List<CustomerDto> _lstCustomer = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        // await GetCustomerId();
+        // await GetListBooking();
+        await LoadData();
+        // await GetCustomerId(_customerId);
+    }
+
     public string SelectedOption { get; set; }
 
-    private void Reset()
+    // public async Task GetCustomerId()
+    // {
+    //     var result = await _customerRepo.GetByNameAsync(_customerDto.UserName);
+    //     if (result.Success)
+    //     {
+    //         _customerId = result.Data.Id.ToString();
+    //     }
+    //     else
+    //     {
+    //         // Xử lý khi không tìm thấy người dùng hoặc có lỗi xảy ra
+    //     }
+    //     // _customerId = result.Data.Id.ToString();
+    // }
+
+    async Task LoadListSeat(Guid roomlayoutId)
     {
-        SelectedOption = null;
+        request.RoomLayoutId = roomlayoutId;
+        request.PageSize = int.MaxValue - 1;
+        var result = await _seatRepo.GetAllActive(request);
+        _lstSeat = result.Data.Data.ToList();
     }
-    TransactionDto _transactionDto = new()
+
+    private async Task GetRoomById(string roomId)
     {
-            CustomerName = "A",
-            PhoneNumber = "0123456789",
-            Price = 150000,
-            Email = "A2@gmail.com",
-            Code = "2A",
-    };
-    List<PaymentMethodDto> _lst = new()
-    {
-        new PaymentMethodDto(){Name="VNPay"},
-        new PaymentMethodDto(){Name="AiPay"},
-        new PaymentMethodDto(){Name="BMPay"},
-        new PaymentMethodDto(){Name="Tiền mặt"},
-    };
-    FilmDto _filmDto = new()
-    {
-        UrlImage="https://media.loveitopcdn.com/3807/co-viet-nam-qua-cac-thoi-ky01.png",
-        Title="Daddy",
-        Script="2D lồng tiếng",
-        Genres="Hành động",
-        Duration="150",
-        ShowDates = new()
-        {
-            DateTime.UtcNow
-        },
-        ShowTimes = new()
-        {
-            DateTime.UtcNow
-        }
-    };
-    DepartmentDto _departmentDto = new()
-    {
-        Name="Thanh xuân có mấy"
-    };
-    RoomDto _roomDto = new()
-    {
-        Code="Phòng bố"
-    };
-    SeatDto _seatDto = new()
-    {
-        Code="A1"
-    };
+        var result = await _roomRepo.GetByIdAsync(Guid.Parse(roomId));
+        _roomLayoutDtoId = result.Data.RoomLayoutId;
+
+    }
+
     private void Pay()
     {
-        // Chuyển hướng đến trang đặt vé với thông tin phim
-        _navigationManager.NavigateTo($"/pay/method");
+        // Xử lý thanh toán ở đây
+        _navigationManager.NavigateTo("/pay/vnpay");
     }
+
+    private void QueryDR()
+    {
+        // Xử lý truy vấn ở đây
+        _navigationManager.NavigateTo("/pay/query");
+    }
+
+    // public async Task GetCustomerId()
+    // {
+    //     var result = await _customerRepo.GetByNameAsync(_customerDto.UserName);
+    //     _customerId = result.Data.Id.ToString();
+    // }
+
+    private async Task LoadData()
+    {
+        // var result = await _customerRepo.GetAllActive(_customerRequest);
+        // _lstCustomer = result.Data.Data.ToList();
+
+        // var result = await _billRepo.GetByIdAsync(idBill);
+        // _billDto = result.Data!;
+
+        var result1 = await _paymentMethodRepo.GetAllActive(obj);
+        _lstPayment = result1.Data!.Data.ToList();
+
+        var result2 = await _filmRepo.GetByIdAsync(idFilm);
+        if (result2 != null)
+        {
+            _filmDto = result2.Data!;
+
+        }
+        var result3 = await _departmentRepo.GetByIdAsync(Guid.Parse(departmentid));
+        if (result3 != null)
+        {
+        _departmentDto = result3.Data!;
+        }
+        
+        var result4 = await _roomRepo.GetByIdAsync(idRoom);
+        if (result4 != null)
+        {
+        _roomDto = result4.Data!;
+        }
+        
+        var result5 = await _seatRepo.GetByIdAsync(idSeat);
+        if (result5 != null)
+        {
+        _seatDto = result5.Data!;
+        }
+       
+        var result6 = await _filmDetailRepo.GetFilmScheduleByIdAsync(Guid.Parse(filmScheduleId));
+        if (result6 != null)
+        {
+        _filmSchedule = result6.Data!;
+        }
+    }
+
+    async Task GetListBooking()
+    {
+        _bookingRequest.RoomId = Guid.Parse(roomId);
+        _bookingRequest.DepartmentId = Guid.Parse(departmentid);
+        _bookingRequest.FilmId = Guid.Parse(filmId);
+        _bookingRequest.FilmScheduleId = Guid.Parse(filmScheduleId);
+        var result = await _bookingRepo.GetAllForCompare(_bookingRequest);
+        _lstBookingForCompare = result.Data.ToList();
+    }
+
+
+    // private void Reset()
+    // {
+    //     SelectedOption = null;
+    // }
+    // TransactionDto _transactionDto = new()
+    // {
+    //         CustomerName = "A",
+    //         PhoneNumber = "0123456789",
+    //         Price = 150000,
+    //         Email = "A2@gmail.com",
+    //         Code = "2A",
+    // };
+    // List<PaymentMethodDto> _lst = new()
+    // {
+    //     new PaymentMethodDto(){Name="VNPay"},
+    //     new PaymentMethodDto(){Name="AiPay"},
+    //     new PaymentMethodDto(){Name="BMPay"},
+    //     new PaymentMethodDto(){Name="Tiền mặt"},
+    // };
+    // FilmDto _filmDto = new()
+    // {
+    //     UrlImage="https://media.loveitopcdn.com/3807/co-viet-nam-qua-cac-thoi-ky01.png",
+    //     Title="Daddy",
+    //     Script="2D lồng tiếng",
+    //     Genres="Hành động",
+    //     Duration="150",
+    //     ShowDates = new()
+    //     {
+    //         DateTime.UtcNow
+    //     },
+    //     ShowTimes = new()
+    //     {
+    //         DateTime.UtcNow
+    //     }
+    // };
+    // DepartmentDto _departmentDto = new()
+    // {
+    //     Name="Thanh xuân có mấy"
+    // };
+    // RoomDto _roomDto = new()
+    // {
+    //     Code="Phòng bố"
+    // };
+    // SeatDto _seatDto = new()
+    // {
+    //     Code="A1"
+    // };
 }
+

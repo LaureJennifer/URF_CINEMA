@@ -14,5 +14,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> UpdateAsync(CustomerUpdateRequest request);
         public Task<RequestResult<CustomerDto>> GetByIdAsync(Guid id);
         public Task<CustomerListWithPaginationViewModel> GetAllActive(ViewCustomerWithPaginationRequest request);
+        public Task<RequestResult<CustomerDto>> GetByNameAsync(string roomLayoutName);
     }
 }

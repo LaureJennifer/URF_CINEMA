@@ -66,18 +66,18 @@
                       
             </MudItem>
            
-                @* <AuthorizeView>
-                    <Authorized> *@
+                <AuthorizeView>
+                    <Authorized>
                     <MudItem xs="2" md="2" lg="2">
                         <MudLink Color="Color.Error" Href="/logout">Đăng xuất</MudLink>
                     </MudItem>
-                   @*  </Authorized>
-                    <NotAuthorized> *@
+                    </Authorized>
+                    <NotAuthorized>
                         <MudItem xs="1" md="1" lg="1">
                             <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
                         </MudItem>
-                 @*    </NotAuthorized>
-                </AuthorizeView> *@
+                    </NotAuthorized>
+                </AuthorizeView>
                  </MudGrid>
        
     </MudAppBar>
@@ -133,11 +133,11 @@
         _navigationManager.NavigateTo($"/home/{idDepartment}", forceLoad: true);
     }
 
-    // protected override async Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     await LoadDepartmentForSelect();
-    //     SelectedDepartment = _lstDepartment.First().Id.ToString();
-    // }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await LoadDepartmentForSelect();
+        SelectedDepartment = _lstDepartment.First().Id.ToString();
+    }
     
 
 
