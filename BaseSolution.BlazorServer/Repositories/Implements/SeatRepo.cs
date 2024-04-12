@@ -39,7 +39,12 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<SeatListWithPaginationViewModel>($"api/Seats?Code={request.Code}&PageSize={request.PageSize}");
+            string url = $"api/Seats?PageSize={request.PageSize}";
+            if (request.RoomLayoutId != null)
+            {               
+                url = $"api/Seats?RoomLayoutId={request.RoomLayoutId}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<SeatListWithPaginationViewModel>(url);
             if (obj != null)
                 return obj;
             return new();

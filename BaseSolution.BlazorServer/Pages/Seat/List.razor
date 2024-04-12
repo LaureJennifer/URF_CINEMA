@@ -1,4 +1,6 @@
 ﻿@page "/seat/list"
+@using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.Application.DataTransferObjects.RoomLayout.Request
 @using BaseSolution.Application.DataTransferObjects.Seat
 @using BaseSolution.Application.DataTransferObjects.Seat.Request
 @using BaseSolution.BlazorServer.Components.Seat
@@ -9,40 +11,57 @@
 
 <MudPaper Class="pa-5">
     <MudGrid>
-        <MudItem xs="8" md="9">
+        <MudItem xs="9" md="9">
             <MudText Class="mt-3" Typo="Typo.h4">Danh sách ghế ngồi</MudText>
         </MudItem>
-        <MudItem xs="4" md="3">
-            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo mã" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" Class="ml-5"></MudInput>
+        @if (_lstRoomLayout == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudItem xs="3" md="3">
+                <MudSelect T="string" Label="Sơ đồ ghế" Value="@selectedRoomLayoutId" ValueChanged="(str)=>OnSelectedRoomLayout(str)">
+                    @foreach (var roomLayout in _lstRoomLayout)
+                    {
+                        <MudSelectItem T="string" Value="@(roomLayout.Id.ToString())">@roomLayout.Name</MudSelectItem>
+                    }
+                    <MudSelectItem T="string" Value="@(Guid.Empty.ToString())">Tất cả các rạp</MudSelectItem>
+                </MudSelect>
+
             </MudItem>
+        }
+        
     </MudGrid>
-   @if (_lst == null)
+    @if (_lstSeat == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     }
     else
     {
-        if (_lst.Count == 0)
+        if (_lstSeat.Count == 0)
         {
             <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
         }
         else
         {
-            <MudTable Items="@_lst" Class="mt-4 " Hover="true" FixedHeader="true">
+            <MudTable Items="@_lstSeat" Class="mt-4 " Hover="true" FixedHeader="true">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
-                    <MudTh>Mã ghế</MudTh>
+                    <MudTh Style="text-align:center">Mã ghế</MudTh>
+                    <MudTh Style="text-align:center">Tên bố cục phòng</MudTh>
                     <MudTh>Loại</MudTh>
                     <MudTh>Giá</MudTh>
-                    <MudTh>Trạng thái</MudTh>
+                    <MudTh Style="text-align:center">Trạng thái</MudTh>
                     <MudTh>Hành động</MudTh>
                 </HeaderContent>
                 <RowTemplate>
-                    <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Mã ghế">@context.Code</MudTd>
+                    <MudTd DataLabel="STT">@(_lstSeat.IndexOf(context) + 1)</MudTd>
+                    <MudTd DataLabel="Mã ghế" Style="text-align:center">@context.Code</MudTd>
+                    <MudTd DataLabel="Tên bố cục phòng" Style="text-align:center">@context.RoomLayoutName</MudTd>
                     <MudTd DataLabel="Loại">@context.Type</MudTd>
                     <MudTd DataLabel="Giá">@context.Price</MudTd>
-                    <MudTd DataLabel="Trạng thái">@context.Status</MudTd>
+                    <MudTd DataLabel="Trạng thái" Style="text-align:center">@context.Status</MudTd>
                     <MudTd>
                         <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
                         <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
@@ -67,24 +86,32 @@
 </MudPaper>
 
 @code {
-    [Inject]
-    public ISeatRepo _seatRepo { get; set; }
+        [Inject]
+        public ISeatRepo _seatRepo { get; set; }
 
-    public List<SeatDto>? _lst { get; set; }
-
+    public List<SeatDto>? _lstSeat { get; set; }
+    string? selectedRoomLayoutId { get; set; }
     public ViewSeatWithPaginationRequest _viewSeatWithPaginationRequest = new(){PageSize = int.MaxValue-1};
     public SeatDeleteRequest _seatDelete = new();
-
+    ViewRoomLayoutWithPaginationRequest _request = new() { PageSize = int.MaxValue - 1 };
+    [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
     string? searchString = "";
-
+    List<RoomLayoutDto> _lstRoomLayout { get; set; } = new();
     MudMessageBox _mbox { get; set; }
+
+    private async Task LoadRoomLayoutForSelect()
+    {
+        var result = await _roomLayoutRepo.GetAllActive(_request);
+        _lstRoomLayout = result.Data.Data.ToList();      
+    }
+
 
     private async Task CreateDialog()
     {
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
         _dialogService.Show<Create>("Thêm mới ghế", closeOnEscapeKey);
-        await LoadData(searchString);
+        await LoadData(string.Empty);
     }
 
     private async Task UpdateDialog(Guid Id)
@@ -95,7 +122,7 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await LoadData(searchString);
+            await LoadData(string.Empty);
         }
     }
 
@@ -110,7 +137,7 @@
 
     public async Task OnConfirmDelete()
     {
-         
+
         var removeConfirm = await _seatRepo.RemoveAsync(_seatDelete);
         if (removeConfirm)
         {
@@ -121,27 +148,31 @@
             _snackbar.Add("Xóa thất bại",Severity.Error);
         }
         await Task.Delay(1000);
-        await LoadData(searchString);
+        await LoadData(string.Empty);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData(searchString);
-        
+        await LoadRoomLayoutForSelect();
+        await LoadData(string.Empty);
+
     }
 
-    private async Task LoadData(string textSearch)
+    private async Task LoadData(string roomLayoutId)
     {
-        
-        _viewSeatWithPaginationRequest.Code = textSearch;
-        
+        if (!string.IsNullOrEmpty(roomLayoutId)){
+            _viewSeatWithPaginationRequest.RoomLayoutId = Guid.Parse(roomLayoutId);
+
+        }
+
         var result = await _seatRepo.GetAllActive(_viewSeatWithPaginationRequest);
-        _lst = result.Data.Data.ToList();
-        
+        _lstSeat = result.Data.Data.ToList();
+
     }
-    private async Task OnSearch(string textSearch)
+    private async Task OnSelectedRoomLayout(string roomLayout)
     {
-        await LoadData(textSearch);
+        selectedRoomLayoutId = roomLayout;
+        await LoadData(roomLayout);
         StateHasChanged();
     }
 }

@@ -81,7 +81,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteRoomLayout(RoomLayoutDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteRoomLayout([FromQuery]RoomLayoutDeleteRequest request, CancellationToken cancellationToken)
         {
             RoomLayoutDeleteViewModel vm = new(_roomLayoutReadWriteRepository, _localizationService, _mapper);
 

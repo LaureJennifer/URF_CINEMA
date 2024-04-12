@@ -17,29 +17,14 @@
 <MudDialog>
     <DialogContent>
         <MudGrid>
-            <MudItem xs="6" sm="6" md="6">
-                <MudSelect T="string" Placeholder="Tên bố cục phòng*" Class="mb-2"
-                           AnchorOrigin="Origin.BottomCenter" @bind-Value="@_roomLayoutId" For="@(() => _roomLayoutId)">
-                    @foreach (var item in _lstRoomLayout)
-                    {
-                        <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
-                    }
-                </MudSelect>
+            <MudItem xs="12" md="6">
+                <MudTextField @bind-Value="@_roomLayoutDto.Name" Placeholder="Tên bố cục phòng chiếu*" />
             </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Code" Placeholder="Mã ghế*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Row" Placeholder="Vị trí*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Type" Placeholder="Loại*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_seatDto.Price" Placeholder="Giá*" />
-            </MudItem>
+
+
+        
             <MudItem xs="12" sm="6">
-                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_seatDto.Status" For="@(() => _seatDto.Status)">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_roomLayoutDto.Status" For="@(() => _roomLayoutDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
@@ -53,7 +38,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Chỉnh sửa</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -61,41 +46,32 @@
     [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
 
     [Inject]
-    public ISeatRepo _seatRepo { get; set; }
-    [Inject]
     public IRoomLayoutRepo _roomLayoutRepo { get; set; }
 
-    public SeatDto _seatDto = new();
-    public List<SeatDto> _lstSeat = new();
-    public List<RoomLayoutDto> _lstRoomLayout = new();
-    ViewRoomLayoutWithPaginationRequest request = new() { PageSize = int.MaxValue - 1 };
+    public RoomLayoutDto _roomLayoutDto = new();
 
-    public string _roomLayoutId{ get; set; }
+    [Parameter]
+    public Guid idRoomLayout { get; set; }
 
-    public SeatCreateRequest obj = new();
-    public ViewSeatWithPaginationRequest seat_ = new();
+    public RoomLayoutUpdateRequest obj = new();
 
     private async Task OnButtonClicked()
     {
-        obj.RoomLayoutId = _seatDto.RoomLayoutId;
-        obj.Code = _seatDto.Code;
-        obj.Row = _seatDto.Row;
-        obj.SeatColumn = _seatDto.SeatColumn;
-        obj.Type = _seatDto.Type;
-        obj.Price = _seatDto.Price;
-        obj.Status = _seatDto.Status;
+        obj.Id = _roomLayoutDto.Id;
+        obj.Name = _roomLayoutDto.Name;
+        obj.Status = _roomLayoutDto.Status;
+       
         bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
-     "Bạn có chắc thêm mới?",
+     "Bạn có chắc chỉnh sửa?",
      yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
-        {
-            obj.RoomLayoutId = Guid.Parse(_roomLayoutId);
-            var result = await _seatRepo.AddAsync(obj);
+        {            
+            var result = await _roomLayoutRepo.UpdateAsync(obj);
             if (result == true)
             {
                 _mudDialog.Close(DialogResult.Ok(true));
-                _snackbar.Add("Thêm thành công", Severity.Success);
+                _snackbar.Add("Sửa thành công", Severity.Success);
                 _navigate.NavigateTo("/seat/list");
                 StateHasChanged();
             }
@@ -103,7 +79,7 @@
             {
                 _snackbar.Add
                 (
-                    "Thêm thất bại",
+                    "Sửa thất bại",
                         Severity.Error
                 );
             }
@@ -118,15 +94,9 @@
     private async Task LoadData()
     {
 
-        var result = await _seatRepo.GetAllActive(seat_);
-        if (result != null)
-        {
-            _lstSeat = result.Data.Data.ToList();
-        }
-        var result1 = await _roomLayoutRepo.GetAllActive(request);
-        _lstRoomLayout = result1.Data.Data.ToList();
+        var result = await _roomLayoutRepo.GetByIdAsync(idRoomLayout);
+        _roomLayoutDto = result.Data!;
+
     }
-
-
     void Cancel() => _mudDialog.Cancel();
 }

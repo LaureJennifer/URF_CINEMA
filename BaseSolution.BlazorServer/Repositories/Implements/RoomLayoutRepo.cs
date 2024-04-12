@@ -9,7 +9,6 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
     public class RoomLayoutRepo : IRoomLayoutRepo
     {
         public async Task<bool> AddAsync(RoomLayoutCreateRequest request)
-
         {
             var client = new HttpClient
             {
@@ -19,14 +18,18 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return obj.IsSuccessStatusCode;
         }
 
-        public async Task<RoomLayoutListWithPaginationViewModel> GetAllActive()
+        public async Task<RoomLayoutListWithPaginationViewModel> GetAllActive(ViewRoomLayoutWithPaginationRequest request)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-
-            var obj = await client.GetFromJsonAsync<RoomLayoutListWithPaginationViewModel>($"api/RoomLayouts");
+            string url = $"api/RoomLayouts?PageSize={request.PageSize}";
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                url = $"api/RoomLayouts?Name={request.Name}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<RoomLayoutListWithPaginationViewModel>(url);
 
 
             if (obj != null)
@@ -56,6 +59,31 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             if (obj != null)
                 return obj;
             return null;
+        }
+
+        public async Task<bool> RemoveAsync(RoomLayoutDeleteRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            string url = $"/api/RoomLayouts?Id={request.Id}";
+            if (!string.IsNullOrWhiteSpace(request.DeletedBy.ToString()))
+            {
+                url += $"&DeletedBy={request.DeletedBy}";
+            }
+            var result = await client.DeleteAsync(url);
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> UpdateAsync(RoomLayoutUpdateRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.PutAsJsonAsync("api/RoomLayouts", request); ;
+            return obj.IsSuccessStatusCode;
         }
     }
 }
