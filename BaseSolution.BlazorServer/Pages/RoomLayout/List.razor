@@ -1,0 +1,145 @@
+﻿@page "/room-layout/list"
+
+@using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.Application.DataTransferObjects.RoomLayout.Request
+@using BaseSolution.BlazorServer.Components.RoomLayout
+@using BaseSolution.BlazorServer.Repositories.Interfaces
+@using MudBlazor
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+<MudPaper Class="pa-5 mb-3">
+    <MudGrid>
+        <MudItem xs="9" md="9">
+            <MudText Class="mt-3" Typo="Typo.h4">Danh sách bố cục phòng chiếu</MudText>
+        </MudItem>
+        <MudItem xs="3" md="3">
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" HelperText="Tìm kiếm theo mã" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+        </MudItem>
+
+    </MudGrid>
+    @if (_lstRoomLayout == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+
+        <MudTable Items="@_lstRoomLayout" Class="mt-4" Hover="true" FixedHeader="true">
+            <HeaderContent>
+                <MudTh>STT</MudTh>
+
+                <MudTh Style="text-align:center">Tên bố cục phòng</MudTh>
+                <MudTh Style="text-align:center">Trạng thái</MudTh>
+                <MudTh>Hành động</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="STT">@(_lstRoomLayout.IndexOf(context) + 1)</MudTd>
+                <MudTd DataLabel="Tên bố cục" Style="text-align:center">@context.Name</MudTd>
+                <MudTd DataLabel="Trạng thái" Style="text-align:center">@context.Status</MudTd>
+                <MudTd>
+                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                </MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="@_size"/>
+            </PagerContent>
+        </MudTable>
+    }
+
+    <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+        <MessageContent>
+            Xác nhận xóa bố cục phòng!
+        </MessageContent>
+        <YesButton>
+            <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+                Xác nhận
+            </MudButton>
+        </YesButton>
+    </MudMessageBox>
+</MudPaper>
+<BaseSolution.BlazorServer.Components.Excel.ExcelImport OnSearch="OnSearch" SearchString="@string.Empty"></BaseSolution.BlazorServer.Components.Excel.ExcelImport>
+
+@code {
+    [Inject]
+    public IRoomLayoutRepo _roomLayoutRepo { get; set; }
+    int[] _size = { 5,10,15,20};
+
+    string? selectedRoomLayoutId { get; set; }
+    public ViewRoomLayoutWithPaginationRequest _viewRoomLayoutWithPaginationRequest = new() { PageSize = int.MaxValue - 1 };
+    public RoomLayoutDeleteRequest _roomLayoutDeleteRequest = new();
+    ViewRoomLayoutWithPaginationRequest _request = new() { PageSize = int.MaxValue - 1 };
+    string searchString { get; set; } = string.Empty;
+    List<RoomLayoutDto> _lstRoomLayout { get; set; } = new();
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        _dialogService.Show<Create>("Thêm mới bố cục phòng", closeOnEscapeKey);
+        await LoadData(string.Empty);
+    }
+
+    private async Task UpdateDialog(Guid Id)
+    {
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.idRoomLayout, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin bố cục phòng", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData(string.Empty);
+        }
+    }
+
+    private async Task OnDeleteClicked(Guid Id)
+    {
+        var seat = await _roomLayoutRepo.GetByIdAsync(Id);
+        _roomLayoutDeleteRequest.Id = seat.Data.Id;
+
+        bool? result = await _mbox.Show();
+        StateHasChanged();
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        var removeConfirm = await _roomLayoutRepo.RemoveAsync(_roomLayoutDeleteRequest);
+        if (removeConfirm)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại", Severity.Error);
+        }
+        await Task.Delay(1000);
+        await LoadData(string.Empty);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await LoadData(string.Empty);
+        StateHasChanged();
+    }
+
+    private async Task LoadData(string roomLayoutName)
+    {
+        if (!string.IsNullOrEmpty(roomLayoutName))
+        {
+            _viewRoomLayoutWithPaginationRequest.Name = roomLayoutName;
+
+        }
+        else _viewRoomLayoutWithPaginationRequest.Name = string.Empty;
+
+        var result = await _roomLayoutRepo.GetAllActive(_viewRoomLayoutWithPaginationRequest);
+        _lstRoomLayout = result.Data.Data.ToList();
+
+    }
+
+    async Task OnSearch(string debouncedText)
+    {       
+        await LoadData(debouncedText);
+    }
+}

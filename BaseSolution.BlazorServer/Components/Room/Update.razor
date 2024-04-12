@@ -5,6 +5,7 @@
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.Room.Request
 @using BaseSolution.Application.DataTransferObjects.RoomLayout
+@using BaseSolution.Application.DataTransferObjects.RoomLayout.Request
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities
 @using BaseSolution.Domain.Enums
@@ -79,6 +80,7 @@
     public IDepartmentRepo _departmentRepo { get; set; }
     [Inject]
     public IRoomLayoutRepo _roomlayoutRepo { get; set; }
+    ViewRoomLayoutWithPaginationRequest request = new() { PageSize = int.MaxValue - 1 };
 
     public RoomDto _roomDto = new();
     private List<RoomDto> _lstRoom { get; set; }
@@ -147,7 +149,7 @@
         var result1 = await _departmentRepo.GetAllActive(department_);
         _lstDepartment = result1.Data.Data.ToList();
 
-        var result2 = await _roomlayoutRepo.GetAllActive();
+        var result2 = await _roomlayoutRepo.GetAllActive(request);
         _lstRoomlayout = result2.Data.Data.ToList();
     }
 

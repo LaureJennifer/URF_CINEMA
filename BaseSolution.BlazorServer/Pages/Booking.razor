@@ -80,6 +80,7 @@ if (_showDateList != null)
     [Inject]public IFilmDetailRepo _filmDetailRepo { get; set; }
     [Inject]
     IRoomByFilmScheduleRepo _roomByFilmScheduleRepo{ get; set; }
+    [Inject] IFilmScheduleRepo _filmScheduleRepo { get; set; }
     IFilmScheduleRoomRepo _filmSheduleRoomRepo { get; set; }
     ViewBookingWithPaginationRequest _bookingRequest = new() { PageSize = int.MaxValue - 1 };
     FilmDto _selectedFilm { get; set; }
@@ -122,7 +123,7 @@ if (_showDateList != null)
         _lstSchedule = _lstFilmScheduleIdFilm.Intersect(_lstFilmScheduleIdRoom);
         foreach (var item in _lstSchedule)
         {
-            var rs = await _filmDetailRepo.GetFilmScheduleByIdAsync(item);
+            var rs = await _filmScheduleRepo.GetFilmScheduleByIdAsync(item);
             var x = rs.Data;
             if (x != null)
             {

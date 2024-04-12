@@ -85,7 +85,7 @@
     private List<RoomDto> _lstRoom { get; set; }
     public List<DepartmentDto> _lstDepartment{ get; set; }
     public List<RoomLayoutDto> _lstRoomlayout { get; set; }
-
+    ViewRoomLayoutWithPaginationRequest request = new() { PageSize = int.MaxValue - 1 };
     public RoomCreateRequest obj = new();
     public ViewRoomWithPaginationRequest room_ = new();
     public ViewDepartmentWithPaginationRequest department_ = new();
@@ -145,7 +145,7 @@
         var result1 = await _departmentRepo.GetAllActive(department_);
         _lstDepartment = result1.Data.Data.ToList();
 
-        var result2 = await _roomlayoutRepo.GetAllActive();
+        var result2 = await _roomlayoutRepo.GetAllActive(request);
         _lstRoomlayout = result2.Data.Data.ToList();
     }
 

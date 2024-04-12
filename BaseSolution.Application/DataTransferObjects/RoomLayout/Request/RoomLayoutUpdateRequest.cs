@@ -11,8 +11,6 @@ namespace BaseSolution.Application.DataTransferObjects.RoomLayout.Request
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }
-
-        public DateTimeOffset? CreatedTime { get; set; }
         public EntityStatus? Status { get; set; }
     }
 }

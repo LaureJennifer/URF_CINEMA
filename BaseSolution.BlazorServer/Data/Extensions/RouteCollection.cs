@@ -70,6 +70,7 @@
         public class RoomLayout
         {
             public static string ExcelImport = "/admin/excel-import";
+            public static string List = "/room-layout/list";
         }
     }
 }

@@ -17,6 +17,7 @@
 @inject ISnackbar _snackBar;
 @inject NavigationManager _navigate;
 <InputFile style="background-color:#100645;color:#F2FFFF" OnChange="@ImportExcelFile" />
+
 @if (lstSeat == null)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate ="true" />
@@ -63,11 +64,19 @@ else
             </MudGrid>
 
         </MudPaper>
-        <MudButton Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddRoomLayout">Thêm sơ đồ ghế</MudButton>
-        <MudButton Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddSeats">Thêm ghế</MudButton>
-
+        <MudButton Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddRoomLayout">Xác nhận thêm mới</MudButton>
     }
 }
+<MudMessageBox @ref="_mbox" Title="Điền tên bố cục phòng">
+    <MessageContent>
+        <MudTextField @bind-Value="@_roomLayoutName" Placeholder="Tên bố cục phòng chiếu*" />
+    </MessageContent>
+    <YesButton>
+        <MudButton Color="Color.Primary" OnClick="@(async()=> await OkButton())">
+            Ok
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
 @code {
     [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
     [Inject] ISeatRepo _seatRepo { get; set; }
@@ -78,17 +87,24 @@ else
     string path { get; set; }
     double maxPrice { get; set; }
     Guid idRoomLayout { get; set; }
+    MudMessageBox _mbox { get; set; }
+    string? _roomLayoutName { get; set; }
 
     async Task AddRoomLayout()
     {
-        _roomLayoutCreateRequest.Name = Guid.NewGuid().ToString() + path;
+        bool? createRoomLayoutName = await _mbox.Show();
+        if (_roomLayoutName != null)
+        {
+            _roomLayoutCreateRequest.Name = _roomLayoutName;
+
+        }
         var result = await _roomLayoutRepo.AddAsync(_roomLayoutCreateRequest);
         var roomLayout = await _roomLayoutRepo.GetByNameAsync(_roomLayoutCreateRequest.Name);
         idRoomLayout = roomLayout.Data!.Id;
         if (result)
         {
             _snackBar.Add("Thêm mới sơ đồ phòng thành công!", Severity.Success);
-
+            await AddSeats();
         }
         else 
             _snackBar.Add("Thêm mới sơ đồ phòng thất bại!", Severity.Error);
@@ -162,8 +178,8 @@ else
                     };
                     lstSeat.Add(seatDto);
                 }                   
-             }
-            
+            }
+
         }
     }
 
@@ -187,6 +203,12 @@ else
     {
         return $"{column}{row.ToString()}";
     }
-    
-    
+    [Parameter]
+    public string SearchString { get; set; } = "";
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+    async Task OkButton()
+    {
+        await OnSearch.InvokeAsync(SearchString);
+    }
 }
