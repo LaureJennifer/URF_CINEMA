@@ -70,7 +70,7 @@ namespace BaseSolution.BlazorServer
 
             builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
             builder.Services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
-
+            builder.Services.AddSingleton<SaveCustomerId>(); //Service để lưu IdCustomer và list Booking
             builder.Services.Configure<RecaptchaOption>(builder.Configuration.GetSection(nameof(RecaptchaOption)));
             builder.Services.AddSession(options =>
             {
