@@ -11,6 +11,5 @@ namespace BaseSolution.Application.DataTransferObjects.FilmDetail.Request
     {
         public Guid FilmId { get; set; }
         public Guid FilmScheduleId { get; set; }
-        public EntityStatus Status { get; set; }
     }
 }

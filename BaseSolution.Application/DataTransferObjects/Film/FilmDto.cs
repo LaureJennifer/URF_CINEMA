@@ -1,4 +1,5 @@
-﻿using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
+﻿using BaseSolution.Application.DataTransferObjects.FilmSchedule;
+using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
 using BaseSolution.Application.DataTransferObjects.Room;
 using BaseSolution.Domain.Entities;
 using BaseSolution.Domain.Enums;
@@ -23,9 +24,7 @@ namespace BaseSolution.Application.DataTransferObjects.Film
         public string Actor { get; set; }
         public string TrailerURL { get; set; }
         public DateTimeOffset ReleaseDate { get; set; }
-        public List<DateTimeOffset> ShowDates { get; set; }
-        public List<DateTimeOffset> ShowTimes { get; set; }
-        public List<RoomDto> Rooms { get; set; }
+        public List<FilmScheduleDto> FilmSchedules { get; set; } 
         public string Duration { get; set; }
         public string Script { get; set; }
         public string Genres { get; set; }

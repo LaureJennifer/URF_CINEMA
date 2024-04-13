@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using BaseSolution.Application.DataTransferObjects.FilmSchedule;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request;
+using BaseSolution.Application.DataTransferObjects.Seat;
 using BaseSolution.Application.DataTransferObjects.User;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Services;
@@ -156,6 +157,32 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     {
                         Error= e.Message,
                         FieldName = LocalizationString.Common.FailedToGet + "list of film schedule room"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<List<FilmScheduleRoomDto>>> GetListFilmScheduleRoomByIdAsync(List<Guid> listIdFilmScheduleRoom, CancellationToken cancellationToken)
+        {
+            try
+            {
+                List<FilmScheduleRoomDto> lstFilmScheduleRooms = new();
+                foreach (var item in listIdFilmScheduleRoom)
+                {
+                    var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(c => c.Id == item && !c.Deleted).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider)
+                   .FirstOrDefaultAsync(cancellationToken);
+                    lstFilmScheduleRooms.Add(filmScheduleRoom);
+                }
+                return RequestResult<List<FilmScheduleRoomDto>>.Succeed(lstFilmScheduleRooms);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<List<FilmScheduleRoomDto>>.Fail(_localizationService["List film schedule room is not found"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "List film schedule room"
                     }
                 });
             }
