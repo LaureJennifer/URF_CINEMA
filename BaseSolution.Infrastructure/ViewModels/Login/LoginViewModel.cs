@@ -15,26 +15,24 @@ using System.Security.Cryptography;
 
 namespace BaseSolution.Infrastructure.ViewModels.Login
 {
-    public class LoginViewModel : ViewModelBase<LoginInputRequest>
+    public class LoginViewModel : ViewModelBase<string>
     {
         private readonly ILoginService _loginService;
         private readonly ILocalizationService _localizationService;
-        private readonly Appsetting _appSetting;
-        public LoginViewModel(ILoginService loginService, ILocalizationService localizationService,IOptionsMonitor<Appsetting> monitor)
+        public LoginViewModel(ILoginService loginService, ILocalizationService localizationService)
         {
             _loginService = loginService;
             _localizationService = localizationService;
-            _appSetting = monitor.CurrentValue;
         }
-        public async override Task HandleAsync(LoginInputRequest data, CancellationToken cancellationToken)
+        public async override Task HandleAsync(string data, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _loginService.Login(data);
-                Data = GenerateToken(result.Data);
-                Success = result.Success;
-                ErrorItems = result.Errors;
-                Message = result.Message;
+                var result = await _loginService.Login(data,cancellationToken);
+                //Data = result.Data!;
+                //Success = result.Success;
+                //ErrorItems = result.Errors;
+                //Message = result.Message;
                 return;
             }
             catch (Exception)
@@ -49,60 +47,60 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
                 };
             }
         }
-        private TokenModel GenerateToken(ViewLoginInput userEntity)
-        {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = Encoding.UTF8.GetBytes(_appSetting.SecretKey);
+        //private TokenModel GenerateToken(ViewLoginInput userEntity)
+        //{
+        //    var jwtTokenHandler = new JwtSecurityTokenHandler();
+        //    var secretKeyBytes = Encoding.UTF8.GetBytes(_appSetting.SecretKey);
 
-            var roles = GetRoleById(userEntity.RoleId);
-            var tokenDescription = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, userEntity.Name),
-                    new Claim(ClaimTypes.Email,userEntity.Email),
-                    new Claim("UserName",userEntity.UserName),
-                    new Claim("Id",userEntity.Id.ToString()),
+        //    var roles = GetRoleById(userEntity.RoleId);
+        //    var tokenDescription = new SecurityTokenDescriptor
+        //    {
+        //        Subject = new ClaimsIdentity(new[]
+        //        {
+        //            new Claim(ClaimTypes.Name, userEntity.Name),
+        //            new Claim(ClaimTypes.Email,userEntity.Email),
+        //            new Claim("UserName",userEntity.UserName),
+        //            new Claim("Id",userEntity.Id.ToString()),
 
-                    new Claim(ClaimTypes.Role, roles?.ToString()),
-                }),
-                    Expires = DateTime.UtcNow.AddDays(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey
-                (secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
-            };
+        //            new Claim(ClaimTypes.Role, roles?.ToString()),
+        //        }),
+        //            Expires = DateTime.UtcNow.AddDays(1),
+        //            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey
+        //        (secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
+        //    };
             
-            var token = jwtTokenHandler.CreateToken(tokenDescription);
+        //    var token = jwtTokenHandler.CreateToken(tokenDescription);
 
-            var accessToken = jwtTokenHandler.WriteToken(token);
+        //    var accessToken = jwtTokenHandler.WriteToken(token);
 
-            return new TokenModel
-            {
-                AccessToken = accessToken
-            };
-        }
+        //    return new TokenModel
+        //    {
+        //        AccessToken = accessToken
+        //    };
+        //}
 
-        private string GenerateRefreshToken()
-        {
-            var random = new byte[32];
-            using ( var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(random);
+        //private string GenerateRefreshToken()
+        //{
+        //    var random = new byte[32];
+        //    using ( var rng = RandomNumberGenerator.Create())
+        //    {
+        //        rng.GetBytes(random);
 
-                return Convert.ToBase64String(random);
-            }
-        }
+        //        return Convert.ToBase64String(random);
+        //    }
+        //}
 
-        public string GetRoleById(Guid roleId)
-        {
-            using (var _dbcontext = new AppReadOnlyDbContext())
-            {
-                var role = _dbcontext.RoleEntities.FirstOrDefault(x => x.Id == roleId);
-                if (role != null)
-                {
-                    return role.Code;
-                }
-                throw new Exception("Quyền không tồn tại!");
-            }
-        }
+        //public string GetRoleById(Guid roleId)
+        //{
+        //    using (var _dbcontext = new AppReadOnlyDbContext())
+        //    {
+        //        var role = _dbcontext.RoleEntities.FirstOrDefault(x => x.Id == roleId);
+        //        if (role != null)
+        //        {
+        //            return role.Code;
+        //        }
+        //        throw new Exception("Quyền không tồn tại!");
+        //    }
+        //}
     }
 }

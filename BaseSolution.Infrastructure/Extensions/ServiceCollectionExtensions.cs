@@ -109,6 +109,7 @@ namespace BaseSolution.Infrastructure.Extensions
             services.AddTransient<ILoginService, LoginService>();
 
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<ICurrentUser, CurrentUser>();
             //services.AddSingleton<IVnPayService, VnPayService>();
 
             return services;

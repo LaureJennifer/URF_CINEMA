@@ -48,14 +48,33 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task<bool> LoginCustomer(LoginInputRequest request)
+        public async Task<string> LoginCustomer(LoginInputRequest request)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.PostAsJsonAsync("api/Logins/Customer", request);
-            return obj.IsSuccessStatusCode;
+            var result = await client.PostAsJsonAsync("api/Logins/Customer", request);
+            var token = await result.Content.ReadAsStringAsync();
+            //var loginResponse = JsonSerializer.Deserialize<LoginResponse>(token,
+            //    new JsonSerializerOptions()
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+            //if (!result.IsSuccessStatusCode)
+            //{
+            //    return loginResponse;
+            //}
+            await _localStorage.SetItemAsync("token", token);
+            await _authenticationStateProvider.GetAuthenticationStateAsync();
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.UserName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            return token;
+            //return loginResponse;
+            //await _localStorage.SetItemAsync("token", token);
+            //await _authenticationStateProvider.GetAuthenticationStateAsync();
+            ////((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.UserName);
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
         public async Task Logout()
@@ -67,6 +86,26 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             await _localStorage.RemoveItemAsync("token");
             ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsLoggedOut();
             client.DefaultRequestHeaders.Authorization = null;
+        }
+
+        public async Task<ViewLoginInput> SignIn(LoginInputRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var result = await client.PostAsJsonAsync("api/Logins/SignInPassword", request);
+            var token = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(token);
+            await _localStorage.SetItemAsync("Token", token);
+            await _authenticationStateProvider.GetAuthenticationStateAsync();
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.UserName);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var loginResult = new ViewLoginInput
+            {
+                Token = token
+            };
+            return loginResult;
         }
     }
 }

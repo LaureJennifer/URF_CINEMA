@@ -1,26 +1,24 @@
 ﻿@page "/ticket/list"
 @using BaseSolution.Application.DataTransferObjects.Ticket
 @using BaseSolution.Application.DataTransferObjects.Ticket.Request
+@using BaseSolution.Application.ValueObjects.Common
 @using BaseSolution.BlazorServer.Components.Ticket;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
-
+@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
 
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
 
 <MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách Vé</MudText>
     <MudGrid>
         <MudItem xs="8">
-            <MudText Class="mt-3" Typo="Typo.h4">Danh sách Vé</MudText>
         </MudItem>
         <MudItem xs="4">
-            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary"/>
+            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo mã" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
         </MudItem>
     </MudGrid>
-
-    <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
-
     @if (_lst == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -54,25 +52,11 @@
                     <MudTd DataLabel="Ngày chiếu">@context.ShowDate.ToString("dd/MM/yyyy")</MudTd>
                     <MudTd DataLabel="Giờ chiếu">@context.ShowTime.ToString("hh : mm tt")</MudTd>
                     <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
-                    <MudTd>
-                        <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
-                    </MudTd>
                 </RowTemplate>
                 <PagerContent>
                     <MudTablePager />
                 </PagerContent>
             </MudTable>
-            <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
-                <MessageContent>
-                    Xác nhận xóa vé!
-                </MessageContent>
-                <YesButton>
-                    <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
-                        Xác nhận
-                    </MudButton>
-                </YesButton>
-            </MudMessageBox>
         }
     }
 </MudPaper>
@@ -83,67 +67,29 @@
 
     public List<TicketDto>? _lst { get; set; }
 
-    public ViewTicketWithPaginationRequest obj = new();
+    public ViewTicketWithPaginationRequest obj = new() { PageSize = int.MaxValue - 1 };
     public TicketDeleteRequest _ticketDelete = new();
 
     string searchString = string.Empty;
 
-    MudMessageBox _mbox { get; set; }
-
-    private async Task CreateDialog()
-    {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        _dialogService.Show<Create>("Thêm mới vé", closeOnEscapeKey);
-        await LoadData();
-    }
-
-    private async Task UpdateDialog(Guid Id)
-    {
-        var parameters = new DialogParameters<Update>();
-        parameters.Add(x => x.idTicket, Id);
-        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin vé", parameters);
-        var result = await dialog.Result;
-        if (!result.Canceled)
-        {
-            await LoadData();
-        }
-    }
-
-    private async Task OnDeleteClicked(Guid Id)
-    {
-        var user = await _ticketRepo.GetByIdAsync(Id);
-        var data = user.Data;
-        _ticketDelete.Id = data.Id;
-        _ticketDelete.DeletedTime = DateTime.Now;
-        bool? result = await _mbox.Show();
-        StateHasChanged();
-    }
-
-    public async Task OnConfirmDelete()
-    {
-        var removeConfirm = await _ticketRepo.RemoveAsync(_ticketDelete);
-        if (removeConfirm.Success)
-        {
-            _snackbar.Add("Xóa thành công", Severity.Success);
-        }
-        else
-        {
-            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
-        }
-        await Task.Delay(2000);
-        await LoadData();
-    }
-
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadData(searchString);
+
     }
 
-    private async Task LoadData()
+    private async Task LoadData(string textSearch)
     {
+
+        obj.Code = textSearch;
 
         var result = await _ticketRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
+
+    }
+    private async Task OnSearch(string textSearch)
+    {
+        await LoadData(textSearch);
+        StateHasChanged();
     }
 }

@@ -38,15 +38,7 @@
                 <MudTextField @bind-Value="_departmentDto.Address" Placeholder="Địa chỉ*" />
             </MudItem>
             <MudItem xs="12" sm="12" md="12">
-                <MudSelect T="EntityStatus" Label="Trạng thái*" Variant="Variant.Text" @bind-Value="_departmentDto.Status" For="@(() => _departmentDto.Status)">
-                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
-                </MudSelect>
+                <MudTextField @bind-Value="_departmentDto.Status" Placeholder="Trạng thái*" />
             </MudItem>
             <MudItem xs="4" sm="4" md="4">
                 <MudSelect T="EntityCountry" @bind-Value="selectedCountry" Label="Quốc gia*" OnValueChanged="OnCountryChanged">

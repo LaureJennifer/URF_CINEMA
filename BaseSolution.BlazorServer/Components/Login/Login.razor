@@ -8,11 +8,13 @@
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Film.Request
 @using BaseSolution.Application.DataTransferObjects.Role
+@using BaseSolution.Application.DataTransferObjects.Role.Request
 @using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.Application.DataTransferObjects.User.Request
 @using BaseSolution.BlazorServer.Components.SignUp;
 @using BaseSolution.BlazorServer.Components.ForgotPassword;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
+
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigation
@@ -42,7 +44,7 @@
                     <MudRadio Option="role.Name">@role.Name</MudRadio>
                 }
 
-            </MudRadioGroup>
+            </MudRadioGroup> 
         </DialogContent>
         <DialogActions>
             <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
@@ -68,11 +70,13 @@
     CustomerDto _customerDto = new();
     private bool showLogin = false;
 
+    private ViewRoleWithPaginationRequest roleRequest = new();
     public ViewUserWithPaginationRequest obj = new();
     public ViewCustomerWithPaginationRequest Obj = new();
+    ViewLoginInput viewLoginInput = new();
     string? error;
     bool _showError = false;
-
+    private string RoleId{ get; set; }
     public ViewLoginInput _loginVM = new();
 
     RoleDto _roleDto = new();
@@ -83,23 +87,26 @@
     }
     public bool ReadOnly { get; set; }
     public List<Option> _lstOption = new List<Option>
-{
-    new Option { Name = "nhân viên" },
-    new Option { Name = "khách hàng" }
-};
+    {
+        new Option { Name = "nhân viên" },
+        new Option { Name = "khách hàng" }
+    };
 
     [Inject]
     public IUserRepo _userRepo { get; set; }
     [Inject]
     public ICustomerRepo _customerRepo { get; set; }
+    [Inject]
+    public IRoleRepo _roleRepo { get; set; }
     [Parameter]
     public Guid idDepartment { get; set; }
 
-    private string customer_ = "Khách hàng";
-    private string employee_ = "nhân viên";
+    // private string customer_ = "Khách hàng";
+    // private string employee_ = "nhân viên";
 
     [Parameter]public string customerid{ get; set; }
     public List<CustomerDto> _lst;
+    private List<RoleDto> lstRole = new();
     public string departmentid{ get; set; }
     bool isShow;
     InputType PassWordInput = InputType.Password;
@@ -158,30 +165,81 @@
     private async Task LoginSuccessCustomer()
     {
         var result = await _loginRepo.LoginCustomer(_login);
-        if (result == true)
+        if (result !=null)
         {
             _snackbar.Add("Đăng nhập thành công", Severity.Success);
             _navigation.NavigateTo($"/home/{departmentid}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
-            // LoadData();
-            showLogin = true;
-        }
-        else
-        {
-            // _navigation.NavigateTo("/");
-        }
-    }
-    private async Task LoginSuccess()
-    {
-        var result = await _loginRepo.Login(_login);
-        if (result != null)
-        {
-            _snackbar.Add("Đăng nhập thành công", Severity.Success);
-            _navigation.NavigateTo($"/user/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+                                                             // LoadData();
             showLogin = true;
         }
         else
         {
             _navigation.NavigateTo("/");
         }
+    }
+    private async Task LoginUser()
+    {
+        bool loginSuccessful = false;
+        foreach (var item in _lstUser)
+        {
+            if (_login.UserName == item.UserName && _login.Password == item.PassWord)
+            {
+                // if (viewLoginInput.RoleId != item.RoleId)
+                // {
+                //     _snackbar.Add("Quyền đăng nhập không tồn tại!", Severity.Error);
+                // }
+                // else
+                // {
+                LoginSuccess();
+                loginSuccessful = true;
+                break;
+                // }
+            }
+        }
+        if (!loginSuccessful && !_lstUser.Any(user => user.UserName == _login.UserName && user.PassWord == _login.Password))
+        {
+            _snackbar.Add("Tài khoản hoặc mật khẩu không đúng!", Severity.Error);
+        }
+
+        return;
+        // var result = await _loginRepo.SignIn(_login);
+        // if (result != null)
+        // {
+        //     _snackbar.Add("Đăng nhập thành công", Severity.Success);
+        //     _navigation.NavigateTo($"/user/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+        //     showLogin = true;
+        // }
+        // else
+        // {
+        //     _navigation.NavigateTo("/");
+        // }
+    }
+    private async Task LoginSuccess()
+    {
+
+        var result = await _loginRepo.SignIn(_login);
+        if (result != null)
+        {
+            // if (result.Code.ToLower() == "Admin" || result.Code.ToLower() == "Nhân viên")
+            // {
+                _snackbar.Add("Đăng nhập thành công", Severity.Success);
+                _navigation.NavigateTo("/user/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+        }
+        else
+        {
+            _navigation.NavigateTo("/"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+        }   
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+    public async Task LoadData()
+    {
+        var result = await _userRepo.GetAllActive(obj);
+        _lstUser = result.Data!.Data.ToList();
+        var result1 = await _roleRepo.GetAllActive();
+        _lstRole = result1.Data!.Data.ToList();
+
     }
 }
