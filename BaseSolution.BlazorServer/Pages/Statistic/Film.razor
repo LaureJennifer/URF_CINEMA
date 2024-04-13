@@ -11,7 +11,7 @@
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Infrastructure.ViewModels.Statistic.Bill
 
-@if (_lstDepartmentForSelect != null && _lstMonthForSelect != null && _lstYearForSelect!=null)
+@if (_lstDepartmentForSelect != null && _lstMonthForSelect != null)
 {
     <MudGrid>
         <MudItem xs="3" md="3">
@@ -120,7 +120,7 @@ else
     List<FilmStatisticForMonthDto> _filmStatisticForMonthDtos { get; set; }
     List<FilmStatisticForYearDto> _filmStatisticForYearDtos { get; set; }
     List<DepartmentDto>? _lstDepartmentForSelect { get; set; }
-    List<string>? _lstYearForSelect { get; set; } 
+    List<string>? _lstYearForSelect { get; set; } = new List<string>(){"2024"};
     List<string>? _lstMonthForSelect { get; set; } = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
     List<string>? _lstQuarterForSelect = new List<string>() { "1", "2", "3", "4" };
     string? selectedDepartmentId { get; set; }
@@ -129,7 +129,7 @@ else
     string? selectedYear { get; set; } = "2024";
     string? selectedMonth { get; set; } = "1";
     string? selectedQuarter { get; set; }
-    FilmStatisticRequest _filmStatisticRequest = new() { PageSize = 100 };
+    FilmStatisticRequest _filmStatisticRequest = new() { PageSize = int.MaxValue-1 };
     ViewDepartmentWithPaginationRequest _request = new(){PageSize = 50};
     List<FilmStatistic> filmStatistics = new();
     bool _showListMonth { get; set; } = true;
@@ -139,6 +139,7 @@ else
         await LoadDepartmentForSelect();
 
         await LoadTimeForSelect();
+
     }
 
     private async Task LoadDepartmentForSelect()
@@ -191,7 +192,8 @@ else
     private async Task LoadTimeForSelect()
     {
         var result = await _filmStatisticRepo.GetFilmStatisticsForMonthAsync(_filmStatisticRequest);
-        _lstYearForSelect = result.OrderBy(x => x.Year).Select(x => x.Year.ToString()).Distinct().ToList();
+        if (result.Count!=0)
+            _lstYearForSelect = result.OrderBy(x => x.Year).Select(x => x.Year.ToString()).Distinct().ToList();
     }
 
     async Task OnSelectedYear(string year)

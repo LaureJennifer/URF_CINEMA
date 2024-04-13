@@ -19,10 +19,7 @@
         <MudGrid>
             <MudItem xs="12" md="6">
                 <MudTextField @bind-Value="@_roomLayoutDto.Name" Placeholder="Tên bố cục phòng chiếu*" />
-            </MudItem>
-
-
-        
+            </MudItem> 
             <MudItem xs="12" sm="6">
                 <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_roomLayoutDto.Status" For="@(() => _roomLayoutDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
@@ -72,7 +69,7 @@
             {
                 _mudDialog.Close(DialogResult.Ok(true));
                 _snackbar.Add("Sửa thành công", Severity.Success);
-                _navigate.NavigateTo("/seat/list");
+                _navigate.NavigateTo("/room-layout/list");
                 StateHasChanged();
             }
             else
