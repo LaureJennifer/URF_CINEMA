@@ -30,6 +30,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
+                var booking = _dbContext.BookingEntities.Where(x => x.SeatStatus == entity.Status).FirstOrDefault();
+                if (booking != null)
+                {
+                    booking.SeatStatus = EntityStatus.InActive;
+                    _dbContext.BookingEntities.Update(booking);
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                }
+                entity.Status = EntityStatus.InActive;
                 entity.CreatedTime = DateTimeOffset.UtcNow;
                 
                 await _dbContext.BillEntities.AddAsync(entity);

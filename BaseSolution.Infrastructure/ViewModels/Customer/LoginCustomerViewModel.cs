@@ -18,12 +18,10 @@ namespace BaseSolution.Infrastructure.ViewModels.Customer
     {
         private readonly ILoginService _loginService;
         private readonly ILocalizationService _localizationService;
-        private readonly Appsetting _appSetting;
-        public LoginCustomerViewModel(ILoginService loginService, ILocalizationService localizationService, IOptionsMonitor<Appsetting> monitor)
+        public LoginCustomerViewModel(ILoginService loginService, ILocalizationService localizationService)
         {
             _loginService = loginService;
             _localizationService = localizationService;
-            _appSetting = monitor.CurrentValue;
         }
         public async override Task HandleAsync(LoginInputRequest data, CancellationToken cancellationToken)
         {

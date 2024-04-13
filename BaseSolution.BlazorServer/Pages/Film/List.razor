@@ -1,5 +1,6 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Film.Request
+@using BaseSolution.Application.ValueObjects.Common
 @using BaseSolution.BlazorServer.Components.Film;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
@@ -7,18 +8,17 @@
 @page "/film/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-
+@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
 <MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách Phim</MudText>
     <MudGrid>
         <MudItem xs="8">
-            <MudText Class="mt-3 ml-5" Typo="Typo.h4">Danh sách Phim</MudText>
+            <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
         <MudItem xs="4">
-            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" Class="mr-3" />
+            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo tên" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
         </MudItem>
     </MudGrid>
-
-    <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3 ml-5"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
     @if (_lst == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -93,7 +93,7 @@
 
     public List<FilmDto>? _lst { get; set; }
 
-    public ViewFilmWithPaginationRequest obj = new();
+    public ViewFilmWithPaginationRequest obj = new() { PageSize = int.MaxValue - 1 };
     public FilmDeleteRequest _filmDelete = new();
 
     string searchString = string.Empty;
@@ -105,7 +105,7 @@
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
         _dialogService.Show<Create>("Thêm mới phim", closeOnEscapeKey);
-        await LoadData();
+        await LoadData(searchString);
     }
 
     private async Task UpdateDialog(Guid Id)
@@ -116,7 +116,7 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await LoadData();
+            await LoadData(searchString);
         }
     }
 
@@ -142,18 +142,27 @@
             _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
         }
         await Task.Delay(2000);
-        await LoadData();
+        await LoadData(searchString);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadData(searchString);
     }
 
-    private async Task LoadData()
+    private async Task LoadData(string textSearch)
     {
+
+        obj.Title = textSearch;
 
         var result = await _filmRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
+
+    }
+
+    private async Task OnSearch(string textSearch)
+    {
+        await LoadData(textSearch);
+        StateHasChanged();
     }
 }

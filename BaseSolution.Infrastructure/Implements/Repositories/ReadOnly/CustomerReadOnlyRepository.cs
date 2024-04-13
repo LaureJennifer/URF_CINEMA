@@ -99,6 +99,27 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
+        public async Task<RequestResult<CustomerDto?>> GetCustomerByNameAsync(string name, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var customer_ =  await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(x=>x.UserName == name && !x.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
+                return RequestResult<CustomerDto?>.Succeed(customer_);
+            }
+            catch(Exception e)
+            {
+                return RequestResult<CustomerDto>.Fail(_localizationService["Customer is not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "Customer"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<PaginationResponse<CustomerDto>>> GetCustomerWithPaginationByAdminAsync(ViewCustomerWithPaginationRequest request, CancellationToken cancellationToken)
         {
             try

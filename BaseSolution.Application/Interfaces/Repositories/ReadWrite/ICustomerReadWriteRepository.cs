@@ -17,5 +17,6 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadWrite
         Task<RequestResult<int>> UpdateCustomerAsync(CustomerEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> DeleteCustomerAsync(CustomerDeleteRequest request, CancellationToken cancellationToken);
         Task<RequestResult<Guid>> RegisterCustomerAsync(CustomerEntity request, CancellationToken cancellationToken);
+        Task<RequestResult<Guid>> ResetPasswordCustomerAsync(CustomerEntity entity, CancellationToken cancellationToken);
     }
 }

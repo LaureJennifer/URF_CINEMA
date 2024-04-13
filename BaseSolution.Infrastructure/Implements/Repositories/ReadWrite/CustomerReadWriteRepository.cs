@@ -8,6 +8,7 @@ using BaseSolution.Domain.Entities;
 using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Implements.Services;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -87,8 +88,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
+                var user = await _dbContext.CustomerEntities.FirstOrDefaultAsync(c => c.UserName.ToUpper() == request.UserName.ToUpper() && c.PassWord == request.PassWord && !c.Deleted);
                 request.CreatedTime = DateTimeOffset.UtcNow;
-
+                
                 await _dbContext.CustomerEntities.AddAsync(request);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -97,6 +99,26 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             catch (Exception e)
             {
                 return RequestResult<Guid>.Fail(_localizationService["Unable to register customer"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "customer"
+                    }
+                });
+            }
+        }
+
+        public async Task<RequestResult<Guid>> ResetPasswordCustomerAsync(CustomerEntity entity, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var user = await _dbContext.CustomerEntities.FirstOrDefaultAsync(c => c.Id == entity.Id && !c.Deleted);
+                return RequestResult<Guid>.Succeed(entity.Id);
+            }
+            catch (Exception e)
+            {
+                return RequestResult<Guid>.Fail(_localizationService["Unable to reset customer"], new[]
                 {
                     new ErrorItem
                     {

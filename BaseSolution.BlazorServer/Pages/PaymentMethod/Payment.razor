@@ -1,5 +1,6 @@
 ﻿@page "/payment/{departmentid}"
 @using BaseSolution.Application.DataTransferObjects.Bill
+@using BaseSolution.Application.DataTransferObjects.Bill.Request
 @using BaseSolution.Application.DataTransferObjects.Booking
 @using BaseSolution.Application.DataTransferObjects.Booking.Request
 @using BaseSolution.Application.DataTransferObjects.Customer
@@ -24,6 +25,7 @@
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager;
+@attribute [Authorize(Roles = "{ADMIN,Nhân viên,Customer")]
 
 <MudAppBar Style="background-color:burlywood" Fixed="false" Elevation="0">
     <MudLink Href="/room"><MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Color="Color.Inherit" Edge="Edge.Start" /></MudLink>
@@ -61,30 +63,33 @@
                                 }
                             </MudPaper>
                         </MudItem>
-                       @*  <MudItem xs="11" lg="11" md="11">
+                        <MudItem xs="11" lg="11" md="11">
                             <MudText Align="Align.Right" Style="color:#180F20">Tổng tiền: @_seatDto.Price.ToString("#,##0") vnd</MudText>
                         </MudItem>
                         <MudItem xs="11" lg="11" md="11">
                             <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @_seatDto.Price.ToString("#,##0") vnd</MudText>
-                        </MudItem> *@
+                        </MudItem>
+                        <MudItem class="custom-item">
+                            <MudTextField Label="Tổng tiền" Value="@_billDto.TotalPrice" ReadOnly="true" class="custom-textfield" />
+                        </MudItem>
                         <MudDivider />
                         <MudText Align="Align.Left" Style="color:#180F20;">Phương thức thanh toán</MudText>
                         <MudDivider />
                     </MudGrid>
                     <MudGrid>
                         <MudItem xs="12" md="12" lg="12" Style="color:darkred;">
-                            @* <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
+                            <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
                                 <MudSelect T="string" @bind-Value="@SelectedOption">
                                     @foreach (var item in _lstPayment)
                                     {
                                         <MudSelectItem T="string" Style="color:darkred;">@item.Name</MudSelectItem>
                                     }
                                 </MudSelect>
-                            </MudField> *@
+                            </MudField>
                             <MudPaper Style="background-color:#180F20;width:auto;height:auto;">
                                 <MudContainer Fixed="true">
                                     <div>
-                                        <MudButton OnClick="Pay">Thanh toán</MudButton>
+                                        <MudButton OnClick="@(() => Pay(_customerDto.Id))">Thanh toán</MudButton>
                                         <MudButton OnClick="QueryDR">Truy vấn</MudButton>
 @*                                         <MudButton OnClick="Refund">Hoàn tiền</MudButton> *@
                                     </div>
@@ -122,7 +127,7 @@
                                     <MudButton Style="color:white">Quay lại</MudButton>
                                 </MudItem>
                                 <MudItem xs="3" lg="3" md="3">
-                                    <MudButton OnClick="()=>Pay()" Style="color:white">Tiếp tục</MudButton>
+                                    <MudButton OnClick="()=>Paymentmethod()" Style="color:white">Tiếp tục</MudButton>
                                 </MudItem>
                                 <MudItem xs="2" lg="2" md="2"></MudItem>
                             </MudGrid>
@@ -210,19 +215,19 @@
 
     public string SelectedOption { get; set; }
 
-    // public async Task GetCustomerId()
-    // {
-    //     var result = await _customerRepo.GetByNameAsync(_customerDto.UserName);
-    //     if (result.Success)
-    //     {
-    //         _customerId = result.Data.Id.ToString();
-    //     }
-    //     else
-    //     {
-    //         // Xử lý khi không tìm thấy người dùng hoặc có lỗi xảy ra
-    //     }
-    //     // _customerId = result.Data.Id.ToString();
-    // }
+    public async Task GetCustomerId()
+    {
+        var result = await _customerRepo.GetByNameAsync(_customerDto.UserName);
+        if (result.Success)
+        {
+            _customerId = result.Data.Id.ToString();
+        }
+        else
+        {
+            // Xử lý khi không tìm thấy người dùng hoặc có lỗi xảy ra
+        }
+        // _customerId = result.Data.Id.ToString();
+    }
 
     async Task LoadListSeat(Guid roomlayoutId)
     {
@@ -239,7 +244,7 @@
 
     }
 
-    private void Pay()
+    private void Paymentmethod()
     {
         // Xử lý thanh toán ở đây
         _navigationManager.NavigateTo("/pay/vnpay");
@@ -251,6 +256,33 @@
         _navigationManager.NavigateTo("/pay/query");
     }
 
+    private async Task Pay( Guid idCustomer)
+    {
+
+        var confirm = await _dialogService.ShowMessageBox
+        (
+            "Thông báo",
+            "Xác nhận thanh toán?",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var bill = new BillCreateRequest
+                {
+                    CustomerId = idCustomer,
+                };
+            await _billRepo.CreateNewBill(bill);
+            _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
+            await LoadData();
+            StateHasChanged();
+        }
+        else
+        {
+            _snackbar.Add("Thanh toán đã được hủy", Severity.Info);
+
+        }
+    }
     // public async Task GetCustomerId()
     // {
     //     var result = await _customerRepo.GetByNameAsync(_customerDto.UserName);
@@ -292,11 +324,11 @@
         _seatDto = result5.Data!;
         }
        
-        var result6 = await _filmDetailRepo.GetFilmScheduleByIdAsync(Guid.Parse(filmScheduleId));
-        if (result6 != null)
-        {
-        _filmSchedule = result6.Data!;
-        }
+        // var result6 = await _filmDetailRepo.GetFilmScheduleByIdAsync(Guid.Parse(filmScheduleId));
+        // if (result6 != null)
+        // {
+        // _filmSchedule = result6.Data!;
+        // }
     }
 
     async Task GetListBooking()

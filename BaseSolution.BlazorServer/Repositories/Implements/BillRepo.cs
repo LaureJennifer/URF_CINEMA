@@ -7,6 +7,7 @@ using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
@@ -20,6 +21,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             var obj = await client.PostAsJsonAsync("api/Bills", request); ;
             return obj.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> CreateNewBill(BillCreateRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var result = await client.PostAsJsonAsync("/api/Bills", request);
+            return result.IsSuccessStatusCode;
         }
 
         public async Task<BillListWithPaginationViewModel> GetAllActive(ViewBillWithPaginationRequest request)

@@ -21,7 +21,7 @@ namespace BaseSolution.BlazorServer.Repositories
         {
             try
             {
-                string token = await _localStorage.GetItemAsStringAsync("token");
+                string token = await _localStorage.GetItemAsStringAsync("Token");
                 var identity = new ClaimsIdentity();
                 _httpClient.DefaultRequestHeaders.Authorization = null;
 
@@ -45,30 +45,30 @@ namespace BaseSolution.BlazorServer.Repositories
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
         }
-            //}
-            //public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-            //{
-            //    try
-            //    {
-            //        var savedToken = await _localStorage.GetItemAsStringAsync("token");
+        //}
+        //public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        //{
+        //    try
+        //    {
+        //        var savedToken = await _localStorage.GetItemAsync<string>("token");
 
-            //        if (string.IsNullOrWhiteSpace(savedToken))
-            //        {
-            //            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
-            //        }
+        //        if (string.IsNullOrWhiteSpace(savedToken))
+        //        {
+        //            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        //        }
 
-            //        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
+        //        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
 
-            //        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine($"Error retrieving authentication state: {ex.Message}");
-            //        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        //        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Error retrieving authentication state: {ex.Message}");
+        //        return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
-            //    }
-            //}
-            public void MarkUserAsAuthenticated(string userName)
+        //    }
+        //}
+        public void MarkUserAsAuthenticated(string userName)
         {
             var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userName) }, "apiauth"));
             var authState = Task.FromResult(new AuthenticationState(authenticatedUser));

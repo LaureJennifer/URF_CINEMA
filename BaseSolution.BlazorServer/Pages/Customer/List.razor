@@ -1,5 +1,6 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.Customer
 @using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.Application.ValueObjects.Common
 @using BaseSolution.BlazorServer.Components.Customer
 @using BaseSolution.BlazorServer.Pages.Customer;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
@@ -8,18 +9,17 @@
 @page "/customer/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
 
-<MudPaper>
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách khách hàng</MudText>
     <MudGrid>
         <MudItem xs="8">
-            <MudText Class="mt-3" Typo="Typo.h4">Danh sách khách hàng</MudText>
         </MudItem>
         <MudItem xs="4">
-            <MudTextField @bind-Value="searchString" Placeholder="Tìm kiếm" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary" />
+            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo tên" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
         </MudItem>
     </MudGrid>
-
-    @* <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton> *@
     @if (_lst == null)
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -42,7 +42,6 @@
                     <MudTh>Email</MudTh>
                     <MudTh>Số điện thoại</MudTh>
                     <MudTh>Địa chỉ</MudTh>
-                    @*         <MudTh>Chức năng</MudTh> *@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
@@ -57,25 +56,11 @@
                     <MudTd DataLabel="Email">@context.Email</MudTd>
                     <MudTd DataLabel="SĐT">@context.PhoneNumber</MudTd>
                     <MudTd DataLabel="Địa chỉ">@context.Address</MudTd>
-                    @*         <MudTd>
-            <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-            <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
-            </MudTd> *@
                 </RowTemplate>
                 <PagerContent>
                     <MudTablePager />
                 </PagerContent>
             </MudTable>
-            @* <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
-    <MessageContent>
-    Xác nhận xóa khách hàng!
-    </MessageContent>
-    <YesButton>
-    <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
-    Xác nhận
-    </MudButton>
-    </YesButton>
-    </MudMessageBox> *@
         }
     }
 </MudPaper>
@@ -86,67 +71,30 @@
 
     public List<CustomerDto>? _lst { get; set; }
 
-    public ViewCustomerWithPaginationRequest obj = new();
+    public ViewCustomerWithPaginationRequest obj =  new () { PageSize = int.MaxValue - 1 };
     public CustomerDeleteRequest _customerDelete = new();
 
     string searchString = string.Empty;
 
-    MudMessageBox _mbox { get; set; }
-
-    private async Task CreateDialog()
-    {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        _dialogService.Show<Create>("Thêm mới khách hàng", closeOnEscapeKey);
-        await LoadData();
-    }
-
-    private async Task UpdateDialog(Guid Id)
-    {
-        var parameters = new DialogParameters<Update>();
-        parameters.Add(x => x.idCustomer, Id);
-        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin khách hàng", parameters);
-        var result = await dialog.Result;
-        if (!result.Canceled)
-        {
-            await LoadData();
-        }
-    }
-
-    private async Task OnDeleteClicked(Guid Id)
-    {
-        var user = await _customerRepo.GetByIdAsync(Id);
-        var data = user.Data;
-        _customerDelete.Id = data.Id;
-        _customerDelete.DeletedTime = DateTime.Now;
-        bool? result = await _mbox.Show();
-        StateHasChanged();
-    }
-
-    public async Task OnConfirmDelete()
-    {
-        var removeConfirm = await _customerRepo.RemoveAsync(_customerDelete);
-        if (removeConfirm.Success)
-        {
-            _snackbar.Add("Xóa thành công", Severity.Success);
-        }
-        else
-        {
-            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
-        }
-        await Task.Delay(2000);
-        await LoadData();
-    }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadData(searchString);
     }
 
-    private async Task LoadData()
+    private async Task LoadData(string textSearch)
     {
+
+        obj.Name = textSearch;
 
         var result = await _customerRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
+
+    }
+
+    private async Task OnSearch(string textSearch)
+    {
+        await LoadData(textSearch);
+        StateHasChanged();
     }
 }

@@ -6,8 +6,9 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {
     public interface ILoginRepo
     {
-        Task<string> Login(LoginInputRequest request);
+        //Task<string> Login(LoginInputRequest request);
         Task Logout();
-        Task<bool> LoginCustomer(LoginInputRequest request);
+        Task<string> LoginCustomer(LoginInputRequest request);
+        Task<ViewLoginInput> SignIn(LoginInputRequest request);
     }
 }

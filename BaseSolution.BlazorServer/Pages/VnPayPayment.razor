@@ -36,7 +36,7 @@
             </MudRadioGroup>
 
             <MudText Typo="Typo.h5" Class="mb-3">Tách phương thức thanh toán tại site của Merchant</MudText>
-            <MudRadioGroup T="string">
+            <MudRadioGroup T="string" @bind-value="SelectedOption">
                 <MudRadio T="string">Thanh toán qua ứng dụng hỗ trợ VNPAYQR</MudRadio>
                 <MudRadio T="string">ATM-Tài khoản ngân hàng nội địa</MudRadio>
                 <MudRadio T="string">Thanh toán qua thẻ quốc tế</MudRadio>
@@ -58,6 +58,9 @@
 
     [Inject]
     public ISeatRepo _seatRepo{ get; set; }
+    [Inject]
+    public IBillRepo _billRepo{ get; set; }
+
     private void Reset()
     {
         SelectedOption = null;

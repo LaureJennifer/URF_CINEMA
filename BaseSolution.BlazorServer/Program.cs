@@ -1,6 +1,7 @@
 ﻿using Autofac.Core;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
+using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories;
 using BaseSolution.BlazorServer.Repositories.Implements;
@@ -9,11 +10,14 @@ using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
+using System.Text;
 
 namespace BaseSolution.BlazorServer
 {
@@ -25,9 +29,14 @@ namespace BaseSolution.BlazorServer
 
             StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
             // Add services to the container.
+
+            builder.Configuration.AddJsonFile("appsettings.json");
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
-            builder.Services.AddMudServices();
+            builder.Services.AddMudServices(config =>
+            {
+                config.PopoverOptions.ThrowOnDuplicateProvider = false;
+            });
             builder.Services.AddAutoMapper();
             builder.Services.AddLocalization(builder.Configuration);
             builder.Services.AddBlazoredLocalStorage();
@@ -61,10 +70,51 @@ namespace BaseSolution.BlazorServer
 
             builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
             builder.Services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
+
+            builder.Services.Configure<RecaptchaOption>(builder.Configuration.GetSection(nameof(RecaptchaOption)));
+            builder.Services.AddSession(options =>
+            {
+                // Configure session options here
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(ConstsToken.SecretKey)),
+                    ValidateIssuer = true,
+                    ValidIssuer = ConstsToken.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = ConstsToken.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                };
+            });
+
             builder.Services.AddHttpClient("API", client =>
             {
                 client.BaseAddress = new Uri(builder.Configuration["BackEndAPIURL"]!);
                 // Cấu hình các thiết lập khác của HttpClient
+            });
+
+            builder.Services.AddDistributedMemoryCache();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromSeconds(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
             });
 
             var app = builder.Build();
@@ -82,6 +132,10 @@ namespace BaseSolution.BlazorServer
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");

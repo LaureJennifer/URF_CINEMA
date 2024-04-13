@@ -20,6 +20,8 @@ using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.ViewModels.Customer;
+using BaseSolution.Infrastructure.ViewModels;
+using System.Threading;
 
 namespace BaseSolution.API.Controllers
 {
@@ -30,28 +32,30 @@ namespace BaseSolution.API.Controllers
         private readonly ILoginService _loginService;
         private readonly ILocalizationService _localizationService;
         private readonly IMapper _mapper;
-        private readonly IValidator<LoginInputRequest> _validator;
-        private readonly IOptionsMonitor<Appsetting> _appsetting;
-
-        public LoginsController(ILoginService loginService, ILocalizationService localizationService, IMapper mapper, IValidator<LoginInputRequest> validator,IOptionsMonitor<Appsetting> monitor)
+        public LoginsController(ILoginService loginService, ILocalizationService localizationService, IMapper mapper)
         {
             _loginService = loginService;
             _localizationService = localizationService;
             _mapper = mapper;
-            _validator = validator;
-            _appsetting = monitor;
         }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginInputRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login(string request, CancellationToken cancellationToken)
         {
-            LoginViewModel vm = new(_loginService, _localizationService,_appsetting);
+            LoginViewModel vm = new(_loginService, _localizationService);
                 await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }
         [HttpPost("Customer")]
         public async Task<IActionResult> LoginCustomer([FromBody] LoginInputRequest request, CancellationToken cancellationToken)
         {
-            LoginCustomerViewModel vm = new(_loginService, _localizationService, _appsetting);
+            LoginCustomerViewModel vm = new(_loginService, _localizationService);
+            await vm.HandleAsync(request, cancellationToken);
+            return Ok(vm);
+        }
+        [HttpPost("SignInPassword")]
+        public async Task<IActionResult> SignInPassword([FromBody] LoginInputRequest request, CancellationToken cancellationToken)
+        {
+            SignInViewModel vm = new(_loginService, _localizationService);
             await vm.HandleAsync(request, cancellationToken);
             return Ok(vm);
         }

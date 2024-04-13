@@ -1,5 +1,6 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.Room.Request
+@using BaseSolution.Application.ValueObjects.Common
 @using BaseSolution.BlazorServer.Components.Room;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
@@ -7,6 +8,7 @@
 @page "/room/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
 <MudPaper Class="pa-5">
     <MudGrid>
         <MudItem xs="8">

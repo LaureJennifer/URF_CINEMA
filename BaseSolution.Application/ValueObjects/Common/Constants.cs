@@ -97,4 +97,46 @@
     {
         public const int MinAmountOfSatoshi = 200000;
     }
+    public static class AppRole
+    {
+        public const string Admin = "Administrator";
+        public const string Customer = "Customer";
+        public const string Manager = "Manager";
+        public const string Accountant = "Accountant";
+        public const string HR = "Human Resource";
+        public const string Warehouse = "Warehouse staff";
+        public const string Id = "id";
+        public const string UserName = "userName";
+        public const string Localhost = "localHost";
+        public const string RoleNames = "roleNames";
+        public const string Password = "password";
+    }
+    public class Email
+    {
+        public const string Key = "Setting.Email.";
+        public const string EmailSend = "Setting.Email.EmailSend";
+        public const string Password = "Setting.Email.Password";
+        public const string Smtp = "Setting.Email.Smtp";
+        public const string Port = "Setting.Email.Port";
+    }
+    public class ConstsToken
+    {
+        public const string Issuer = "https://localhost:7005";
+        public const string Audience = "https://localhost:7005";
+        public const string SecretKey = "keytoken_NVT25102002@123456789abcdefgh";
+    }
+    public class Roles
+    {
+        public const string Admin = "ADMIN";
+        public const string Staff = "STAFF";
+        public static string GetFormatRoles(params string[] roles)
+        {
+            var result = string.Join(",", roles);
+            return result;
+        }
+        public static bool IsModuleManager(List<string> roleCodes)
+        {
+            return roleCodes.Any(c => c != Admin && c != Staff);
+        }
+    }
 }

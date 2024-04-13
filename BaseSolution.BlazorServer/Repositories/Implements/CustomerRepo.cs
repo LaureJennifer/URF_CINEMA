@@ -47,13 +47,13 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
-        public async Task<RequestResult<CustomerDto>> GetByNameAsync(string customerName)
+        public async Task<RequestResult<CustomerDto>> GetByNameAsync(string userName)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<RequestResult<CustomerDto>>($"api/Customers/{customerName}");
+            var obj = await client.GetFromJsonAsync<RequestResult<CustomerDto>>($"api/Customers/{userName}");
             if (obj != null)
                 return obj;
             return null;

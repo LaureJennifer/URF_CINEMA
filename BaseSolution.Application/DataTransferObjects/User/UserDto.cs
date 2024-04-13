@@ -19,6 +19,7 @@ namespace BaseSolution.Application.DataTransferObjects.User
         public string UrlImage { get; set; }
         public Guid RoleId { get; set; }
         public string Role { get; set; }
+        public bool Deleted { get; set; }
         public EntityStatus Status { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BaseSolution.Application.DataTransferObjects.Account;
+using BaseSolution.Application.DataTransferObjects.Account.Request;
 using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
@@ -9,14 +10,17 @@ using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.Implements.Services;
+using BaseSolution.Infrastructure.ViewModels;
 using BaseSolution.Infrastructure.ViewModels.Customer;
 using BaseSolution.Infrastructure.ViewModels.Example;
+using BaseSolution.Infrastructure.ViewModels.Login;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MimeKit;
+using System.Threading;
 
 namespace BaseSolution.API.Controllers
 {
@@ -161,6 +165,15 @@ namespace BaseSolution.API.Controllers
                 }
             }
             return Ok();
+        }
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPassword signInPassword, CancellationToken cancellationToken)
+        {
+            CustomerResetViewModel vm = new(_customerReadWriteRepository, _localizationService, _mapper);
+
+            await vm.HandleAsync(signInPassword, cancellationToken);
+
+            return Ok(vm);
         }
     }
 }

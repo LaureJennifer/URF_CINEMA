@@ -11,6 +11,7 @@ namespace BaseSolution.Application.DataTransferObjects.Bill.Request
 {
     public class ViewBillWithPaginationRequest : PaginationRequest
     {
+        public string? Code { get; set; }
         public string? CustomerName { get; set; }
         public string? DepartmentName { get; set; }
 

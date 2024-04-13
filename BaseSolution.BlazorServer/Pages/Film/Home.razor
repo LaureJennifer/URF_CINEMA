@@ -9,6 +9,7 @@
 @using BaseSolution.BlazorServer.Components.Film;
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "ADMIN,Nhân viên,Customer")]
 @if (departmentId == null)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -99,12 +100,6 @@ else
 
 @code {
     public string Search { get; set; }
-    // private void OpenDialog()
-    // {
-    //     DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-    //     DialogService.Show<Login>("Đăng nhập", closeOnEscapeKey);
-    // }
    
     [Parameter] public string departmentId { get; set; } 
     [Inject] public IFilmRepo _filmRepo { get; set; }

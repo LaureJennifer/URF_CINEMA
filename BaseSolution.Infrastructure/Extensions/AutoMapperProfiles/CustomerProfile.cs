@@ -17,6 +17,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
             CreateMap<CustomerUpdateRequest, CustomerEntity>();
             CreateMap<CustomerDeleteRequest, CustomerEntity>();
             CreateMap<RegisterRequest,CustomerEntity>().ReverseMap();
+            CreateMap<ResetPassword, CustomerEntity>();
         }
     }
 }

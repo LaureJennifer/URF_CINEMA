@@ -1,12 +1,18 @@
 ﻿@using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.Application.DataTransferObjects.User.Request
+@using BaseSolution.Application.ValueObjects.Common
 @using BaseSolution.BlazorServer.Components.User;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using System.Security.Claims
 
 @page "/user/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@inject AuthenticationStateProvider _authProvider;
+@inject ProtectedSessionStorage _session;
+@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
 
 <MudPaper Class="pa-5">
     <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
@@ -15,7 +21,7 @@
             <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
         <MudItem xs="4">
-            <MudTextField T="string" @bind-Value="searchString" OnKeyUp="SearchTask" Label="Tìm kiếm" Placeholder="Theo tên" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search"></MudTextField>
+            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo mã" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
         </MudItem>
     </MudGrid>
     @if (_lst == null)
@@ -79,10 +85,10 @@
 
     public List<UserDto>? _lst { get; set; }
 
-    public ViewUserWithPaginationRequest obj = new();
+    public ViewUserWithPaginationRequest obj = new() { PageSize = int.MaxValue - 1 };
     public UserDeleteRequest _userDelete = new();
 
-    string searchString = string.Empty;
+    string searchString = "";
 
     MudMessageBox _mbox { get; set; }
 
@@ -91,7 +97,7 @@
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
         _dialogService.Show<Create>("Thêm mới nhân viên", closeOnEscapeKey);
-        await LoadData();
+        await LoadData(searchString);
     }
 
     private async Task UpdateDialog(Guid Id)
@@ -102,9 +108,11 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await LoadData();
+            await LoadData(searchString);
         }
     }
+
+    private List<string> _lstrole = new();
 
     private async Task OnDeleteClicked(Guid Id)
     {
@@ -128,32 +136,27 @@
             _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
         }
         await Task.Delay(2000);
-        await LoadData();
-    }
-
-    public async Task SearchTask()
-    {
-        obj.Name = string.IsNullOrWhiteSpace(searchString) ? null : searchString;
-
-        await LoadData();
+        await LoadData(searchString);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData();
+        await LoadData(searchString);
+
     }
 
-    private async Task LoadDataSearch()
+    private async Task LoadData(string textSearch)
     {
 
-        // var result = await _userRepo.GetByIdAsync();
-        // _lst = result.Data.Data.ToList();
-    }
-
-    private async Task LoadData()
-    {
+        obj.Code = textSearch;
 
         var result = await _userRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
+
+    }
+    private async Task OnSearch(string textSearch)
+    {
+        await LoadData(textSearch);
+        StateHasChanged();
     }
 }
