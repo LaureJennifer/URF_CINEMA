@@ -1,4 +1,4 @@
-﻿@page "/booking/{departmentId}/{filmId}"
+﻿@page "/booking/{departmentId}/{customerId}/{filmId}"
 @using BaseSolution.Application.DataTransferObjects.Booking
 @using BaseSolution.Application.DataTransferObjects.Booking.Request
 @using BaseSolution.Application.DataTransferObjects.Film
@@ -73,6 +73,7 @@ if (_showDateList != null)
     public string filmId { get; set; }
     [Parameter]
     public string departmentId { get; set; }
+    [Parameter] public string customerId { get; set; }
     [Inject]
     IBookingRepo _bookingRepo{ get; set; }
     [Inject] public IRoomRepo _roomRepo { get; set; }
@@ -211,7 +212,7 @@ if (_showDateList != null)
     private async void NavigateToRoom(string idFilmSchedule)
     {
         await FindFilmScheduleRoomByDateTime(idFilmSchedule);
-        _navigationManager.NavigateTo($"/room/{departmentId}/{filmId}/{idFilmSchedule.ToString()}/{_roomId.ToString()}");
+        _navigationManager.NavigateTo($"/room/{departmentId}/{customerId}/{filmId}/{idFilmSchedule.ToString()}/{_roomId.ToString()}");
     }
 
 }

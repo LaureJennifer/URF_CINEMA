@@ -14,11 +14,12 @@
 @using BaseSolution.BlazorServer.Components.SignUp;
 @using BaseSolution.BlazorServer.Components.ForgotPassword;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
+@using Newtonsoft.Json.Linq
 
 @inject IDialogService DialogService
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigation
-
+@inject SaveCustomerId saveCustomerId;
 @if (!showLogin)
 {
     <MudDialog>
@@ -165,10 +166,14 @@
     private async Task LoginSuccessCustomer()
     {
         var result = await _loginRepo.LoginCustomer(_login);
+        // lấy Id 
+        JObject jsonObject = JObject.Parse(result);
+        string customerId = (string)jsonObject["data"]["id"];
+        saveCustomerId.CustomerId = customerId;
         if (result !=null)
         {
             _snackbar.Add("Đăng nhập thành công", Severity.Success);
-            _navigation.NavigateTo($"/home/{departmentid}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            _navigation.NavigateTo($"/home/{departmentid}/{customerId}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
                                                              // LoadData();
             showLogin = true;
         }

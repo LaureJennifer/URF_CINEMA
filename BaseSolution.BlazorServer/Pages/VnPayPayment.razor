@@ -3,7 +3,7 @@
 @using BaseSolution.BlazorServer.Data.Extensions
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using MudBlazor
-@page "/pay/vnpay"
+@page "/pay/vnpay/{total}"
 
 <MudContainer>
     <MudGrid>
@@ -16,10 +16,10 @@
                 <MudListItem Dense="true" Class="d-flex justify-content-between lh-condensed">
                     <MudItem>
                        @*  @for() *@
-                        <MudText Typo="Typo.h6">Tên sản phẩm</MudText>
+                        <MudText Typo="Typo.h6"></MudText>
                         <MudText Typo="Typo.caption">Thanh toán hóa đơn</MudText>
                     </MudItem>
-                    <MudText Class="text-muted">100.000₫</MudText>
+                    <MudText Class="text-muted">@totalPrice.ToString("C0")₫</MudText>
                 </MudListItem>
                 <MudListItem Dense="true" Class="d-flex justify-content-between">
                     <MudText>Tổng tiền thanh toán</MudText>
@@ -53,6 +53,7 @@
     </MudGrid>
 </MudContainer>
 @code{
+    [Parameter] public string total { set; get; }
     public string SelectedOption { get; set; }
     string Checked;
 
@@ -60,7 +61,13 @@
     public ISeatRepo _seatRepo{ get; set; }
     [Inject]
     public IBillRepo _billRepo{ get; set; }
+    Decimal totalPrice { get; set; } = 0;
 
+    protected async override Task OnInitializedAsync()
+    {
+        totalPrice = decimal.Parse(total);
+        await Task.Delay(1000);
+    }
     private void Reset()
     {
         SelectedOption = null;

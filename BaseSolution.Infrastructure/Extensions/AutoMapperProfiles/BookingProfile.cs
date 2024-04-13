@@ -21,7 +21,9 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
                 .ForMember(des => des.FilmScheduleId, opt => opt.MapFrom(src => src.FilmScheduleId))
                 .ForMember(des => des.SeatCode, opt => opt.MapFrom(src => src.SeatEntity.Code))
                 .ForMember(des => des.RoomCode, opt => opt.MapFrom(src => src.RoomEntity.Code))
-                .ForMember(des => des.ExpiredTime, opt => opt.MapFrom(src => src.ExpiredTime));
+                .ForMember(des => des.ExpiredTime, opt => opt.MapFrom(src => src.ExpiredTime))
+                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(src => src.DepartmentEntity.Name));
+                
 
             CreateMap<BookingCreateRequest, BookingEntity>();
             CreateMap<BookingUpdateRequest, BookingEntity>();

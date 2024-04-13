@@ -62,15 +62,15 @@ namespace BaseSolution.API.Controllers
 
             return Ok(vm);
         }
-        [HttpGet("{username}")]
-        public async Task<IActionResult> GetCustomerByUserName(string name, CancellationToken cancellationToken)
-        {
-            CustomerNameViewModel vm = new(_customerReadOnlyRepository, _localizationService);
+        //[HttpGet("{username}")]
+        //public async Task<IActionResult> GetCustomerByUserName(string name, CancellationToken cancellationToken)
+        //{
+        //    CustomerNameViewModel vm = new(_customerReadOnlyRepository, _localizationService);
 
-            await vm.HandleAsync(name, cancellationToken);
+        //    await vm.HandleAsync(name, cancellationToken);
 
-            return Ok(vm);
-        }
+        //    return Ok(vm);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateCustomer(CustomerCreateRequest request, CancellationToken cancellationToken)

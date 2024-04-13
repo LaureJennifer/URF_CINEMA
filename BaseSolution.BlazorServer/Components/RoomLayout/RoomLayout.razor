@@ -7,6 +7,8 @@
 @using BaseSolution.Domain.Enums
 @inject ISnackbar _snackBar;
 @inject NavigationManager _navigate;
+@* lưu booking *@
+@inject SaveCustomerId _saveCustomerId; 
 @if (_roomLayoutDtoId != Guid.Empty)
 {
     <MudGrid Class="mb-7 mt-3">
@@ -248,7 +250,7 @@ else
                         _lstseatSelecteds.Remove(rs!);
                         Total -= rs!.Price;
                     }
-                    
+
                 }
             }
 
@@ -261,10 +263,11 @@ else
                 {                    
                     await UpdateBookingSeat(seat, EntityStatus.SoldOut);
                 }
-                _navigate.NavigateTo($"/home/{departmentId}");
+                _saveCustomerId.ListBooking = _lstBooking;
+                _navigate.NavigateTo($"/payment/{departmentId}/{customerId}/{Total.ToString()}");
 
             }
-            // _navigate.NavigateTo($"/payment/{departmentId}/{customerId}");
+            
         }
         else
             _snackBar.Add("Bạn chưa chọn ghế nào!", Severity.Warning);
@@ -279,13 +282,7 @@ else
             _lstBooking.Remove(booking);
         }
         _lstBookingSold.Clear();
-        await Task.Delay(100);
-        
-        
-       
-        
-
-
+        await Task.Delay(100);       
     }
 
     Variant GetButtonVariant(SeatDto seat)
@@ -375,7 +372,7 @@ else
         _bookingCreateRequest.SeatId = seat.Id;
         _bookingCreateRequest.RoomId = Guid.Parse(roomId);
         _bookingCreateRequest.CreatedTime = createdTime;
-        _bookingCreateRequest.ExpiredTime = createdTime.AddMinutes(10);
+        _bookingCreateRequest.ExpiredTime = createdTime.AddMinutes(2);
         _bookingCreateRequest.SeatStatus = EntityStatus.YourSeat;
         _bookingCreateRequest.DepartmentId = Guid.Parse(departmentId);
         _bookingCreateRequest.FilmId = Guid.Parse(filmId); ;

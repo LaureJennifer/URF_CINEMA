@@ -128,7 +128,7 @@
     public class Roles
     {
         public const string Admin = "ADMIN";
-        public const string Staff = "STAFF";
+        public const string Staff = "Nhân viên";
         public static string GetFormatRoles(params string[] roles)
         {
             var result = string.Join(",", roles);

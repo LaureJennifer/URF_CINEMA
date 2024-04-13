@@ -1,4 +1,4 @@
-﻿@page "/home/{departmentId}"
+﻿@page "/home/{departmentId}/{customerId}"
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 @using BaseSolution.Application.DataTransferObjects.Film
@@ -9,7 +9,7 @@
 @using BaseSolution.BlazorServer.Components.Film;
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
-@attribute [Authorize(Roles = "ADMIN,Nhân viên,Customer")]
+@* @attribute [Authorize(Roles = "ADMIN,Nhân viên,Customer")] *@
 @if (departmentId == null)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -102,6 +102,7 @@ else
     public string Search { get; set; }
    
     [Parameter] public string departmentId { get; set; } 
+    [Parameter] public string customerId { get; set; }
     [Inject] public IFilmRepo _filmRepo { get; set; }
     public ViewFilmWithPaginationRequest obj = new();
     public List<Guid>? _lstFilmId { get; set; } = new();
@@ -111,7 +112,7 @@ else
     private void Order(Guid IdFilm)
     {
         // Chuyển hướng đến trang đặt vé với thông tin phim
-        NavigationManager.NavigateTo($"/booking/{departmentId}/{IdFilm}");
+        NavigationManager.NavigateTo($"/booking/{departmentId}/{customerId}/{IdFilm}");
     }
     private void OpenDialog()
     {

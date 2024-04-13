@@ -1,4 +1,4 @@
-﻿@page "/room/{departmentId}/{filmId}/{filmScheduleId}/{roomId}"
+﻿@page "/room/{departmentId}/{customerId}/{filmId}/{filmScheduleId}/{roomId}"
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.RoomLayout
@@ -41,7 +41,7 @@ else
                 <MudItem xs="12" md="12">
                     @if (_roomLayoutDtoId != Guid.Empty)
                     {
-                        <BaseSolution.BlazorServer.Components.RoomLayout.RoomLayout filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId" createdTime="@createdTime" departmentId="@departmentId"></BaseSolution.BlazorServer.Components.RoomLayout.RoomLayout>
+                        <BaseSolution.BlazorServer.Components.RoomLayout.RoomLayout filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId" createdTime="@createdTime" departmentId="@departmentId" customerId="@customerId"></BaseSolution.BlazorServer.Components.RoomLayout.RoomLayout>
                     }
                     else
                     {
@@ -61,6 +61,8 @@ else
     public string filmScheduleId { get; set; }
     [Parameter]
     public string roomId { get; set; }
+    [Parameter]
+    public string customerId { get; set; }
     [Parameter] 
     public string departmentId { get; set; }
     [Inject] IRoomRepo _roomRepo { get; set; }
