@@ -78,18 +78,18 @@ else
     [Inject] IJSRuntime jsRuntime { get; set; }
     [Inject] private IBillStatisticRepo _billStatisticRepo { get; set; }
     [Inject] public IDepartmentRepo _departmentRepo { get; set; }
-    BillStatisticRequest _billStatisticRequest = new(){PageSize = 100};
+    BillStatisticRequest _billStatisticRequest = new(){PageSize = int.MaxValue-1};
     ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
     List<DepartmentDto>? _lstDepartment { get; set; }
     List<BillStatisticForQuarterDto> _billStatisticForQuarterDtos { get; set; }
     List<BillStatisticForMonthDto> _billStatisticForMonthDtos { get; set; }
     List<BillStatisticForYearDto> _billStatisticForYearDtos { get; set; }
     List<string> customPalette = new List<string>() { "#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#00FFFF", "#0000FF", "#8A2BE2", "#FF00FF", "#800080", "#FFC0CB", "#008000", "#800000" };
-    List<string>? _lstYearForSelect { get; set; }
+    List<string>? _lstYearForSelect { get; set; } = new List<string>() { "2024" };
     string? selectedDepartmentId { get; set; }
     string? selectedDepartment { get; set; }
     string? selectedOption = "billStatisticForMonth";
-    string? selectedYear { get; set; }
+    string? selectedYear { get; set; } = "2024";
     string label = "Doanh thu";
     bool _hasError = false;
 
@@ -98,6 +98,7 @@ else
         await LoadDepartmentForSelect();
 
         await LoadYearForSelect();
+
     }
 
     private async Task LoadDepartmentForSelect()
@@ -140,7 +141,9 @@ else
         _billStatisticRequest.PageNumber = 1;
         _billStatisticRequest.PageSize = 50;
         var result = await _billStatisticRepo.GetBillStatisticsForYearAsync(_billStatisticRequest);
+        if (result.Count != 0)
         _lstYearForSelect = result.OrderBy(x => x.Year).Select(x => x.Year.ToString()).Distinct().ToList();
+        
     }
 
     async Task OnSelectedYear(string year)
