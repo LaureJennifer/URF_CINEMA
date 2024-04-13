@@ -50,6 +50,33 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             }
         }
 
+        public async Task<RequestResult<List<Guid>>> CreateRangeFilmScheduleRoomAsync(List<FilmScheduleRoomEntity> requests, CancellationToken cancellationToken)
+        {
+            try
+            {
+                foreach (var entity in requests)
+                {
+                    entity.CreatedTime = DateTimeOffset.UtcNow;
+                }
+
+                await _dbContext.FilmScheduleRoomEntities.AddRangeAsync(requests);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
+                return RequestResult<List<Guid>>.Succeed(requests.Select(x => x.Id).ToList());
+            }
+            catch (Exception e)
+            {
+                return RequestResult<List<Guid>>.Fail(_localizationService["Unable to create range film schedule room"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                        FieldName = LocalizationString.Common.FailedToCreate + "range film schedule room"
+                    }
+                });
+            }
+        }
+
         public async Task<RequestResult<int>> DeleteFilmScheduleRoomAsync(FilmScheduleRoomDeleteRequest request, CancellationToken cancellationToken)
         {
             try

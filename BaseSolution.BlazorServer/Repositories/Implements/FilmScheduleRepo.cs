@@ -1,33 +1,60 @@
-﻿using BaseSolution.Application.DataTransferObjects.FilmDetail;
-using BaseSolution.Application.DataTransferObjects.FilmDetail.Request;
-using BaseSolution.Application.DataTransferObjects.FilmSchedule;
-using BaseSolution.Application.ValueObjects.Response;
+﻿using BaseSolution.Application.DataTransferObjects.FilmSchedule;
+using BaseSolution.Application.DataTransferObjects.FilmSchedule.Request;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using BaseSolution.BlazorServer.ValueObjects.Response;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
-    public class FilmDetailRepo : IFilmDetailRepo
+    public class FilmScheduleRepo : IFilmScheduleRepo
     {
-        public async Task<bool> AddAsync(FilmDetailCreateRequest request)
+        public async Task<bool> AddAsync(FilmScheduleCreateRequest request)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.PostAsJsonAsync("api/FilmDetails", request); ;
+            var obj = await client.PostAsJsonAsync("api/FilmSchedules", request); ;
             return obj.IsSuccessStatusCode;
         }
 
-        public async Task<FilmDetailListWithPaginationViewModel> GetAllActive(ViewFilmDetailWithPaginationRequest request)
+        public async Task<bool> DeleteAsync(FilmScheduleDeleteRequest request)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<FilmDetailListWithPaginationViewModel>($"api/FilmDetails?PageSize={request.PageSize}");
+            string url = $"/api/FilmSchedules?Id={request.Id}";
+            if (!string.IsNullOrWhiteSpace(request.DeletedBy.ToString()))
+            {
+                url += $"&DeletedBy={request.DeletedBy}";
+            }
+            var result = await client.DeleteAsync(url);
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<FilmScheduleListWithPaginationViewModel> GetAllActive(ViewFilmScheduleWithPaginationRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            
+            var obj = await client.GetFromJsonAsync<FilmScheduleListWithPaginationViewModel>($"api/FilmSchedules?PageSize={request.PageSize}");
+            if (obj != null)
+                return obj;
+            return new();
+        }
+
+        public async Task<FilmScheduleListWithPaginationViewModel> GetByShowDateTime(ViewFilmScheduleWithPaginationRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var showDate = request.ShowDate?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+            var showTime = request.ShowTime?.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+            var obj = await client.GetFromJsonAsync<FilmScheduleListWithPaginationViewModel>($"api/FilmSchedules?ShowDate={Uri.EscapeDataString(showDate)}&ShowTime={Uri.EscapeDataString(showTime)}");
             if (obj != null)
                 return obj;
             return new();
@@ -45,49 +72,13 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
-        public async Task<RequestResult<FilmDetailDto>> GetByIdAsync(Guid id)
+        public async Task<bool> UpdateAsync(FilmScheduleUpdateRequest request)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<RequestResult<FilmDetailDto>>($"api/FilmDetails/{id}");
-            if (obj != null)
-                return obj;
-            return null;
-        }
-
-        public async Task<FilmDetailListWithPaginationViewModel> GetFilmScheduleByFilm(ViewFilmDetailWithPaginationRequest request)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var obj = await client.GetFromJsonAsync<FilmDetailListWithPaginationViewModel>($"api/FilmDetails?FilmId={request.FilmId}&PageSize={request.PageSize}");
-            if (obj != null)
-                return obj;
-            return new();
-        }
-
-        public async Task<RequestResult<FilmDetailDeleteRequest>> RemoveAsync([FromQuery] FilmDetailDeleteRequest request)
-        {
-            var query = $"?Id={request.Id}&DeletedBy={request.DeletedBy}&DeletedDate={request.DeletedTime}";
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var obj = await client.DeleteAsync($"api/FilmDetails/{query}").Result.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<RequestResult<FilmDetailDeleteRequest>>(obj);
-            return result;
-        }
-
-        public async Task<bool> UpdateAsync(FilmDetailUpdateRequest request)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var obj = await client.PutAsJsonAsync("api/FilmDetails", request); ;
+            var obj = await client.PutAsJsonAsync("api/FilmSchedules", request); ;
             return obj.IsSuccessStatusCode;
         }
     }

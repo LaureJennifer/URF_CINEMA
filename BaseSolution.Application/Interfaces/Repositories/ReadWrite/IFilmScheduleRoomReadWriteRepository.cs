@@ -15,5 +15,8 @@ namespace BaseSolution.Application.Interfaces.Repositories.ReadWrite
         Task<RequestResult<Guid>> AddFilmScheduleRoomAsync(FilmScheduleRoomEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> UpdateFilmScheduleRoomAsync(FilmScheduleRoomEntity entity, CancellationToken cancellationToken);
         Task<RequestResult<int>> DeleteFilmScheduleRoomAsync(FilmScheduleRoomDeleteRequest request, CancellationToken cancellationToken);
+
+        Task<RequestResult<List<Guid>>> CreateRangeFilmScheduleRoomAsync(List<FilmScheduleRoomEntity> requests, CancellationToken cancellationToken);
+
     }
 }

@@ -3,11 +3,15 @@ using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.FilmSchedule.Request;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom;
 using BaseSolution.Application.DataTransferObjects.FilmScheduleRoom.Request;
+using BaseSolution.Application.DataTransferObjects.Seat.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
+using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using BaseSolution.Infrastructure.ViewModels.FilmSchedule;
 using BaseSolution.Infrastructure.ViewModels.FilmScheduleRoom;
+using BaseSolution.Infrastructure.ViewModels.Seat;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,6 +67,16 @@ namespace BaseSolution.API.Controllers
         public async Task<IActionResult> GetFilmScheduleRoomByShowDateTime([FromQuery]FilmScheduleRoomFindByDateTimeRequest request, CancellationToken cancellationToken)
         {
             FilmScheduleRoomByTimeViewModel vm = new(_filmScheduleRoomReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
+
+        [HttpPost("CreateRangeFilmScheduleRoom")]
+        public async Task<IActionResult> CreateRangeFilmScheduleRoom([FromBody] List<FilmScheduleRoomCreateRangeRequest> request, CancellationToken cancellationToken)
+        {
+            FilmScheduleRoomCreateRangeViewModel vm = new(_filmScheduleRoomReadWriteRepository, _filmScheduleRoomReadOnlyRepository, _localizationService, _mapper);
 
             await vm.HandleAsync(request, cancellationToken);
 

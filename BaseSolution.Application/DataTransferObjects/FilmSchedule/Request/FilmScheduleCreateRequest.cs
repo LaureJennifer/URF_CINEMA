@@ -11,6 +11,5 @@ namespace BaseSolution.Application.DataTransferObjects.FilmSchedule.Request
     {
         public DateTimeOffset ShowDate { get; set; }
         public DateTimeOffset ShowTime { get; set; }
-        public EntityStatus Status { get; set; } 
     }
 }
