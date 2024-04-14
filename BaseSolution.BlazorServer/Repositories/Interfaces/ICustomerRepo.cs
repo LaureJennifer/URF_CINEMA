@@ -3,6 +3,7 @@ using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.Application.DataTransferObjects.Account;
+using BaseSolution.Application.DataTransferObjects.Bill;
 
 namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {
@@ -15,5 +16,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<RequestResult<CustomerDto>> GetByIdAsync(Guid id);
         public Task<CustomerListWithPaginationViewModel> GetAllActive(ViewCustomerWithPaginationRequest request);
         public Task<RequestResult<CustomerDto>> GetByNameAsync(string roomLayoutName);
+        public Task<RequestResult<BillDto>> SendEmailAsync(string email, BillDto _bill);
     }
 }

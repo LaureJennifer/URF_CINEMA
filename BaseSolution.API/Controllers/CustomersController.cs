@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BaseSolution.Application.DataTransferObjects.Account;
 using BaseSolution.Application.DataTransferObjects.Account.Request;
+using BaseSolution.Application.DataTransferObjects.Bill;
 using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;
@@ -140,31 +141,37 @@ namespace BaseSolution.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("sendGmail")]
-        public async Task<IActionResult> SendGmailAsync([FromBody] string emailAddress)
+        public async Task<IActionResult> SendGmailAsync([FromBody] string emailAddress, BillDto _bill)
         {
-            _verifyCode = UtilityExtensions.GenerateRandomString(6);
-            if (EmailVerification.SetCodeForEmail(emailAddress, _verifyCode))
+            if (emailAddress != null)
             {
+                _bill.CreatedTime = DateTime.UtcNow;
+                _bill.Status = Domain.Enums.EntityStatus.Active;
                 var email = new MimeMessage();
-                email.From.Add(MailboxAddress.Parse("thieuddph45736@fpt.edu.vn"));
+                email.From.Add(MailboxAddress.Parse("duanurfcinema@gmail.com"));
                 email.To.Add(MailboxAddress.Parse(emailAddress));
-                email.Subject = "Mã đăng nhập";
+                email.Subject = "Thông tin hóa đơn";
 
                 var body = new TextPart("html")
                 {
-                    Text = "<h1><strong>" + _verifyCode + "</strong></h1>"
+                    Text = $"<h1><strong>Mã hóa đơn: {Guid.NewGuid()} </strong></h1>" +
+                            $"<h2> Tên khách hàng: " + _bill.CustomerName + "</h1>" +
+                            $"<h2> Tổng tiền:" + _bill.TotalPrice + "</h2>" +
+                            $"<h2> Thời gian tạo:" + _bill.CreatedTime + "</h2>" +
+                            $"<h2> Trạng thái:" + _bill.Status + "</h2>"
                 };
                 email.Body = body;
 
                 using (var client = new SmtpClient())
                 {
                     await client.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                    await client.AuthenticateAsync("thieuddph45736@fpt.edu.vn", "qwpmktwcosxgxirs");
+                    await client.AuthenticateAsync("duanurfcinema@gmail.com", "amdguvsjdrdujflt");
                     await client.SendAsync(email);
                     client.Disconnect(true);
                 }
             }
             return Ok();
+
         }
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword(ResetPassword signInPassword, CancellationToken cancellationToken)
