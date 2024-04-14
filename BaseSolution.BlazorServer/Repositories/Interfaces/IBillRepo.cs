@@ -13,7 +13,7 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> UpdateAsync(BillUpdateRequest request);
         public Task<RequestResult<BillDto>> GetByIdAsync(Guid id);
         public Task<BillListWithPaginationViewModel> GetAllActive(ViewBillWithPaginationRequest request);
-        Task<bool> CreateNewBill(BillCreateRequest request);
+        //Task<bool> CreateNewBill(BillCreateRequest request);
 
         Task<bool> CreateNewPayment(CheckoutVM request);
     }

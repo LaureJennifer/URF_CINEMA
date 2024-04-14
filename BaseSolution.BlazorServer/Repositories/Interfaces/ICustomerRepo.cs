@@ -8,7 +8,7 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {
     public interface ICustomerRepo
     {
-        public Task<bool> AddAsync(CustomerCreateRequest request);
+        //public Task<bool> AddAsync(CustomerCreateRequest request);
         public Task<bool> RegisterAsync(RegisterRequest request);
         public Task<RequestResult<CustomerDeleteRequest>> RemoveAsync(CustomerDeleteRequest request);
         public Task<bool> UpdateAsync(CustomerUpdateRequest request);

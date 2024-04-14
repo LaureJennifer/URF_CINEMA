@@ -1,4 +1,4 @@
-﻿@page "/home/{departmentId}/{customerId}"
+﻿@page "/home/{departmentId}"
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 @using BaseSolution.Application.DataTransferObjects.Film
@@ -9,6 +9,8 @@
 @using BaseSolution.BlazorServer.Components.Film;
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@inject SaveCustomerId saveCustomerId;
+@inject ISnackbar _snackbar
 @* @attribute [Authorize(Roles = "ADMIN,Nhân viên,Customer")] *@
 @if (departmentId == null)
 {
@@ -100,7 +102,7 @@ else
 
 @code {
     public string Search { get; set; }
-   
+
     [Parameter] public string departmentId { get; set; } 
     [Parameter] public string customerId { get; set; }
     [Inject] public IFilmRepo _filmRepo { get; set; }
@@ -111,8 +113,17 @@ else
     public List<FilmDto>? _lst { get; set; } = new();
     private void Order(Guid IdFilm)
     {
-        // Chuyển hướng đến trang đặt vé với thông tin phim
-        NavigationManager.NavigateTo($"/booking/{departmentId}/{customerId}/{IdFilm}");
+        if (saveCustomerId.CustomerId == null)
+        {
+          
+            _snackbar.Add("Bạn cần đăng nhập để tiếp tục!", Severity.Warning);
+        }
+        else
+        {
+            // Chuyển hướng đến trang đặt vé với thông tin phim
+            NavigationManager.NavigateTo($"/booking/{departmentId}/{saveCustomerId.CustomerId}/{IdFilm}");
+        }
+
     }
     private void OpenDialog()
     {

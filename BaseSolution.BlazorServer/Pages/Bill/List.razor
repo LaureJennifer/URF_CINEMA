@@ -9,7 +9,7 @@
 @page "/bill/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 
 <MudPaper Class="pa-5">
     <MudText Class="mt-3" Typo="Typo.h4">Danh sách hóa đơn</MudText>
@@ -41,7 +41,7 @@
                     <MudTh>Tổng tiền</MudTh>
                     <MudTh>Thời gian tạo</MudTh>
                     <MudTh>Trạng Thái</MudTh>
-                    <MudTh>Chức năng</MudTh>
+               
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>

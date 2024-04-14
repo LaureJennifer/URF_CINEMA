@@ -4,6 +4,8 @@
 @using BaseSolution.Application.DataTransferObjects.Account.Request
 @using BaseSolution.Application.DataTransferObjects.Customer
 @using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 @using BaseSolution.Application.DataTransferObjects.Film
 @using BaseSolution.Application.DataTransferObjects.Film.Request
@@ -20,6 +22,7 @@
 @inject ISnackbar _snackbar
 @inject NavigationManager _navigation
 @inject SaveCustomerId saveCustomerId;
+
 @if (!showLogin)
 {
     <MudDialog>
@@ -70,7 +73,7 @@
     LoginInputRequest _login = new();
     CustomerDto _customerDto = new();
     private bool showLogin = false;
-
+    [Parameter] public string _opt { get; set; }
     private ViewRoleWithPaginationRequest roleRequest = new();
     public ViewUserWithPaginationRequest obj = new();
     public ViewCustomerWithPaginationRequest Obj = new();
@@ -89,7 +92,7 @@
     public bool ReadOnly { get; set; }
     public List<Option> _lstOption = new List<Option>
     {
-        new Option { Name = "nhân viên" },
+        new Option { Name = "Quản lý" },
         new Option { Name = "khách hàng" }
     };
 
@@ -149,9 +152,9 @@
 
     private async Task HandleValidSubmit()
     {
-        if (option.ToLower() == "nhân viên")
+        if (option.ToLower() == "quản lý")
         {
-            await LoginSuccess();
+            await LoginUser();
         }
         else if (option.ToLower() == "khách hàng")
         {
@@ -162,25 +165,52 @@
             _snackbar.Add("Cần phải chọn vai trò phía đăng nhập");
         }
     }
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
 
+
+    List<DepartmentDto>? _lstDepartment { get; set; }
+
+    ViewDepartmentWithPaginationRequest _request = new() { PageSize = 50 };
+    public string SelectedDepartment { get; set; }
+    public string SelectedValue { get; set; }
+    public string Search { get; set; }
+    bool _drawerOpen = true;
+    private async Task LoadDepartment()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data.Data.ToList();
+    }
     private async Task LoginSuccessCustomer()
     {
         var result = await _loginRepo.LoginCustomer(_login);
+
         // lấy Id 
         JObject jsonObject = JObject.Parse(result);
-        string customerId = (string)jsonObject["data"]["id"];
-        saveCustomerId.CustomerId = customerId;
-        if (result !=null)
+        
+        JToken dataToken = jsonObject["data"];
+        if (dataToken != null && dataToken.Type != JTokenType.Null)
         {
-            _snackbar.Add("Đăng nhập thành công", Severity.Success);
-            _navigation.NavigateTo($"/home/{departmentid}/{customerId}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
-                                                             // LoadData();
-            showLogin = true;
+            string customerId = (string)jsonObject["data"]["id"];
+            saveCustomerId.CustomerId = customerId;
+
+            if (result != null)
+            {
+                _snackbar.Add("Đăng nhập thành công", Severity.Success);
+                saveCustomerId.LayoutOption = typeof(CustomerLayout);
+                _navigation.NavigateTo($"/home/{_lstDepartment.First().Id.ToString()}"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+                                                                                         // LoadData();
+                showLogin = true;
+            }
+            else
+            {
+                _navigation.NavigateTo("/");
+            }
         }
         else
         {
-            _navigation.NavigateTo("/");
+            _snackbar.Add("Đăng nhập thất bại, Tài khoản không tồn tại",Severity.Error);
         }
+
     }
     private async Task LoginUser()
     {
@@ -195,13 +225,15 @@
                 // }
                 // else
                 // {
-                LoginSuccess();
+                await LoginSuccess();
                 loginSuccessful = true;
-                break;
+                return;
                 // }
             }
+           
+
         }
-        if (!loginSuccessful && !_lstUser.Any(user => user.UserName == _login.UserName && user.PassWord == _login.Password))
+        if (loginSuccessful==false)
         {
             _snackbar.Add("Tài khoản hoặc mật khẩu không đúng!", Severity.Error);
         }
@@ -219,16 +251,18 @@
         //     _navigation.NavigateTo("/");
         // }
     }
+    
     private async Task LoginSuccess()
     {
-
+        
         var result = await _loginRepo.SignIn(_login);
         if (result != null)
         {
             // if (result.Code.ToLower() == "Admin" || result.Code.ToLower() == "Nhân viên")
             // {
-                _snackbar.Add("Đăng nhập thành công", Severity.Success);
-                _navigation.NavigateTo("/user/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
+            _snackbar.Add("Đăng nhập thành công", Severity.Success);
+            saveCustomerId.LayoutOption = typeof(MainLayout);
+            _navigation.NavigateTo("/user/list"); // sau khi login xong thì muốn chuyển đến màn nào thì chuyển sang màn đó
         }
         else
         {
@@ -237,6 +271,7 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        await LoadDepartment();
         await LoadData();
     }
     public async Task LoadData()
@@ -244,7 +279,7 @@
         var result = await _userRepo.GetAllActive(obj);
         _lstUser = result.Data!.Data.ToList();
         var result1 = await _roleRepo.GetAllActive();
-        _lstRole = result1.Data!.Data.ToList();
+        _lstRole = result1.Data!.Data.ToList(); 
 
     }
 }

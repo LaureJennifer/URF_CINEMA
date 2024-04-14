@@ -1,4 +1,6 @@
 ﻿@using BaseSolution.BlazorServer.Data.Extensions
+@inject AuthenticationStateProvider _authProvider;
+
 <MudNavMenu Color="Color.Primary">
     <MudNavLink Href="@RouteManager.User.List">Quản lý nhân viên</MudNavLink>
 </MudNavMenu>

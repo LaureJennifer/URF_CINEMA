@@ -11,7 +11,7 @@
 @using BaseSolution.Application.ValueObjects.Common
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Infrastructure.ViewModels.Statistic.Bill
-@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 @if (_lstDepartmentForSelect != null && _lstMonthForSelect != null)
 {
     <MudGrid>

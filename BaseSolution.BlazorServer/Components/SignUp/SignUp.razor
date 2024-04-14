@@ -17,9 +17,10 @@
                     <MudGrid>
                         <MudItem xs="12">
                             <MudTextField T="string" @bind-Value="_customerDto.UserName" Label="Tên tài khoản*" />
+                            <MudTextField T="string" @bind-Value="_customerDto.Name" Label="Tên*" />
                             <MudTextField T="string" @bind-Value="_customerDto.PassWord" Label="Mật khẩu*" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PasswordInputIcon" />
                             <MudTextField T="string" @bind-Value="_customerDto.ConfirmPassword" Label="Xác nhận mật khẩu*" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" OnAdornmentClick="ButtonTestclick" AdornmentAriaLabel="Show Password" AdornmentIcon="@PasswordInputIcon" />
-                          @*   <MudTextField T="string" @bind-Value="_customerDto.Name" Label="Họ tên*" /> *@
+                            <MudTextField T="string" @bind-Value="_customerDto.PhoneNumber" Label="Số điện thoại*" />
                             <MudTextField T="string" @bind-Value="_customerDto.Email" Label="Email*"/>
                         @*     <MudDatePicker @bind-date="_dateOfBirth" Label="Ngày sinh*" /> *@
                         </MudItem>
@@ -114,9 +115,9 @@
         obj.UserName = _customerDto.UserName;
         obj.Password = _customerDto.PassWord;
         obj.ConfirmPassword = _customerDto.ConfirmPassword;
-        // obj.Name = _customerDto.Name;
+        obj.Name = _customerDto.Name;
         obj.Email = _customerDto.Email;
-        // obj.PhoneNumber = _customerDto.PhoneNumber;
+        obj.PhoneNumber = _customerDto.PhoneNumber;
         // obj.Address = _customerDto.Address;
         // DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_dateOfBirth!, TimeSpan.Zero);
         // obj.DateOfBirth = releaseDATE; 
@@ -126,7 +127,6 @@
          yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
         {
-            obj.Status = EntityStatus.Active;
             var result = await _customerRepo.RegisterAsync(obj);
             if (result == true)
             {

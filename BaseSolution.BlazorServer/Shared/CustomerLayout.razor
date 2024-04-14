@@ -1,4 +1,5 @@
-﻿@using BaseSolution.Application.DataTransferObjects.Department
+﻿
+@using BaseSolution.Application.DataTransferObjects.Department
 @using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.Application.DataTransferObjects.User
 @using BaseSolution.BlazorServer.Components.Login
@@ -12,6 +13,8 @@
 @inject NavigationManager _navigationManager;
 @inject EntityStatusExtensions _entityStatusExtensions
 @inject SaveCustomerId saveCustomerId;
+@inject AuthenticationStateProvider _authProvider;
+
 <MudThemeProvider/>
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -69,12 +72,14 @@
                 <AuthorizeView>
                     <Authorized>
                     <MudItem xs="2" md="2" lg="2">
-                        <MudLink Color="Color.Error" Href="/logout">Đăng xuất</MudLink>
+                        <MudLink Color="Color.Error" Href="/logout"><MudIconButton Icon="@Icons.Material.Filled.PersonPin" Color="Color.Error">Đăng xuất</MudIconButton></MudLink>
                     </MudItem>
                     </Authorized>
                     <NotAuthorized>
                         <MudItem xs="1" md="1" lg="1">
-                            <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF"></MudIconButton>
+
+                        <MudLink Href="/login"><MudIconButton Icon="@Icons.Material.Filled.PersonPin" Color="Color.Success">Đăng nhập</MudIconButton></MudLink>
+                        
                         </MudItem>
                     </NotAuthorized>
                 </AuthorizeView>
@@ -130,7 +135,7 @@
     void OnSelectedDepartment(string idDepartment)
     {
         SelectedDepartment = idDepartment;
-        _navigationManager.NavigateTo($"/home/{idDepartment}/{saveCustomerId.CustomerId}", forceLoad: true);
+        _navigationManager.NavigateTo($"/home/{idDepartment}", forceLoad: true);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

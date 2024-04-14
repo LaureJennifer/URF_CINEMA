@@ -15,6 +15,7 @@
 @using BaseSolution.Application.DataTransferObjects.Room
 @using BaseSolution.Application.DataTransferObjects.Seat
 @using BaseSolution.Application.DataTransferObjects.Seat.Request
+@using BaseSolution.Application.DataTransferObjects.Ticket.Request
 @using BaseSolution.Application.DataTransferObjects.Transaction
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Data.Extensions
@@ -34,7 +35,7 @@
     <MudSpacer />
 </MudAppBar>
 
-<MudPaper Style="background-color:#180F20;width:auto;height:auto;">
+<MudPaper Style="background-color:#180F20;width:auto;height:auto;" Class="mb-3">
     <MudContainer Fixed="true">
         <MudPaper Square="true" Style="background-color:#180F20">
             <MudGrid>
@@ -106,15 +107,15 @@
                                         }
                                     </MudSelect>
                                 </MudField>
-                                <MudPaper Style="background-color:#180F20;width:auto;height:auto;">
+                                @* <MudPaper Style="background-color:#180F20;width:auto;height:auto;">
                                     <MudContainer Fixed="true">
                                         <div>
                                             <MudButton OnClick="@(() => Pay(_customerDto.Id))">Thanh toán</MudButton>
                                             <MudButton OnClick="QueryDR">Truy vấn</MudButton>
-                                            @*                                         <MudButton OnClick="Refund">Hoàn tiền</MudButton> *@
+                                                                                     <MudButton OnClick="Refund">Hoàn tiền</MudButton> 
                                         </div>
                                     </MudContainer>
-                                </MudPaper>
+                                </MudPaper> *@
                             </MudItem>
                         </MudGrid>
                         }
@@ -125,7 +126,7 @@
                 <MudItem xs="4" md="4" lg="4">
                     @if (_filmDto != null)
                     {
-                        <MudPaper Style="background-color:#2E0E4A">
+                        <MudPaper Style="background-color:#03213B">
                             <MudGrid>
                                 <MudItem xs="12" md="12" lg="12">
                                     <MudImage Src="@_filmDto.UrlImage" Style="width:90%;height:70%;" Alt="Swedish Farm House" Elevation="1" Class="rounded-lg ma-4" />
@@ -156,12 +157,12 @@
                                 <MudGrid>
                                     <MudItem xs="3" lg="3" md="3"></MudItem>
                                     <MudItem xs="3" lg="3" md="3">
-                                        <MudButton Style="color:white">Quay lại</MudButton>
+                                        <MudButton OnClick="@(() => _navigationManager.NavigateTo($"/home/{departmentId}"))" Style="color:white">Trang chủ</MudButton>
                                     </MudItem>
                                     <MudItem xs="3" lg="3" md="3">
-                                        <MudButton OnClick="()=>Paymentmethod()" Style="color:white">Tiếp tục</MudButton>
+                                        <MudButton OnClick="@(() => Pay(_customerDto.Id))" Style="color:white">Thanh Toán</MudButton>
                                     </MudItem>
-                                    <MudItem xs="2" lg="2" md="2"></MudItem>
+                                    <MudItem xs="3" lg="3" md="3"></MudItem>
                                 </MudGrid>
                             </MudGrid>
                         </MudPaper>
@@ -190,6 +191,8 @@
 
     [Inject]
     public IFilmRepo _filmRepo { get; set; }
+    [Inject]
+    public ITicketRepo _ticketRepo { get; set; }
 
     [Inject]
     public IDepartmentRepo _departmentRepo { get; set; }
@@ -232,7 +235,9 @@
     CustomerDto _customer = new();
     Decimal totalPrice { get; set; } = 0;
     FilmScheduleDto _filmScheduleDto { get; set; } = new();
-
+    bool _checkUpdateBookingSeatStatus { get; set; } = false;
+    BillCreateRequest _billCreateRequest = new();
+    ViewBillWithPaginationRequest _viewBillWithPaginationRequest = new();
     ViewPaymentMethodWithPaginationRequest _viewPaymentMethodWithPaginationRequest = new();
     protected async override Task OnInitializedAsync()
     {
@@ -244,7 +249,7 @@
         await LoadFilmSchedule();
         await GetCustomerId();
     }
-
+    BookingUpdateRequest _bookingUpdateRequest = new();
     public string SelectedOption { get; set; }
 
     public async Task GetCustomerId()
@@ -277,7 +282,7 @@
         // Xử lý truy vấn ở đây
         _navigationManager.NavigateTo("/pay/query");
     }
-
+    bool _checkCreateBill { get; set; } = false;
     private async Task Pay( Guid idCustomer)
     {
 
@@ -290,15 +295,13 @@
         );
         if (confirm == true)
         {
-            var bill = new BillCreateRequest
-                {
-                    CustomerId = idCustomer,
-                    DepartmentId = Guid.Parse(departmentId)
-                };
-            await _billRepo.CreateNewBill(bill);
-            _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
-            await LoadData();
-            StateHasChanged();
+            await CreateBill();
+            if (_checkCreateBill)
+            {
+                _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
+                StateHasChanged();
+            }
+
         }
         else
         {
@@ -306,39 +309,122 @@
 
         }
     }
-    private async Task Paymethod()
+    async Task CreateBill()
+    {
+        _billCreateRequest.CustomerId = Guid.Parse(customerId);
+        _billCreateRequest.DepartmentId = Guid.Parse(departmentId);
+        _billCreateRequest.TotalPrice = Convert.ToDouble(total);
+        string code = Guid.NewGuid().ToString();
+        _billCreateRequest.Code = code;
+           
+        var createBill = await _billRepo.AddAsync(_billCreateRequest);
+        if (createBill)
+        {
+            _checkCreateBill = true;
+            _viewBillWithPaginationRequest.CustomerId = Guid.Parse(customerId);
+            _viewBillWithPaginationRequest.DepartmentId = Guid.Parse(departmentId);
+            _viewBillWithPaginationRequest.Code = code;
+            var getBill = await _billRepo.GetAllActive(_viewBillWithPaginationRequest);
+            _billDto = getBill.Data.Data.First();
+            if (_billDto != null)
+            {
+
+                await CreateTicket(_billDto.Id);
+            }
+        }
+        else
+        {
+            _checkCreateBill = false;
+        }
+    }
+    async Task CreateTicket(Guid idBill)
+    {
+        foreach (var booking in lstBook)
+        {
+            var result = await _seatRepo.GetByIdAsync(booking.SeatId);
+            var seatPrice = result.Data!.Price;
+            var ticket = new TicketCreateRequest
+                {
+                    BillId = idBill,
+                    FilmId = booking.FilmId,
+                    BookingId = booking.Id,
+                    Code = Guid.NewGuid().ToString(),
+                    Price = seatPrice
+            };
+            var createTicket = await _ticketRepo.AddAsync(ticket);
+            if (createTicket)
+            {
+                await UpdateBookingSeat();
+                _checkCreateBill = true;
+            }
+            else
+            {
+                _checkCreateBill = false;
+            }
+        }
+
+    }
+    async Task UpdateBookingSeat()
     {
 
-        var confirm = await _dialogService.ShowMessageBox
-        (
-            "Thông báo",
-            "Xác nhận thanh toán?",
-            "Xác nhận",
-            cancelText: "Hủy"
-        );
-        if (confirm == true)
+        foreach (var booking in lstBook)
         {
-            var bill = new CheckoutVM()
-                {
-                    BillId =  idBill,
-                    TotalPrice = _billDto.TotalPrice,
-                    DepartmentName = _bookingDto.DepartmentName,
-                    filmID = _filmDto.Id,
-                    BookingId = _bookingDto.Id,
-                    HoTen = _customerDto.Name,
-                    DepartmentId = Guid.Parse(departmentId)
-                };
-            await _billRepo.CreateNewPayment(bill);
-            _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
-            await LoadData();
-            StateHasChanged();
+            _bookingUpdateRequest.SeatStatus = Domain.Enums.EntityStatus.SoldOut;
+            _bookingUpdateRequest.Id = booking.Id;
+            var result = await _bookingRepo.UpdateAsync(_bookingUpdateRequest);
+            if (result)
+            {
+                _checkUpdateBookingSeatStatus = true;
+            }
+            else
+            {
+                _checkUpdateBookingSeatStatus = false;
+            }
+        }
+
+        if (_checkUpdateBookingSeatStatus)
+        {
+
+            _checkCreateBill = true;
         }
         else
         {
-            _snackbar.Add("Thanh toán đã được hủy", Severity.Info);
-
+            _checkCreateBill = false;
         }
     }
+    // private async Task Paymethod()
+    // {
+
+    //     var confirm = await _dialogService.ShowMessageBox
+    //     (
+    //         "Thông báo",
+    //         "Xác nhận thanh toán?",
+    //         "Xác nhận",
+    //         cancelText: "Hủy"
+    //     );
+    //     if (confirm == true)
+    //     {
+    //         var bill = new CheckoutVM()
+    //             {
+    //                 BillId =  idBill,
+    //                 TotalPrice = _billDto.TotalPrice,
+    //                 DepartmentName = _bookingDto.DepartmentName,
+    //                 filmID = _filmDto.Id,
+    //                 BookingId = _bookingDto.Id,
+    //                 HoTen = _customerDto.Name,
+    //                 DepartmentId = Guid.Parse(departmentId)
+    //             };
+    //         await _billRepo.CreateNewPayment(bill);
+    //         _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
+    //         await LoadData();
+    //         StateHasChanged();
+    //     }
+    //     else
+    //     {
+    //         _snackbar.Add("Thanh toán đã được hủy", Severity.Info);
+
+    //     }
+    // }
 
     private async Task LoadData()
     {
