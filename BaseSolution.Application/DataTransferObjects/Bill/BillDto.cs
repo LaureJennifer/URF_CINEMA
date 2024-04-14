@@ -15,6 +15,8 @@ namespace BaseSolution.Application.DataTransferObjects.Bill
         public string CustomerName { get; set; }
         public string CustomerEmail { get; set; }
         public string DepartmentName { get; set; }
+        public string Code { get; set; }
+
         public int TicketQuantity { get; set; }
         public string Description { get; set; }
         public double TotalPrice { get; set; }

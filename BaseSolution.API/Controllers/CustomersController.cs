@@ -157,7 +157,7 @@ namespace BaseSolution.API.Controllers
                     Text = $"<h1><strong>Mã hóa đơn: {Guid.NewGuid()} </strong></h1>" +
                             $"<h2> Tên khách hàng: " + _bill.CustomerName + "</h1>" +
                             $"<h2> Tổng tiền:" + _bill.TotalPrice + "</h2>" +
-                            $"<h2> Thời gian tạo:" + _bill.CreatedTime + "</h2>" +
+                            $"<h2> Thời gian tạo:" + _bill.CreatedTime.ToLocalTime() + "</h2>" +
                             $"<h2> Trạng thái:" + _bill.Status + "</h2>"
                 };
                 email.Body = body;
