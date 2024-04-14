@@ -150,9 +150,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-
         await LoadData(string.Empty);
-        StateHasChanged();
     }
 
 
@@ -167,12 +165,11 @@
 
         var result = await _filmRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
-
+        StateHasChanged();
     }
 
     async Task OnSearch(string debouncedText)
     {
         await LoadData(debouncedText);
-        StateHasChanged();
     }
 }

@@ -14,41 +14,41 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Code" Placeholder="Mã phim*" />
+                <MudTextField @bind-Value="_filmDto.Code" Required="true" ErrorText="@GetErrorText(_filmDto.Code)" Placeholder="Mã phim*" Validation="ValidateCode" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Title" Placeholder="Tên phim*" />
+                <MudTextField @bind-Value="_filmDto.Title" Required="true" ErrorText="@GetErrorText(_filmDto.Title)" Placeholder="Tên phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.DirectedBy" Placeholder="Đạo diễn*" />
+                <MudTextField @bind-Value="_filmDto.DirectedBy" Required="true" ErrorText="@GetErrorText(_filmDto.DirectedBy)" Placeholder="Đạo diễn*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Actor" Placeholder="Diễn viên*" />
+                <MudTextField @bind-Value="_filmDto.Actor" Required="true" ErrorText="@GetErrorText(_filmDto.Actor)" Placeholder="Diễn viên*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Language" Placeholder="Ngôn ngữ*" />
+                <MudTextField @bind-Value="_filmDto.Language" Required="true" ErrorText="@GetErrorText(_filmDto.Language)" Placeholder="Ngôn ngữ*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Genres" Placeholder="Thể loại*" />
+                <MudTextField @bind-Value="_filmDto.Genres" Required="true" ErrorText="@GetErrorText(_filmDto.Genres)" Placeholder="Thể loại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudDatePicker @bind-date="_releaseDate" Placeholder="Ngày khởi chiếu*" />
+                <MudDatePicker @bind-date="_releaseDate" Required="true" ErrorText="@GetError(_releaseDate)" Placeholder="Ngày khởi chiếu*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Duration" Placeholder="Thời lượng*" />
+                <MudTextField @bind-Value="_filmDto.Duration" Required="true" ErrorText="@GetErrorText(_filmDto.Duration)" Placeholder="Thời lượng*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Script" Placeholder="Định dạng phim*" />
+                <MudTextField @bind-Value="_filmDto.Script" Required="true" ErrorText="@GetErrorText(_filmDto.Script)" Placeholder="Định dạng phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.AgeRating" Placeholder="Độ tuổi*" />
+                <MudTextField @bind-Value="_filmDto.AgeRating" Required="true" ErrorText="@GetErrorText(_filmDto.AgeRating)" Placeholder="Độ tuổi*" />
             </MudItem>
         </MudGrid>
         <MudGrid Class="mt-3">
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="Placeholder" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -63,7 +63,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadPosterFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="Placeholder" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh Bìa</MudButton>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -78,7 +78,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadTrailerFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="Placeholder" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Trailer</MudButton>
+                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -114,7 +114,7 @@
     ImageHandle imageHandle = new();
     DateTime? _releaseDate { get; set; }
 
-   
+
     private async Task UploadFiles(IBrowserFile file)
     {
         imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
@@ -125,7 +125,7 @@
     {
         posterUrl = @"\poster\Film\" + await imageHandle.AddImage(file, "Film");
         files.Add(file);
-    } 
+    }
 
     private async Task UploadTrailerFiles(IBrowserFile file)
     {
@@ -144,7 +144,7 @@
         obj.PosterURL = posterUrl;
         obj.TrailerURL = trailerUrl;
         obj.Genres = _filmDto.Genres;
-        obj.Duration= _filmDto.Duration;    
+        obj.Duration = _filmDto.Duration;
         DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
         obj.ReleaseDate = releaseDATE;
         obj.Script = _filmDto.Script;
@@ -190,4 +190,34 @@
     }
 
     void Cancel() => _mudDialog.Cancel();
+
+    private string GetError(DateTime? date)
+    {
+        if (date == null)
+        {
+            return "Vui lòng chọn ngày khởi chiếu.";
+        }
+        return string.Empty;
+    }
+
+    private string GetErrorText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Vui lòng nhập giá trị.";
+        }
+
+        // Kiểm tra các điều kiện khác (nếu cần)
+
+        return null;
+    }
+    private string ValidateCode(string value)
+    {
+        if (_lstFilm.Any(d => d.Code == value))
+        {
+            return "Mã phim đã tồn tại.";
+        }
+
+        return null;
+    }
 }

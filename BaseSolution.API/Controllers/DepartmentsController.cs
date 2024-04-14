@@ -71,7 +71,7 @@ namespace BaseSolution.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteDepartment(DepartmentDeleteRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteDepartment([FromQuery]DepartmentDeleteRequest request, CancellationToken cancellationToken)
         {
             DepartmentDeleteViewModel vm = new(_departmentReadWriteRepository, _localizationService, _mapper);
 

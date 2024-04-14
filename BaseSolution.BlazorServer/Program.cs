@@ -10,6 +10,7 @@ using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadOnly;
 using BaseSolution.Infrastructure.Implements.Repositories.ReadWrite;
 using Blazored.LocalStorage;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -67,7 +68,7 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<IFilmScheduleRepo, FilmScheduleRepo>();
             builder.Services.AddTransient<ISendMailCustomer, SendMailCustomer>();
             builder.Services.AddTransient<ILoginRepo, LoginRepo>();
-
+            builder.Services.AddBlazoredToast();
             builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
             builder.Services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
             builder.Services.AddSingleton<SaveCustomerId>(); //Service để lưu IdCustomer và list Booking

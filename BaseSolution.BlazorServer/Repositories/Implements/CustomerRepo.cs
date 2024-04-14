@@ -32,7 +32,13 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<CustomerListWithPaginationViewModel>($"api/Customers");
+            string url = $"api/Customers?PageSize={request.PageSize}";
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                url = $"api/Customers?Name={request.Name}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<CustomerListWithPaginationViewModel>(url);
+
             if (obj != null)
                 return obj;
             return new();

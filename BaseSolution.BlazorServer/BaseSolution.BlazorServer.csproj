@@ -61,6 +61,7 @@
     <Folder Include="Pages\Room\" />
     <Folder Include="Pages\Role\" />
     <Folder Include="wwwroot\image\Customer\" />
+    <Folder Include="wwwroot\image\Film\" />
     <Folder Include="wwwroot\poster\" />
     <Folder Include="wwwroot\trailer\" />
   </ItemGroup>
