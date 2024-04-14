@@ -15,15 +15,39 @@
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.Name" Placeholder="Họ và tên*" />
+                @if (string.IsNullOrEmpty(_userDto.Name))
+                {
+                    <div class="error-message">Họ và tên không được để trống.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.PhoneNumber" Placeholder="Số điện thoại*" />
+                @if (string.IsNullOrEmpty(_userDto.PhoneNumber))
+                {
+                <div class="error-message">Số điện thoại không được để trống.</div>
+                }
+                else if (!IsValidPhoneNumber(_userDto.PhoneNumber))
+                {
+                <div class="error-message">Số điện thoại không đúng định dạng.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.Email" Placeholder="Email*" />
+                @if (string.IsNullOrEmpty(_userDto.Email))
+                {
+                    <div class="error-message">Email không được để trống.</div>
+                }
+                else if (!IsValidEmail(_userDto.Email))
+                {
+                    <div class="error-message">Email không đúng định dạng.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.PassWord" Placeholder="Mật khẩu*" />
+                @if (string.IsNullOrEmpty(_userDto.PassWord))
+                {
+                    <div class="error-message">Mật khẩu không được để trống.</div>
+                }
             </MudItem>
             <MudItem xs="12" sm="6">
                 @if(_lstRole != null)
@@ -34,6 +58,10 @@
                             <MudSelectItem Value="@item.Id.ToString()">@item.Code</MudSelectItem>
                         }
                     </MudSelect>
+                    @if (string.IsNullOrEmpty(_selectedRoleId))
+                    {
+                        <div class="error-message">Chức vụ không được để trống.</div>
+                    }
                 }  
             </MudItem>
             <MudItem xs="12" sm="6">
@@ -161,4 +189,16 @@
     }
 
     void Cancel() => _mudDialog.Cancel();
+
+    public static bool IsValidEmail(string email)
+    {
+        string pattern = @"^[\w\.-]+@[\w\.-]+\.\w+$";
+        return Regex.IsMatch(email, pattern);
+    }
+
+    public static bool IsValidPhoneNumber(string phoneNumber)
+    {
+        string pattern = @"^\d{10}$"; // Giả sử số điện thoại có 10 chữ số
+        return Regex.IsMatch(phoneNumber, pattern);
+    }
 }

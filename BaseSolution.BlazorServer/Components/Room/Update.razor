@@ -17,18 +17,36 @@
 
 <MudDialog>
     <DialogContent>
+        csharp
+        Copy
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_roomDto.Code" Label="Mã phòng*" />
+                @if (string.IsNullOrEmpty(_roomDto.Code))
+                {
+                    <div class="validation-error">Vui lòng nhập mã phòng.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_roomDto.ScreenSize" Label="Kích thước màn hình*" />
+                @if (string.IsNullOrEmpty(_roomDto.ScreenSize))
+                {
+                    <div class="validation-error">Vui lòng nhập kích thước màn hình.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_roomDto.Capacity" Label="Sức chứa*" />
+                @if (_roomDto.Capacity <= 0)
+                {
+                    <div class="validation-error">Vui lòng nhập sức chứa hợp lệ.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_roomDto.SoundSystem" Label="Âm thanh*" />
+                @if (string.IsNullOrEmpty(_roomDto.SoundSystem))
+                {
+                    <div class="validation-error">Vui lòng nhập thông tin hệ thống âm thanh.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 @if (_lstDepartment != null)
@@ -39,6 +57,10 @@
                             <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
                         }
                     </MudSelect>
+                    @if (string.IsNullOrEmpty(_selectedDepartmentId))
+                    {
+                        <div class="validation-error">Vui lòng chọn tên rạp.</div>
+                    }
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
@@ -50,6 +72,10 @@
                             <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
                         }
                     </MudSelect>
+                    @if (string.IsNullOrEmpty(_selectedRoomlayoutId))
+                    {
+                        <div class="validation-error">Vui lòng chọn tên bố cục phòng.</div>
+                    }
                 }
             </MudItem>
             <MudItem xs="12" sm="6">
@@ -62,6 +88,10 @@
                     <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
+                @if (_roomDto.Status == EntityStatus.None)
+                {
+                    <div class="validation-error">Vui lòng chọn trạng thái.</div>
+                }
             </MudItem>
         </MudGrid>
     </DialogContent>

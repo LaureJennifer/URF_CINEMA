@@ -25,18 +25,38 @@
                         <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
                     }
                 </MudSelect>
+                @if (string.IsNullOrEmpty(_roomLayoutId))
+                {
+                    <div class="validation-error">Vui lòng chọn tên bố cục phòng.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_seatDto.Code" Placeholder="Mã ghế*" />
+                @if (string.IsNullOrEmpty(_seatDto.Code))
+                {
+                    <div class="validation-error">Vui lòng nhập mã ghế.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_seatDto.Row" Placeholder="Vị trí*" />
+                @if (string.IsNullOrEmpty(_seatDto.Row))
+                {
+                    <div class="validation-error">Vui lòng nhập vị trí.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_seatDto.Type" Placeholder="Loại*" />
+                @if (_seatDto.Type == null)
+                {
+                    <div class="validation-error">Vui lòng nhập loại.</div>
+                }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_seatDto.Price" Placeholder="Giá*" />
+                @if (_seatDto.Price <= 0)
+                {
+                    <div class="validation-error">Vui lòng nhập giá hợp lệ.</div>
+                }
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_seatDto.Status" For="@(() => _seatDto.Status)">
@@ -48,6 +68,10 @@
                     <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
+                @if (_seatDto.Status == null)
+                {
+                    <div class="validation-error">Vui lòng chọn trạng thái.</div>
+                }
             </MudItem>
         </MudGrid>
     </DialogContent>
