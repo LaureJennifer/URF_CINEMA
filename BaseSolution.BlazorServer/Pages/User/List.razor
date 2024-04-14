@@ -12,7 +12,7 @@
 @inject ISnackbar _snackbar
 @inject AuthenticationStateProvider _authProvider;
 @inject ProtectedSessionStorage _session;
-@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 
 <MudPaper Class="pa-5">
     <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>

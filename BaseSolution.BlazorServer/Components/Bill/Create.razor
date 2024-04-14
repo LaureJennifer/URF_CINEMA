@@ -73,11 +73,8 @@
     private async Task OnButtonClicked()
     {
         obj.CustomerId = Guid.Parse(customerId);
-        obj.TicketQuantity = _billDto.TicketQuantity;
         obj.TotalPrice = _billDto.TotalPrice;
-        obj.CreatedTime = _billDto.CreatedTime;
         obj.Description = _billDto.Description;
-        obj.Status = _billDto.Status;
         bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc thêm mới?",

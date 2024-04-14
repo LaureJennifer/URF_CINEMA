@@ -209,7 +209,7 @@ else
     string @meses { get; set; } = "";
     Guid _roomLayoutDtoId { get; set; }
     double Total { get; set; } = 0;
-
+    List<BookingDto> _lstBookingForPayment { get; set; } = new();
     protected async override Task OnInitializedAsync()
     {
         await GetRoomById(roomId);
@@ -259,11 +259,19 @@ else
                 bool? result = await _mbox.Show();
             }
             else {
-                foreach (var seat in _lstseatSelecteds)
-                {                    
-                    await UpdateBookingSeat(seat, EntityStatus.SoldOut);
+                // foreach (var seat in _lstseatSelecteds)
+                // {                    
+                //     await UpdateBookingSeat(seat, EntityStatus.SoldOut);
+                // }
+                foreach (var booking in _lstBooking)
+                {
+                    if (_lstseatSelecteds.Select(x => x.Id).Contains(booking.SeatId))
+                    {
+                        _lstBookingForPayment.Add(booking);
+                    }
+                    
                 }
-                _saveCustomerId.ListBooking = _lstBooking;
+                _saveCustomerId.ListBooking = _lstBookingForPayment.DistinctBy(x=>x.SeatId).ToList();
                 _navigate.NavigateTo($"/payment/{departmentId}/{customerId}/{Total.ToString()}");
 
             }

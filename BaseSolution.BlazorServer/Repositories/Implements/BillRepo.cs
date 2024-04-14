@@ -24,15 +24,15 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return obj.IsSuccessStatusCode;
         }
 
-        public async Task<bool> CreateNewBill(BillCreateRequest request)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var result = await client.PostAsJsonAsync("/api/Bills", request);
-            return result.IsSuccessStatusCode;
-        }
+        //public async Task<bool> CreateNewBill(BillCreateRequest request)
+        //{
+        //    var client = new HttpClient
+        //    {
+        //        BaseAddress = new Uri("https://localhost:7005")
+        //    };
+        //    var result = await client.PostAsJsonAsync("/api/Bills", request);
+        //    return result.IsSuccessStatusCode;
+        //}
 
         public async Task<bool> CreateNewPayment(CheckoutVM request)
         {
@@ -50,7 +50,12 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<BillListWithPaginationViewModel>($"api/Bills");
+            string url = $"api/Bills";
+            if (request.CustomerId!=null && request.DepartmentId != null) 
+            {
+                url = $"api/Bills?CustomerId={request.CustomerId}&DepartmentId={request.DepartmentId}&Code={request.Code}";
+            }
+            var obj = await client.GetFromJsonAsync<BillListWithPaginationViewModel>(url);
             if (obj != null)
                 return obj;
             return new();

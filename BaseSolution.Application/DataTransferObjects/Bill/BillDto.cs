@@ -11,9 +11,9 @@ namespace BaseSolution.Application.DataTransferObjects.Bill
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
+        public Guid DepartmentId { get; set; }
         public string CustomerName { get; set; }
         public string DepartmentName { get; set; }
-        public double TotalPrice1 { get; set; }
         public int TicketQuantity { get; set; }
         public string Description { get; set; }
         public double TotalPrice { get; set; }

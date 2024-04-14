@@ -107,7 +107,6 @@
         obj.BillId = Guid.Parse(_selectedBillId);
         obj.BookingId = Guid.Parse(_selectedBookingId);
         obj.FilmId = Guid.Parse(_selectedFilmId);
-        obj.Status = _ticketDto.Status;
         bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc thêm mới?",

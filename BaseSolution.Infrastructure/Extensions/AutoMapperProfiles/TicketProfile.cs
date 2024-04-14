@@ -21,7 +21,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
                 .ForMember(des => des.RoomCode, opt => opt.MapFrom(src => src.BookingEntity.RoomEntity.Code))
                 .ForMember(des => des.ShowDate, opt => opt.MapFrom(src => src.FilmEntity.FilmDetails.Select(x => x.FilmScheduleEntity.ShowDate).FirstOrDefault()))
                 .ForMember(des => des.ShowTime, opt => opt.MapFrom(src => src.FilmEntity.FilmDetails.Select(x => x.FilmScheduleEntity.ShowTime).FirstOrDefault()));
-
+                
             CreateMap<TicketEntity, FilmStatisticForMonthDto>()
                 .ForMember(des => des.Month, opt => opt.MapFrom(x => x.BillEntity.CreatedTime.Month))
                 .ForMember(des => des.Year, opt => opt.MapFrom(x => x.BillEntity.CreatedTime.Year))

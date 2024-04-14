@@ -186,8 +186,9 @@
 
         // lấy Id 
         JObject jsonObject = JObject.Parse(result);
-        string data = (string)jsonObject["data"];
-        if (data != null)
+        
+        JToken dataToken = jsonObject["data"];
+        if (dataToken != null && dataToken.Type != JTokenType.Null)
         {
             string customerId = (string)jsonObject["data"]["id"];
             saveCustomerId.CustomerId = customerId;

@@ -19,6 +19,7 @@
         await LoadDepartment();
         saveCustomerId.LayoutOption = typeof(CustomerLayout);
         await _loginRepo.Logout();
+        saveCustomerId.CustomerId = null;
         _navigate.NavigateTo($"/home/{_lstDepartment.First().Id.ToString()}");
     }
     private async Task LoadDepartment()

@@ -42,17 +42,8 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var bill_ = await _appReadOnlyDbContext.BillEntities.AsNoTracking().Where(c => c.Id == idBill && !c.Deleted).ProjectTo<BillDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(cancellationToken);
-                
-                var ticketQuantity = bill_!.TicketQuantity;
-                var totalPrice = bill_.TotalPrice1;
+                .FirstOrDefaultAsync(cancellationToken);   
 
-                // Find bill to map TicketQuantity and TotalPrice then update database
-                var billEntity_ = _appReadWriteDbContext.BillEntities.FirstOrDefault(c => c.Id == idBill);
-                billEntity_!.TotalPrice = totalPrice;
-
-                 _appReadWriteDbContext.BillEntities.Update(billEntity_);
-                await _appReadWriteDbContext.SaveChangesAsync();
 
                 return RequestResult<BillDto?>.Succeed(bill_);
             }
@@ -74,7 +65,14 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {
                 var bills = _appReadOnlyDbContext.BillEntities.AsNoTracking().ProjectTo<BillDto>(_mapper.ConfigurationProvider);
-
+                if (request.CustomerId!=null)
+                {
+                    bills = bills.Where(x => x.CustomerId == request.CustomerId);
+                }
+                if (request.DepartmentId != null)
+                {
+                    bills = bills.Where(x => x.DepartmentId == request.DepartmentId);
+                }
                 if (!string.IsNullOrWhiteSpace(request.CustomerName))
                 {
                     bills = bills.Where(x => x.CustomerName == request.CustomerName);
@@ -84,19 +82,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                     bills = bills.Where(x => x.CustomerName == request.CustomerName);
                 }
                 var result = await bills.PaginateAsync(request, cancellationToken);
-                foreach ( var bill in bills)
-                {
-                    var ticketQuantity = bill!.TicketQuantity;
-                    var totalPrice = bill.TotalPrice1;
-
-                    // Find bill to map TicketQuantity and TotalPrice then update database
-                    var billEntity_ = _appReadWriteDbContext.BillEntities.FirstOrDefault(c => c.Id == bill.Id);
-                    billEntity_!.TotalPrice = totalPrice;
-
-                    _appReadWriteDbContext.BillEntities.Update(billEntity_);
-                    
-                }
-                await _appReadWriteDbContext.SaveChangesAsync();
 
                 return RequestResult<PaginationResponse<BillDto>>.Succeed(new PaginationResponse<BillDto>()
                 {

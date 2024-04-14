@@ -72,13 +72,13 @@
                 <AuthorizeView>
                     <Authorized>
                     <MudItem xs="2" md="2" lg="2">
-                        <MudLink Color="Color.Error" Href="/logout">Đăng xuất</MudLink>
+                        <MudLink Color="Color.Error" Href="/logout"><MudIconButton Icon="@Icons.Material.Filled.PersonPin" Color="Color.Error">Đăng xuất</MudIconButton></MudLink>
                     </MudItem>
                     </Authorized>
                     <NotAuthorized>
                         <MudItem xs="1" md="1" lg="1">
 
-                        <MudLink Href="/login"><MudButton>Đăng nhập  </MudButton></MudLink>
+                        <MudLink Href="/login"><MudIconButton Icon="@Icons.Material.Filled.PersonPin" Color="Color.Success">Đăng nhập</MudIconButton></MudLink>
                         
                         </MudItem>
                     </NotAuthorized>
@@ -135,7 +135,7 @@
     void OnSelectedDepartment(string idDepartment)
     {
         SelectedDepartment = idDepartment;
-        _navigationManager.NavigateTo($"/home/{idDepartment}/{saveCustomerId.CustomerId}", forceLoad: true);
+        _navigationManager.NavigateTo($"/home/{idDepartment}", forceLoad: true);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
