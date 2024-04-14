@@ -14,6 +14,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
         {
             CreateMap<BillEntity, BillDto>()
                .ForMember(des => des.CustomerName, opt => opt.MapFrom(x => x.CustomerEntity.Name))
+               .ForMember(des => des.CustomerEmail, opt => opt.MapFrom(x => x.CustomerEntity.Email))
                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name))
                .ForMember(des => des.TicketQuantity, opt => opt.MapFrom(x => x.Tickets.Count()));
 

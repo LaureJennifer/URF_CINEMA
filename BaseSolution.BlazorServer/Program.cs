@@ -65,7 +65,7 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddTransient<IPaymentMethodRepo, PaymentMethodRepo>();
             builder.Services.AddTransient<IRoomByFilmScheduleRepo, RoomByFilmScheduleRepo>();
             builder.Services.AddTransient<IFilmScheduleRepo, FilmScheduleRepo>();
-
+            builder.Services.AddTransient<ISendMailCustomer, SendMailCustomer>();
             builder.Services.AddTransient<ILoginRepo, LoginRepo>();
 
             builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();

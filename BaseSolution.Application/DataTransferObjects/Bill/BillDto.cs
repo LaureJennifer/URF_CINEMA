@@ -13,6 +13,7 @@ namespace BaseSolution.Application.DataTransferObjects.Bill
         public Guid CustomerId { get; set; }
         public Guid DepartmentId { get; set; }
         public string CustomerName { get; set; }
+        public string CustomerEmail { get; set; }
         public string DepartmentName { get; set; }
         public int TicketQuantity { get; set; }
         public string Description { get; set; }

@@ -9,6 +9,7 @@ using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
@@ -81,17 +82,6 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             var obj = await client.DeleteAsync($"api/Customers/{query}").Result.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<RequestResult<CustomerDeleteRequest>>(obj);
-            return result;
-        }
-
-        public async Task<RequestResult<BillDto>> SendEmailAsync(string email, BillDto _bill)
-        {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var obj = await client.DeleteAsync($"api/Customers/sendGmail").Result.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<RequestResult<BillDto>>(obj);
             return result;
         }
 
