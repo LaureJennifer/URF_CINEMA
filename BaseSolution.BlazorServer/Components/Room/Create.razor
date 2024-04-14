@@ -19,7 +19,7 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.Code" Placeholder="Mã phòng*" />
+                <MudTextField @bind-Value="_roomDto.Code" Placeholder="Mã phòng*" Validation="ValidateCode" />
                 @if (string.IsNullOrEmpty(_roomDto.Code))
                 {
                     <div class="validation-error">Vui lòng nhập mã phòng.</div>
@@ -86,7 +86,7 @@
                     <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
-                @if (_roomDto.Status == EntityStatus.None)
+                @if (_roomDto.Status == null)
                 {
                     <div class="validation-error">Vui lòng chọn trạng thái.</div>
                 }
@@ -105,13 +105,13 @@
     public IRoomRepo _roomRepo { get; set; }
 
     [Inject]
-    public IDepartmentRepo _departmentRepo{ get; set; }
+    public IDepartmentRepo _departmentRepo { get; set; }
     [Inject]
-    public IRoomLayoutRepo _roomlayoutRepo{ get; set; }
+    public IRoomLayoutRepo _roomlayoutRepo { get; set; }
 
     public RoomDto _roomDto = new();
     private List<RoomDto> _lstRoom { get; set; }
-    public List<DepartmentDto> _lstDepartment{ get; set; }
+    public List<DepartmentDto> _lstDepartment { get; set; }
     public List<RoomLayoutDto> _lstRoomlayout { get; set; }
     ViewRoomLayoutWithPaginationRequest request = new() { PageSize = int.MaxValue - 1 };
     public RoomCreateRequest obj = new();
@@ -119,7 +119,7 @@
     public ViewDepartmentWithPaginationRequest department_ = new();
 
     private string _selectedDepartmentId { get; set; }
-    private string _selectedRoomlayoutId{ get; set; }
+    private string _selectedRoomlayoutId { get; set; }
 
 
     private async Task OnButtonClicked()
@@ -179,4 +179,14 @@
 
 
     void Cancel() => _mudDialog.Cancel();
+
+    private string ValidateCode(string value)
+    {
+        if (_lstRoom.Any(d => d.Code == value))
+        {
+            return "Mã phòng đã tồn tại.";
+        }
+
+        return null;
+    }
 }

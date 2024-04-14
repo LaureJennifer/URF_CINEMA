@@ -81,7 +81,6 @@
     {
 
         await LoadData(string.Empty);
-        StateHasChanged();
     }
 
 
@@ -96,6 +95,7 @@
 
         var result = await _customerRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
+        StateHasChanged();
 
     }
 

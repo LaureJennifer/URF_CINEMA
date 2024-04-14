@@ -1,9 +1,8 @@
 ﻿using BaseSolution.Application.DataTransferObjects.Customer.Request;
 using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.ValueObjects.Response;
-using BaseSolution.BlazorServer.Data;
 using BaseSolution.Application.DataTransferObjects.Account;
-using BaseSolution.Application.DataTransferObjects.Bill;
+using BaseSolution.BlazorServer.Data;
 
 namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {

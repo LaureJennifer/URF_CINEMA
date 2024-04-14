@@ -21,7 +21,7 @@
             <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
         <MudItem xs="4">
-            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo mã" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo mã" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
         </MudItem>
     </MudGrid>
     @if (_lst == null)
@@ -109,6 +109,7 @@
         if (!result.Canceled)
         {
             await LoadData(searchString);
+            StateHasChanged();
         }
     }
 
@@ -148,15 +149,15 @@
     private async Task LoadData(string textSearch)
     {
 
-        obj.Code = textSearch;
+        obj.Name = textSearch;
 
         var result = await _userRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
+        StateHasChanged();
 
     }
-    private async Task OnSearch(string textSearch)
+    async Task OnSearch(string debouncedText)
     {
-        await LoadData(textSearch);
-        StateHasChanged();
+        await LoadData(debouncedText);
     }
 }

@@ -21,7 +21,7 @@
         Copy
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_roomDto.Code" Label="Mã phòng*" />
+                <MudTextField @bind-Value="_roomDto.Code" Label="Mã phòng*" Style="visibility:hidden;" />
                 @if (string.IsNullOrEmpty(_roomDto.Code))
                 {
                     <div class="validation-error">Vui lòng nhập mã phòng.</div>
@@ -88,7 +88,7 @@
                     <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
-                @if (_roomDto.Status == EntityStatus.None)
+                @if (_roomDto.Status == null)
                 {
                     <div class="validation-error">Vui lòng chọn trạng thái.</div>
                 }
@@ -125,7 +125,7 @@
     private string _selectedRoomlayoutId { get; set; }
 
     [Parameter]
-    public Guid idRoom{ get; set; }
+    public Guid idRoom { get; set; }
 
     private async Task OnButtonClicked()
     {

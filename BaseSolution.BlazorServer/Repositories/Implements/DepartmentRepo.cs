@@ -1,10 +1,13 @@
 ﻿using BaseSolution.Application.DataTransferObjects.Bill;
 using BaseSolution.Application.DataTransferObjects.Department;
 using BaseSolution.Application.DataTransferObjects.Department.Request;
+using BaseSolution.Application.DataTransferObjects.User.Request;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
 using BaseSolution.BlazorServer.ValueObjects.Pagination;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
@@ -26,7 +29,13 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<DepartmentListWithPaginationViewModel>($"api/Departments?PageSize={request.PageSize}");
+            string url = $"api/Departments?PageSize={request.PageSize}";
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                url = $"api/Departments?Name={request.Name}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<DepartmentListWithPaginationViewModel>(url);
+
             if (obj != null)
                 return obj;
             return new();
@@ -44,9 +53,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
-        public Task<RequestResult<DepartmentDeleteRequest>> RemoveAsync(DepartmentDeleteRequest request)
+        public async Task<RequestResult<DepartmentDeleteRequest>> RemoveAsync([FromQuery]DepartmentDeleteRequest request)
         {
-            throw new NotImplementedException();
+            var query = $"?Id={request.Id}&DeletedBy={request.DeletedBy}&DeletedDate={request.DeletedTime}";
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var obj = await client.DeleteAsync($"api/Departments/{query}").Result.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<RequestResult<DepartmentDeleteRequest>>(obj);
+            return result;
         }
 
         public async Task<bool> UpdateAsync(DepartmentUpdateRequest request)

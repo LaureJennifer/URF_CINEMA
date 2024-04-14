@@ -16,7 +16,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.PostAsJsonAsync("api/Users", request);;
+            var obj = await client.PostAsJsonAsync("api/Users", request); ;
             return obj.IsSuccessStatusCode;
         }
 
@@ -26,7 +26,13 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<UserListWithPaginationViewModel>($"api/Users");
+            string url = $"api/Users?PageSize={request.PageSize}";
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                url = $"api/Users?Name={request.Name}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<UserListWithPaginationViewModel>(url);
+
             if (obj != null)
                 return obj;
             return new();
@@ -44,7 +50,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             return null;
         }
 
-        public async Task<RequestResult<UserDeleteRequest>> RemoveAsync([FromQuery]UserDeleteRequest request)
+        public async Task<RequestResult<UserDeleteRequest>> RemoveAsync([FromQuery] UserDeleteRequest request)
         {
             var query = $"?Id={request.Id}&DeletedBy={request.DeletedBy}&DeletedDate={request.DeletedTime}";
             var client = new HttpClient

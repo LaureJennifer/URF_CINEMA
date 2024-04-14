@@ -17,37 +17,20 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Code" Placeholder="Mã rạp*" />
+                <MudTextField @bind-Value="_departmentDto.Name" Placeholder="Tên rạp*" Required="true" ErrorText="@GetErrorText(_departmentDto.Name)" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Name" Placeholder="Tên rạp*" />
+                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Placeholder="Số điện thoại*" Required="true" ErrorText="@GetErrorText(_departmentDto.PhoneNumber)" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Placeholder="Số điện thoại*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Email" Placeholder="Email*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.AddressCodeFormat" Placeholder="Định dạng*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Address" Placeholder="Địa chỉ*" />
+                <MudTextField @bind-Value="_departmentDto.Email" Placeholder="Email*" Required="true" ErrorText="@GetErrorText(_departmentDto.Email)" />
             </MudItem>
             <MudItem xs="12" sm="12" md="12">
-                <MudSelect T="EntityStatus" Label="Trạng thái*" @bind-Value="_departmentDto.Status" For="@(() => _departmentDto.Status)">
-                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
-                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
-                </MudSelect>
+                <MudTextField @bind-Value="_departmentDto.Address" Placeholder="Địa chỉ*" Required="true" ErrorText="@GetErrorText(_departmentDto.Address)" />
             </MudItem>
             <MudItem xs="4" sm="4" md="4">
                 <MudSelect T="string" @bind-Value="selectedCountry" Label="Quốc gia*">
-                    @foreach (var country in _lstDepartment.Select(x=>x.AddressCode).ToList())
+                    @foreach (var country in _lstDepartment.Select(x => x.AddressCode).ToList())
                     {
                         <MudSelectItem T="string" Value="country">@ConvertForCountry(country.Substring(0, 2))</MudSelectItem>
                     }
@@ -55,7 +38,7 @@
             </MudItem>
             <MudItem xs="4" sm="4" md="4">
                 <MudSelect T="string" @bind-Value="selectedCity" Label="Thành phố*">
-                    @foreach (var country in _lstDepartment.Select(x=>x.AddressCode).ToList())
+                    @foreach (var country in _lstDepartment.Select(x => x.AddressCode).ToList())
                     {
                         <MudSelectItem T="string" Value="country">@ConvertForCity(country.Substring(3, 2))</MudSelectItem>
                     }
@@ -94,7 +77,9 @@
     public ViewDepartmentWithPaginationRequest department_ = new();
 
     [Parameter]
-    public Guid idDepartment{ get; set; }
+    public Guid idDepartment { get; set; }
+
+    public string AddressCodeFormat = "01/10/2003";
 
     private async Task OnButtonClicked()
     {
@@ -105,11 +90,11 @@
         obj.PhoneNumber = _departmentDto.PhoneNumber;
         obj.Email = _departmentDto.Email;
         obj.Address = _departmentDto.Address;
-        obj.AddressCodeFormat = _departmentDto.AddressCodeFormat;
+        obj.AddressCodeFormat = AddressCodeFormat;
         obj.Status = _departmentDto.Status;
         bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
-     "Bạn có chắc thêm mới?",
+     "Bạn có chắc sửa mới?",
      yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
         {
@@ -117,7 +102,7 @@
             if (result == true)
             {
                 _mudDialog.Close(DialogResult.Ok(true));
-                _snackbar.Add("Thêm thành công", Severity.Success);
+                _snackbar.Add("Sửa thành công", Severity.Success);
                 _navigate.NavigateTo("/department/list");
                 StateHasChanged();
             }
@@ -169,6 +154,59 @@
         }
 
     }
+
+    private string GetErrorText<T>(T value) where T : Enum
+    {
+        if (EqualityComparer<T>.Default.Equals(value, default(T)))
+        {
+            return "Vui lòng chọn giá trị.";
+        }
+
+        return null;
+    }
+
+    private string GetErrorText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Vui lòng nhập giá trị.";
+        }
+
+        if (!ValidateEmail(value))
+        {
+            return "Email không hợp lệ.";
+        }
+
+        if (!ValidatePhoneNumber(value))
+        {
+            return "Số điện thoại không hợp lệ.";
+        }
+
+        return null;
+    }
+
+    public static bool ValidatePhoneNumber(string phoneNumber)
+    {
+        string pattern = @"^\d{10}$";
+        return Regex.IsMatch(phoneNumber, pattern);
+    }
+
+    public static bool ValidateEmail(string email)
+    {
+        string pattern = @"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$";
+        return Regex.IsMatch(email, pattern);
+    }
+
+    private string ValidateCode(string value)
+    {
+        if (_lstDepartment.Any(d => d.Code == value))
+        {
+            return "Mã rạp đã tồn tại.";
+        }
+
+        return null;
+    }
+
     public string ConvertForCountry(string status)
     {
         switch (status)

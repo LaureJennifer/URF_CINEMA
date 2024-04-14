@@ -28,7 +28,6 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-
             var obj = await client.GetFromJsonAsync<FilmListWithPaginationViewModel>($"api/Films");
             if (obj != null)
                 return obj;
@@ -41,7 +40,14 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.GetFromJsonAsync<FilmListWithPaginationViewModel>($"api/Films");
+            string url = $"api/Films?PageSize={request.PageSize}";
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                url = $"api/Films?Name={request.Title}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<FilmListWithPaginationViewModel>(url);
+
+
             if (obj != null)
                 return obj;
             return new();
@@ -77,7 +83,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var obj = await client.PutAsJsonAsync("api/Films", request); ;
+            var obj = await client.PutAsJsonAsync("api/Films", request);
             return obj.IsSuccessStatusCode;
         }
     }

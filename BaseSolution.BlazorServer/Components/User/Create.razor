@@ -21,51 +21,52 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_userDto.Code" Placeholder="Mã nhân viên*" />
-                @if (string.IsNullOrEmpty(_userDto.Code))
+                <MudTextField @bind-Value="_userDto.Code" Placeholder="Mã nhân viên*" Validation="ValidateCode" />
+                @if (_showCodeError)
                 {
+                    
                     <div class="error-message">Mã nhân viên không được để trống.</div>
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.Name" Placeholder="Họ và tên*" />
-                @if (string.IsNullOrEmpty(_userDto.Name))
+                @if (_showNameError)
                 {
                     <div class="error-message">Họ và tên không được để trống.</div>
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.PhoneNumber" Placeholder="Số điện thoại*" />
-                @if (string.IsNullOrEmpty(_userDto.PhoneNumber))
+                @if (_showPhoneError)
                 {
                     <div class="error-message">Số điện thoại không được để trống.</div>
                 }
-                else if (!IsValidPhoneNumber(_userDto.PhoneNumber))
+                else if (_showPhoneAError)
                 {
                     <div class="error-message">Số điện thoại không đúng định dạng.</div>
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.Email" Placeholder="Email*" />
-                @if (string.IsNullOrEmpty(_userDto.Email))
+                @if (_showMailError)
                 {
                     <div class="error-message">Email không được để trống.</div>
                 }
-                else if (!IsValidEmail(_userDto.Email))
+                else if (_showMailAError)
                 {
                     <div class="error-message">Email không đúng định dạng.</div>
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.UserName" Placeholder="Tên tài khoản*" />
-                @if (string.IsNullOrEmpty(_userDto.UserName))
+                @if (_showUserNameError)
                 {
                     <div class="error-message">Tên tài khoản không được để trống.</div>
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.PassWord" Placeholder="Mật khẩu*" />
-                @if (string.IsNullOrEmpty(_userDto.PassWord))
+                @if (_showPasswordError)
                 {
                     <div class="error-message">Mật khẩu không được để trống.</div>
                 }
@@ -79,7 +80,7 @@
                             <MudSelectItem Value="@item.Id.ToString()">@item.Code</MudSelectItem>
                         }
                     </MudSelect>
-                    @if (string.IsNullOrEmpty(_selectedRoleId))
+                    @if (_showRoleError)
                     {
                         <div class="error-message">Chức vụ không được để trống.</div>
                     }
@@ -104,7 +105,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
-        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
+        <MudButton Color="Color.Primary" OnClick="()=>OnButtonClicked()">Thêm mới</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -128,6 +129,16 @@
     IList<IBrowserFile> files = new List<IBrowserFile>();
     ImageHandle imageHandle = new();
 
+    private bool _showCodeError { get; set; }
+    private bool _showNameError { get; set; }
+    private bool _showPhoneError { get; set; }
+    private bool _showMailError { get; set; }
+    private bool _showUserNameError { get; set; }
+    private bool _showPasswordError { get; set; }
+    private bool _showRoleError { get; set; }
+    private bool _showPhoneAError { get; set; }
+    private bool _showMailAError { get; set; }
+
 
     private async Task UploadFiles(IBrowserFile file)
     {
@@ -137,58 +148,77 @@
 
     private async Task OnButtonClicked()
     {
-        obj.Code = _userDto.Code;
-        obj.Name = _userDto.Name;
-        obj.PhoneNumber = _userDto.PhoneNumber;
-        obj.Email = _userDto.Email;
-        obj.UserName = _userDto.UserName;
-        obj.PassWord = _userDto.PassWord;
-        obj.UrlImage = imageUrl;
-        obj.RoleId = _userDto.RoleId;
-        bool? confirm = await DialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc thêm mới?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (confirm == true)
+        int countError = 0;
+        // Kiểm tra và hiển thị lỗi validate
+        if (string.IsNullOrEmpty(_userDto.Code)) { countError++; _showCodeError = true; } else { _showCodeError = false; }
+        if (string.IsNullOrEmpty(_userDto.Name)) { countError++; _showNameError = true; }else { _showNameError = false; }
+        if (string.IsNullOrEmpty(_userDto.PhoneNumber)) { countError++; _showPhoneError = true; }else { _showPhoneError = false; }
+        if (string.IsNullOrEmpty(_userDto.Email)) { countError++; _showMailError = true; }else { _showMailError = false; }
+        if (string.IsNullOrEmpty(_userDto.UserName)) { countError++; _showUserNameError = true; }else { _showUserNameError = false; }
+        if (string.IsNullOrEmpty(_userDto.PassWord)) { countError++; _showPasswordError = true; }else { _showPasswordError = false; }
+        if (string.IsNullOrEmpty(_selectedRoleId)) { countError++; _showRoleError = true; }else { _showRoleError = false; }
+        if (IsValidPhoneNumber(_userDto.PhoneNumber) == false) { countError++; _showPhoneAError = true; }else { _showPhoneAError = false; }
+        if (IsValidEmail(_userDto.Email) == false) { countError++; _showMailAError = true; }else { _showMailAError = false; }
+        if (countError>0)
         {
-            if (_lstUser.Any(x => x.UserName.ToLower().Trim().Equals(obj.UserName.Trim().ToLower())))
+            _snackbar.Add("Lỗi nhập liệu");
+        }
+        else
+        {
+            obj.Code = _userDto.Code;
+            obj.Name = _userDto.Name;
+            obj.PhoneNumber = _userDto.PhoneNumber;
+            obj.Email = _userDto.Email;
+            obj.UserName = _userDto.UserName;
+            obj.PassWord = _userDto.PassWord;
+            obj.UrlImage = imageUrl;
+            obj.RoleId = Guid.Parse(_selectedRoleId);
+            bool? confirm = await DialogService.ShowMessageBox(
+         "Xác nhận",
+         "Bạn có chắc thêm mới?",
+         yesText: "Xác nhận", cancelText: "Hủy");
+            if (confirm == true)
             {
-                _snackbar.Add
-                (
-                    "Thêm thất bại do trùng tên tài khoản người dùng",
-                     Severity.Error
-                );
-            }
-            else if (_selectedRoleId == null)
-            {
-                _snackbar.Add
-                (
-                    "Chưa chọn chức vụ",
-                     Severity.Error
-                );
-            }
-            else
-            {
-                obj.RoleId = Guid.Parse(_selectedRoleId);
-                var result = await _userRepo.AddAsync(obj);
-                if (result == true)
-                {
-                    _mudDialog.Close(DialogResult.Ok(true));
-                    _snackbar.Add("Thêm thành công", Severity.Success);
-                    _navigate.NavigateTo("/user/list");
-                    StateHasChanged();
-                }
-                else
+                if (_lstUser.Any(x => x.UserName.ToLower().Trim().Equals(obj.UserName.Trim().ToLower())))
                 {
                     _snackbar.Add
                     (
-                        "Thêm thất bại",
+                        "Thêm thất bại do trùng tên tài khoản người dùng",
                          Severity.Error
                     );
+                }
+                else if (_selectedRoleId == null)
+                {
+                    _snackbar.Add
+                    (
+                        "Chưa chọn chức vụ",
+                         Severity.Error
+                    );
+                }
+                else
+                {
+                    obj.RoleId = Guid.Parse(_selectedRoleId);
+                    var result = await _userRepo.AddAsync(obj);
+                    if (result == true)
+                    {
+                        _mudDialog.Close(DialogResult.Ok(true));
+                        _snackbar.Add("Thêm thành công", Severity.Success);
+                        _navigate.NavigateTo("/user/list");
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        _snackbar.Add
+                        (
+                            "Thêm thất bại",
+                             Severity.Error
+                        );
+                    }
                 }
             }
         }
     }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -205,6 +235,7 @@
         }
         var result1 = await _roleRespo.GetAllActive();
         _lstRole = result1.Data.Data.ToList();
+        StateHasChanged();
     }
 
 
@@ -212,14 +243,31 @@
 
     public static bool IsValidEmail(string email)
     {
-        string pattern = @"^[\w\.-]+@[\w\.-]+\.\w+$";
+        if (email == null)
+        {
+            return false;
+        }
+        string pattern = @"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$";
         return Regex.IsMatch(email, pattern);
     }
 
     public static bool IsValidPhoneNumber(string phoneNumber)
     {
-        string pattern = @"^\d{10}$"; // Giả sử số điện thoại có 10 chữ số
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            return false;
+        }
+        string pattern = @"^0\d{9}$"; // Giả sử số điện thoại có 10 chữ số
         return Regex.IsMatch(phoneNumber, pattern);
+    }
+    private string ValidateCode(string value)
+    {
+        if (_lstUser.Any(d => d.Code == value))
+        {
+            return "Mã nhân viên đã tồn tại.";
+        }
+
+        return "";
     }
 }
 

@@ -20,28 +20,22 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Code" Placeholder="Mã rạp*" />
+                <MudTextField @bind-Value="_departmentDto.Code" Placeholder="Mã rạp*" Required="true" ErrorText="@GetErrorText(_departmentDto.Code)" Validation="ValidateCode" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Name" Placeholder="Tên rạp*" />
+                <MudTextField @bind-Value="_departmentDto.Name" Placeholder="Tên rạp*" Required="true" ErrorText="@GetErrorText(_departmentDto.Name)" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Placeholder="Số điện thoại*" />
+                <MudTextField @bind-Value="_departmentDto.PhoneNumber" Placeholder="Số điện thoại*" Required="true" ErrorText="@GetErrorText(_departmentDto.PhoneNumber)" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Email" Placeholder="Email*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.AddressCodeFormat" Placeholder="Định dạng*" />
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_departmentDto.Address" Placeholder="Địa chỉ*" />
+                <MudTextField @bind-Value="_departmentDto.Email" Placeholder="Email*" Required="true" ErrorText="@GetErrorText(_departmentDto.Email)" />
             </MudItem>
             <MudItem xs="12" sm="12" md="12">
-                <MudTextField @bind-Value="_departmentDto.Status" Placeholder="Trạng thái*" />
+                <MudTextField @bind-Value="_departmentDto.Address" Placeholder="Địa chỉ*" Required="true" ErrorText="@GetErrorText(_departmentDto.Address)" />
             </MudItem>
             <MudItem xs="4" sm="4" md="4">
-                <MudSelect T="EntityCountry" @bind-Value="selectedCountry" Label="Quốc gia*" OnValueChanged="OnCountryChanged">
+                <MudSelect T="EntityCountry" @bind-Value="selectedCountry" Label="Quốc gia*" Required="true" ErrorText="@GetErrorText(selectedCountry)">
                     @foreach (var country in Enum.GetValues(typeof(EntityCountry)).Cast<EntityCountry>())
                     {
                         <MudSelectItem T="EntityCountry" Value="country">@_entityStatusExtensions.ConvertForCountry(country)</MudSelectItem>
@@ -49,7 +43,7 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="4" sm="4" md="4">
-                <MudSelect T="EntityCity" @bind-Value="selectedCity" Label="Thành phố*" AdornmentColor="Color.Inherit" onvalueChanged="OnCityChanged">
+                <MudSelect T="EntityCity" @bind-Value="selectedCity" Label="Thành phố*" Required="true" ErrorText="@GetErrorText(selectedCity)" AdornmentColor="Color.Inherit" OnValueChanged="OnCityChanged">
                     @foreach (var city in GetCitiesInSelectedCountry())
                     {
                         <MudSelectItem T="EntityCity" Value="city">@_entityStatusExtensions.ConvertForCity(city)</MudSelectItem>
@@ -57,7 +51,7 @@
                 </MudSelect>
             </MudItem>
             <MudItem xs="4" sm="4" md="4">
-                <MudSelect T="EntityDistrict" @bind-Value="selectedDistrict" Label="Quận*">
+                <MudSelect T="EntityDistrict" @bind-Value="selectedDistrict" Label="Quận*" Required="true" ErrorText="@GetErrorText(selectedDistrict)">
                     @foreach (var district in GetDistrictsInSelectedCity())
                     {
                         <MudSelectItem T="EntityDistrict" Value="district">@_entityStatusExtensions.ConvertForDistrict(district)</MudSelectItem>
@@ -77,13 +71,70 @@
     private EntityCity selectedCity;
     private EntityDistrict selectedDistrict;
 
+    private string GetErrorText<T>(T value) where T : Enum
+    {
+        if (EqualityComparer<T>.Default.Equals(value, default(T)))
+        {
+            return "Vui lòng chọn giá trị.";
+        }
+
+        return null;
+    }
+
+    private string ValidateCode(string value)
+    {
+        if (_lstDepartment.Any(d => d.Code == value))
+        {
+            return "Mã rạp đã tồn tại.";
+        }
+
+        return null;
+    }
+
+    private string GetErrorText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Vui lòng nhập giá trị.";
+        }
+
+        // Kiểm tra các điều kiện khác (nếu cần)
+        // Ví dụ: Kiểm tra định dạng email
+        if (!ValidateEmail(value))
+        {
+            return "Email không hợp lệ.";
+        }
+
+        // Kiểm tra các điều kiện khác (nếu cần)
+        // Ví dụ: Kiểm tra định dạng số điện thoại
+        if (!ValidatePhoneNumber(value))
+        {
+            return "Số điện thoại không hợp lệ.";
+        }
+
+        // Chưa có lỗi, trả về null
+        return null;
+    }
+
+    public static bool ValidatePhoneNumber(string phoneNumber)
+    {
+        string pattern = @"^\d{10}$";
+        return Regex.IsMatch(phoneNumber, pattern);
+    }
+
+    public static bool ValidateEmail(string email)
+    {
+        string pattern = @"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$";
+        return Regex.IsMatch(email, pattern);
+    }
+
     private List<EntityCity> GetCitiesInSelectedCountry()
     {
         // Trả về danh sách thành phố dựa trên quốc gia được chọn
         switch (selectedCountry)
         {
             case EntityCountry.VN:
-                return new List<EntityCity> { EntityCity.HN, EntityCity.HCM, EntityCity.DN, EntityCity.TH,EntityCity.BK,EntityCity.BN,EntityCity.QN,EntityCity.QB,EntityCity.BD,EntityCity.LC,EntityCity.SL,EntityCity.CB,EntityCity.HG };
+                return new List<EntityCity> { EntityCity.HN, EntityCity.HCM, EntityCity.DN, EntityCity.TH, EntityCity.BK, EntityCity.BN, EntityCity.QN, EntityCity.QB, EntityCity.BD, EntityCity.LC, EntityCity.SL, EntityCity.CB, EntityCity.HG };
             case EntityCountry.CN:
                 return new List<EntityCity> { EntityCity.SH, EntityCity.SZ };
             case EntityCountry.US:
@@ -110,11 +161,11 @@
             case EntityCity.HCM:
                 return new List<EntityDistrict> { EntityDistrict.TP, EntityDistrict.BT };
             case EntityCity.DN:
-                return new List<EntityDistrict> { EntityDistrict.CL, EntityDistrict.TK};
+                return new List<EntityDistrict> { EntityDistrict.CL, EntityDistrict.TK };
             case EntityCity.BD:
                 return new List<EntityDistrict> { EntityDistrict.TU, EntityDistrict.TA };
             case EntityCity.NY:
-                return new List<EntityDistrict> { EntityDistrict.MHT};
+                return new List<EntityDistrict> { EntityDistrict.MHT };
             case EntityCity.SG:
                 return new List<EntityDistrict> { };
             // Thêm các trường hợp cho các thành phố khác
@@ -147,7 +198,7 @@
     public DepartmentCreateRequest obj = new();
     public ViewDepartmentWithPaginationRequest department_ = new();
 
-    public string AddressCode{ get; set; }
+    public string AddressCode { get; set; }
     public void SetAddressCode()
     {
         string countryCodeString = ((int)selectedCountry).ToString("D2");
@@ -157,6 +208,7 @@
         AddressCode = $"{countryCodeString}-{cityCodeString}-{districtCodeString}";
     }
 
+    public string AddressCodeFormat = "01/10/2003";
 
     private async Task OnButtonClicked()
     {
@@ -167,8 +219,7 @@
         obj.PhoneNumber = _departmentDto.PhoneNumber;
         obj.Email = _departmentDto.Email;
         obj.Address = _departmentDto.Address;
-        obj.AddressCodeFormat = _departmentDto.AddressCodeFormat;
-        obj.Status= _departmentDto.Status;
+        obj.AddressCodeFormat = AddressCodeFormat;
         bool? confirm = await DialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc thêm mới?",
@@ -205,7 +256,9 @@
         if (result != null)
         {
             _lstDepartment = result.Data.Data.ToList();
+            StateHasChanged();
         }
+
     }
 
 

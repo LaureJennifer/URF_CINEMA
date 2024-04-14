@@ -34,7 +34,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             try
             {
                 entity.CreatedTime = DateTimeOffset.UtcNow;
-
+                entity.Status = EntityStatus.Active;
                 await _dbContext.DepartmentEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync(cancellationToken);
 

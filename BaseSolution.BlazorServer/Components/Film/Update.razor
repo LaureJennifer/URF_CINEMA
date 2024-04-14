@@ -14,34 +14,34 @@
     <DialogContent>
         <MudGrid>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Code" Placeholder="Mã phim*" />
+                <MudTextField @bind-Value="_filmDto.Code" Style="visibility:hidden" Required="true" ErrorText="@GetErrorText(_filmDto.Code)" Placeholder="Mã phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Title" Placeholder="Tên phim*" />
+                <MudTextField @bind-Value="_filmDto.Title" Required="true" ErrorText="@GetErrorText(_filmDto.Title)" Placeholder="Tên phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.DirectedBy" Placeholder="Đạo diễn*" />
+                <MudTextField @bind-Value="_filmDto.DirectedBy" Required="true" ErrorText="@GetErrorText(_filmDto.DirectedBy)" Placeholder="Đạo diễn*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Actor" Placeholder="Diễn viên*" />
+                <MudTextField @bind-Value="_filmDto.Actor" Required="true" ErrorText="@GetErrorText(_filmDto.Actor)" Placeholder="Diễn viên*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Language" Placeholder="Ngôn ngữ*" />
+                <MudTextField @bind-Value="_filmDto.Language" Required="true" ErrorText="@GetErrorText(_filmDto.Language)" Placeholder="Ngôn ngữ*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Genres" Placeholder="Thể loại*" />
+                <MudTextField @bind-Value="_filmDto.Genres" Required="true" ErrorText="@GetErrorText(_filmDto.Genres)" Placeholder="Thể loại*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.ReleaseDate" Label="dd/MM/yyyy" Placeholder="Ngày khởi chiếu*" />
+                <MudDatePicker @bind-date="_releaseDate" Required="true" ErrorText="@GetError(_releaseDate)" Placeholder="Ngày khởi chiếu*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Duration" Label="phút" Placeholder="Thời lượng*" />
+                <MudTextField @bind-Value="_filmDto.Duration" Required="true" ErrorText="@GetErrorText(_filmDto.Duration)" Placeholder="Thời lượng*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.Script" Placeholder="Định dạng phim*" />
+                <MudTextField @bind-Value="_filmDto.Script" Required="true" ErrorText="@GetErrorText(_filmDto.Script)" Placeholder="Định dạng phim*" />
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_filmDto.AgeRating" Placeholder="Độ tuổi*" />
+                <MudTextField @bind-Value="_filmDto.AgeRating" Required="true" ErrorText="@GetErrorText(_filmDto.AgeRating)" Placeholder="Độ tuổi*" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_filmDto.Status" For="@(() => _filmDto.Status)">
@@ -128,6 +128,8 @@
     IList<IBrowserFile> files = new List<IBrowserFile>();
     ImageHandle imageHandle = new();
 
+    DateTime? _releaseDate { get; set; }
+
     private async Task UploadFiles(IBrowserFile file)
     {
         imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
@@ -158,7 +160,8 @@
         obj.TrailerURL = trailerUrl;
         obj.Genres = _filmDto.Genres;
         obj.Duration = _filmDto.Duration;
-        obj.ReleaseDate = _filmDto.ReleaseDate;
+        DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
+        obj.ReleaseDate = releaseDATE;
         obj.Script = _filmDto.Script;
         obj.AgeRating = _filmDto.AgeRating;
         obj.Status = _filmDto.Status;
@@ -201,4 +204,25 @@
     }
 
     void Cancel() => _mudDialog.Cancel();
+
+    private string GetError(DateTime? date)
+    {
+        if (date == null)
+        {
+            return "Vui lòng chọn ngày khởi chiếu.";
+        }
+        return string.Empty;
+    }
+
+    private string GetErrorText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Vui lòng nhập giá trị.";
+        }
+
+        // Kiểm tra các điều kiện khác (nếu cần)
+
+        return null;
+    }
 }
