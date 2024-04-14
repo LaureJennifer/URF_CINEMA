@@ -51,7 +51,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
                 BaseAddress = new Uri("https://localhost:7005")
             };
             string url = $"api/Bills";
-            if (request.CustomerId!=null && request.DepartmentId != null) 
+            if (request.CustomerId!=null && request.DepartmentId != null && !string.IsNullOrEmpty(request.Code)) 
             {
                 url = $"api/Bills?CustomerId={request.CustomerId}&DepartmentId={request.DepartmentId}&Code={request.Code}";
             }

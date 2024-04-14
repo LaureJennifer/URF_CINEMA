@@ -73,6 +73,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     bills = bills.Where(x => x.DepartmentId == request.DepartmentId);
                 }
+                if (!string.IsNullOrWhiteSpace(request.Code))
+                {
+                    bills = bills.Where(x => x.Code == request.Code);
+                }
                 if (!string.IsNullOrWhiteSpace(request.CustomerName))
                 {
                     bills = bills.Where(x => x.CustomerName == request.CustomerName);
