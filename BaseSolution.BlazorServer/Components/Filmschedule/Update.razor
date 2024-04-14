@@ -25,21 +25,15 @@
                     <MudTextField @bind-Value="@_film.Title"></MudTextField>
                 </MudItem>
                 <MudItem xs="6" sm="6" md="6">
-                    <MudDatePicker @bind-Date="@_showDate" Label="Ngày chiếu*" DateFormat="dd.MM.yyyy" />
+                    <MudTextField T="DateTime" Format="s" @bind-Value="@_showDate" Label="Thời gian chiếu" InputType="InputType.DateTimeLocal" />
                 </MudItem>
-                <MudItem xs="6" sm="6" md="6">
-                    <MudTimePicker AmPm="true" @bind-Time="_showTime" />
-
-                </MudItem>
+             
                 <MudItem xs="12" md="12">
                     <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_filmScheduleDto.Status" For="@(() => _filmScheduleDto.Status)">
                         <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                         <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
-                        <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
                         <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
-                        <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
-                        <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
-                        <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                        <MudSelectItem Value="EntityStatus.Deleted">Đã xóa</MudSelectItem>
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" sm="12" md="12">
@@ -96,8 +90,7 @@
     ViewRoomWithPaginationRequest _viewRoomWithPaginationRequest = new();
     ViewFilmScheduleWithPaginationRequest _viewFilmScheduleWithPaginationRequest = new() { PageSize = int.MaxValue - 1 };
     ViewFilmScheduleWithPaginationRequest _viewFilmScheduleForCheckExist = new() { PageSize = int.MaxValue - 1 };
-    DateTime? _showDate { get; set; }
-    TimeSpan? _showTime { get; set; } = new TimeSpan(00, 45, 00);
+    DateTime _showDate { get; set; }
     MudTimePicker _timePicker;
     FilmDetailCreateRequest _filmDetailCreateRequest = new();
     void Submit() => MudDialog.Close(DialogResult.Ok(true));
@@ -106,7 +99,7 @@
     Guid filmScheduleId { get; set; }
     [Inject] private IDialogService dialogService { get; set; }
     bool checkResultCreateAll { get; set; } = false;
-
+    Guid idFilmShedule { get; set; }
     FilmScheduleUpdateRequest _filmScheduleUpdateRequest = new();
 
     protected override async Task OnInitializedAsync()
@@ -123,14 +116,14 @@
 
         bool? rs = await _dialogService.ShowMessageBox(
      "Xác nhận",
-     "Bạn có chắc chắn thêm mới?",
+     "Bạn có chắc chắn Chỉnh sửa?",
      yesText: "Xác nhận", cancelText: "Hủy");
         if (rs == true)
         {
             await UpdateFilmSchedule();
             if (checkResultCreateAll)
             {
-                _snackbar.Add("Thêm mới lịch chiếu thành công!", Severity.Success);
+                _snackbar.Add("Chỉnh sửa lịch chiếu thành công!", Severity.Success);
                 await Task.Delay(60);
                 MudDialog.Close(DialogResult.Ok(true));
                 StateHasChanged();
@@ -138,19 +131,37 @@
             }
             else
             {
-                _snackbar.Add("Thêm mới lịch chiếu thất bại!", Severity.Error);
+                _snackbar.Add("Chỉnh sửa lịch chiếu thất bại!", Severity.Error);
             }
 
         }
 
     }
 
-    private void HandleCheckBoxCheckedChanged(Guid roomId, bool isChecked)
+    private async void HandleCheckBoxCheckedChanged(Guid roomId, bool isChecked)
     {
         if (lstRoomId.Contains(roomId))
         {
             isChecked = false;
             lstRoomId.Remove(roomId);
+
+            ViewFilmScheduleRoomWithPaginationRequest rq = new()
+                {
+                    RoomId = roomId,
+                    FilmScheduleId = _filmSchedule.Id,
+                };
+            var rs = await _filmScheduleRoomRepo.GetFilmScheduleRoomByRoomAsync(rq);
+            var result = rs.Data.Data.First().Id;
+            if (result!=null)
+            {
+                FilmScheduleRoomDeleteRequest rquest = new()
+                    {
+                        Id = result
+                    };
+               var removeRs = await _filmScheduleRoomRepo.RemoveAsync(rquest);
+               
+            }
+            
         }
         else
         if (isChecked)
@@ -170,23 +181,24 @@
 
     async Task UpdateFilmSchedule()
     {
-        DateTimeOffset showDate = new DateTimeOffset((DateTime)_showDate!, TimeSpan.Zero);
-        showDate = showDate.Add((TimeSpan)_showTime!);
-        _viewFilmScheduleForCheckExist.ShowDate = showDate;
-        _viewFilmScheduleForCheckExist.ShowTime = showDate;
+        DateTimeOffset showDateTime = new DateTimeOffset(_showDate, TimeZoneInfo.Local.GetUtcOffset(_showDate));
+
+        _viewFilmScheduleForCheckExist.ShowDate = showDateTime;
+        _viewFilmScheduleForCheckExist.ShowTime = showDateTime;
         var result = await _filmScheduleRepo.GetByShowDateTime(_viewFilmScheduleForCheckExist);
         var filmSchedule = result.Data.Data.ToList();
         if (filmSchedule.Count>0)
         {
-            _filmScheduleUpdateRequest.Id = filmSchedule.First().Id;
+            idFilmShedule = filmSchedule.First().Id;
+            _filmScheduleUpdateRequest.Id = idFilmShedule;
             _filmScheduleUpdateRequest.Status = _filmScheduleDto.Status;
-            _filmScheduleUpdateRequest.ShowDate = showDate;
-            _filmScheduleUpdateRequest.ShowTime = showDate;
+            _filmScheduleUpdateRequest.ShowDate = showDateTime;
+            _filmScheduleUpdateRequest.ShowTime = showDateTime;
             var rs = await _filmScheduleRepo.UpdateAsync(_filmScheduleUpdateRequest);
             if (rs)
             {
                 checkResultCreateAll = true;
-                await UpdateRangeFilmScheduleRoom();
+                await UpdateRangeFilmScheduleRoom(idFilmShedule);
             }
             else
             {
@@ -201,24 +213,24 @@
 
     }
 
-    async Task UpdateRangeFilmScheduleRoom()
+    async Task UpdateRangeFilmScheduleRoom(Guid idFilmShedule)
     {
         // tìm xem nếu có FilmScheduleRoom rồi thì thôi còn chưa thì tạo mới
 
         foreach (var roomId in _lstSelectedRoomId)
         {
-            _viewFilmScheduleRoomForCheckExist.FilmScheduleId = filmScheduleId;
+            _viewFilmScheduleRoomForCheckExist.FilmScheduleId = idFilmShedule;
             _viewFilmScheduleRoomForCheckExist.RoomId = roomId;
             var resultCheck = await _filmScheduleRoomRepo.GetFilmScheduleRoomByRoomAsync(_viewFilmScheduleRoomForCheckExist);
             var data = resultCheck.Data.Data.ToList();
             if (data.Count() <= 0)
             {
-                FilmScheduleRoomUpdateRequest filmScheduleRoomUpdateRequest = new()
+                FilmScheduleRoomCreateRequest filmScheduleRoomCreateRequest = new()
                     {
-                        FilmScheduleId = filmScheduleId,
+                        FilmScheduleId = idFilmShedule,
                         RoomId = roomId
                     };
-                var result = await _filmScheduleRoomRepo.UpdateAsync(filmScheduleRoomUpdateRequest);
+                var result = await _filmScheduleRoomRepo.AddAsync(filmScheduleRoomCreateRequest);
                 if (result)
                 {
                     checkResultCreateAll = true;
@@ -226,17 +238,15 @@
                 else
                     checkResultCreateAll = false;
             }
-          
-        }
 
+        }
     }
-    
+
     async Task CreateFilmSchedule()
     {
-        DateTimeOffset showDate = new DateTimeOffset((DateTime)_showDate!, TimeSpan.Zero);
-        showDate = showDate.Add((TimeSpan)_showTime!);
-        _filmScheduleCreateRequest.ShowDate = showDate;
-        _filmScheduleCreateRequest.ShowTime = showDate;
+        DateTimeOffset showDateTime = new DateTimeOffset(_showDate, TimeZoneInfo.Local.GetUtcOffset(_showDate));
+        _filmScheduleCreateRequest.ShowDate = showDateTime;
+        _filmScheduleCreateRequest.ShowTime = showDateTime;
         var result = await _filmScheduleRepo.AddAsync(_filmScheduleCreateRequest);
         if (result)
         {
@@ -311,9 +321,8 @@
     {
         var result = await _filmScheduleRepo.GetFilmScheduleByIdAsync(idFilmSchedule);
         _filmSchedule = result.Data;
-        DateTime dateTime = _filmSchedule!.ShowTime.ToLocalTime().DateTime;
-        _showDate = dateTime;
-        _showTime = dateTime.TimeOfDay;
+        _showDate = _filmSchedule!.ShowTime.ToLocalTime().DateTime;
+
     }
     async Task LoadFilmById(string idFilm)
     {

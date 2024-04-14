@@ -97,7 +97,7 @@
                 <RowTemplate>
                     <MudTd DataLabel=""></MudTd>
                     <MudTd DataLabel=""></MudTd>
-                    <MudTd DataLabel="Time" Style="text-align: center">@context.ShowTime.ToLocalTime().ToString("hh:mm")</MudTd>
+                    <MudTd DataLabel="Time" Style="text-align: center">@context.ShowTime.ToLocalTime().ToString("hh:mm tt")</MudTd>
                     <MudTd DataLabel="Rooms" Style="text-align: center">
                         @foreach (var room in @context.Rooms)
                         {

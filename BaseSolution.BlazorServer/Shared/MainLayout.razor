@@ -8,6 +8,7 @@
 @inject IDialogService DialogService
 @inject NavigationManager _navigationManager;
 @inject EntityStatusExtensions _entityStatusExtensions
+@inject SaveCustomerId _saveCustomerId
 <style>
     body {
         background-color: #100645;
@@ -117,7 +118,8 @@
                 <AuthorizeView>
                     <Authorized>
                         <MudItem xs="12" md="12" lg="12">
-                            <MudIconButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:red"></MudIconButton>Đăng xuất
+                            <MudText></MudText>
+                            <MudButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Error">Đăng xuất</MudButton>
                         </MudItem>
                     </Authorized>
                     <NotAuthorized>

@@ -128,7 +128,7 @@
 
     async Task CreateFilmSchedule()
     {
-        DateTimeOffset showDate = new DateTimeOffset((DateTime)_showDate!, TimeSpan.Zero);
+        DateTimeOffset showDate = new DateTimeOffset((DateTime)_showDate!, TimeSpan.FromHours(7));
         showDate = showDate.Add((TimeSpan)_showTime!);
         _filmScheduleCreateRequest.ShowDate = showDate;
         _filmScheduleCreateRequest.ShowTime = showDate;

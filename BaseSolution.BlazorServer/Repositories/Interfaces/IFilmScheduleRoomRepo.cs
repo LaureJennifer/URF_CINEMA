@@ -18,6 +18,7 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<bool> AddRangeAsync(List<FilmScheduleRoomCreateRangeRequest> request);
 
         public Task<bool> RemoveAsync(FilmScheduleRoomDeleteRequest request);
+        public Task<bool> AddAsync(FilmScheduleRoomCreateRequest request);
         public Task<bool> UpdateAsync(FilmScheduleRoomUpdateRequest request);
     }
 }
