@@ -1,4 +1,4 @@
-﻿@page "/home/{departmentId}/{customerId}"
+﻿@page "/home/{departmentId}"
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm
 @using BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
 @using BaseSolution.Application.DataTransferObjects.Film
@@ -9,6 +9,7 @@
 @using BaseSolution.BlazorServer.Components.Film;
 @inject IDialogService DialogService
 @inject NavigationManager NavigationManager
+@inject SaveCustomerId saveCustomerId;
 @* @attribute [Authorize(Roles = "ADMIN,Nhân viên,Customer")] *@
 @if (departmentId == null)
 {
@@ -112,7 +113,7 @@ else
     private void Order(Guid IdFilm)
     {
         // Chuyển hướng đến trang đặt vé với thông tin phim
-        NavigationManager.NavigateTo($"/booking/{departmentId}/{customerId}/{IdFilm}");
+        NavigationManager.NavigateTo($"/booking/{departmentId}/{saveCustomerId.CustomerId}/{IdFilm}");
     }
     private void OpenDialog()
     {

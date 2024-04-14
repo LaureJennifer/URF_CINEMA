@@ -1,14 +1,29 @@
 ﻿@page "/logout"
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 
 
 @inject ILoginRepo _loginRepo
 @inject NavigationManager _navigate
-
+@inject SaveCustomerId saveCustomerId;
 @code {
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+
+
+    List<DepartmentDto>? _lstDepartment { get; set; }
+
+    ViewDepartmentWithPaginationRequest _request = new() { PageSize = 50 };
     protected async override Task OnInitializedAsync()
     {
+        await LoadDepartment();
+        saveCustomerId.LayoutOption = typeof(CustomerLayout);
         await _loginRepo.Logout();
-        _navigate.NavigateTo("/home");
+        _navigate.NavigateTo($"/home/{_lstDepartment.First().Id.ToString()}");
+    }
+    private async Task LoadDepartment()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data.Data.ToList();
     }
 }

@@ -1,0 +1,42 @@
+﻿@page "/login"
+@layout EmptyLayout
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using BaseSolution.Application.DataTransferObjects.Account
+@using BaseSolution.Application.DataTransferObjects.Account.Request
+@using BaseSolution.Application.DataTransferObjects.Customer
+@using BaseSolution.Application.DataTransferObjects.Customer.Request
+@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
+@using BaseSolution.Application.DataTransferObjects.DepartmentFilm.Request
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.Application.DataTransferObjects.Film.Request
+@using BaseSolution.Application.DataTransferObjects.Role
+@using BaseSolution.Application.DataTransferObjects.Role.Request
+@using BaseSolution.Application.DataTransferObjects.User
+@using BaseSolution.Application.DataTransferObjects.User.Request
+@using BaseSolution.BlazorServer.Components.Login
+@using BaseSolution.BlazorServer.Components.SignUp;
+@using BaseSolution.BlazorServer.Components.ForgotPassword;
+@using BaseSolution.BlazorServer.Repositories.Interfaces
+@using Newtonsoft.Json.Linq
+
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigation
+@inject SaveCustomerId saveCustomerId;
+<MudItem xs="1" md="1" lg="1">
+    <MudButton Class="mt-4" @onclick="OpenLoginDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF">Đăng nhập</MudButton>
+</MudItem>
+@code{
+    private void OpenLoginDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Login>("", closeOnEscapeKey);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+    }
+}

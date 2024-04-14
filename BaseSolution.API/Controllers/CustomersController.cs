@@ -102,7 +102,7 @@ namespace BaseSolution.API.Controllers
             return Ok(vm);
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterRequest request, CancellationToken cancellationToken)
         {
             CustomerRegisterViewModel vm = new(_customerReadOnlyRepository, _customerReadWriteRepository, _localizationService, _mapper);
