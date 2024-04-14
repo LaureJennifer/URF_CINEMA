@@ -296,9 +296,11 @@
         if (confirm == true)
         {
             await CreateBill();
+
             if (_checkCreateBill)
             {
                 _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
+                await _customerRepo.SendEmailAsync(_customer.Email, _billDto);
                 StateHasChanged();
             }
 
