@@ -9,7 +9,7 @@
 @using MudBlazor
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 <MudPaper Class="pa-5">
     <MudGrid>
         <MudItem xs="9" md="9">
@@ -22,7 +22,7 @@
         else
         {
             <MudItem xs="3" md="3">
-                <MudSelect T="string" Label="Sơ đồ ghế" Value="@selectedRoomLayoutId" ValueChanged="(str)=>OnSelectedRoomLayout(str)">
+                <MudSelect T="string" Label="Sơ đồ ghế" AnchorOrigin="Origin.BottomCenter" Value="@selectedRoomLayoutId" ValueChanged="(str)=>OnSelectedRoomLayout(str)">
                     @foreach (var roomLayout in _lstRoomLayout)
                     {
                         <MudSelectItem T="string" Value="@(roomLayout.Id.ToString())">@roomLayout.Name</MudSelectItem>

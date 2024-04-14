@@ -12,6 +12,8 @@ namespace BaseSolution.Application.DataTransferObjects.Ticket
     {
         public Guid Id { get; set; }
         public Guid BillId { get; set; }
+        public Guid BookingId { get; set; }
+        public Guid FilmId { get; set; }
         public string DepartmentName { get; set; }
         public string FilmName { get; set; }
         public string SeatCode { get; set; }
