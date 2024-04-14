@@ -16,6 +16,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         public Task<RequestResult<CustomerDto>> GetByIdAsync(Guid id);
         public Task<CustomerListWithPaginationViewModel> GetAllActive(ViewCustomerWithPaginationRequest request);
         public Task<RequestResult<CustomerDto>> GetByNameAsync(string roomLayoutName);
-        public Task<RequestResult<BillDto>> SendEmailAsync(string email, BillDto _bill);
+        
     }
 }

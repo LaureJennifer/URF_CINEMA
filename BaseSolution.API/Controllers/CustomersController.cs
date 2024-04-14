@@ -141,15 +141,15 @@ namespace BaseSolution.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("sendGmail")]
-        public async Task<IActionResult> SendGmailAsync([FromBody] string emailAddress, BillDto _bill)
+        public async Task<IActionResult> SendGmailAsync([FromBody]BillDto _bill)
         {
-            if (emailAddress != null)
+            if (_bill.CustomerEmail != null)
             {
                 _bill.CreatedTime = DateTime.UtcNow;
                 _bill.Status = Domain.Enums.EntityStatus.Active;
                 var email = new MimeMessage();
                 email.From.Add(MailboxAddress.Parse("duanurfcinema@gmail.com"));
-                email.To.Add(MailboxAddress.Parse(emailAddress));
+                email.To.Add(MailboxAddress.Parse(_bill.CustomerEmail));
                 email.Subject = "Thông tin hóa đơn";
 
                 var body = new TextPart("html")

@@ -79,7 +79,7 @@
                             <MudText Align="Align.Right" Style="color:#180F20">Số tiền cần thanh toán: @totalPrice.ToString("C0") vnd</MudText>
                         </MudItem>
                         <MudItem class="custom-item">
-                            <MudTextField Label="Tổng tiền" Value="@_billDto.TotalPrice" ReadOnly="true" class="custom-textfield" />
+                            @* <MudTextField Label="Tổng tiền" Value="@_billDto.TotalPrice" ReadOnly="true" class="custom-textfield" /> *@
                         </MudItem>
                         <MudDivider />
                         <MudText Align="Align.Left" Style="color:#180F20;">Phương thức thanh toán</MudText>
@@ -209,7 +209,7 @@
     public List<BillDto> _lst = new();
     public List<PaymentMethodDto> _lstPayment = new();
     public FilmDto _filmDto { get; set; }
-
+    [Inject] ISendMailCustomer _sendMailCustomer { get; set; }
     public CustomerDto _customerDto = new();
     public BillDto _billDto = new();
     FilmScheduleDto _filmSchedule = new();
@@ -300,7 +300,8 @@
             if (_checkCreateBill)
             {
                 _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
-                await _customerRepo.SendEmailAsync(_customer.Email, _billDto);
+                await _sendMailCustomer.SendEmailAsync(_billDto);
+                
                 StateHasChanged();
             }
 
