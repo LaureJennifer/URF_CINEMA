@@ -9,6 +9,7 @@ namespace BaseSolution.BlazorServer
     public class SaveCustomerId
     {
         public string CustomerId { get;set; }
+        public string Name { get;set; }
         public List<BookingDto> ListBooking { get; set; }
 
         public Type LayoutOption { get; set; } = typeof(CustomerLayout);

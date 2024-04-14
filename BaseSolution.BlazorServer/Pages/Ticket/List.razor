@@ -5,10 +5,12 @@
 @using BaseSolution.BlazorServer.Components.Ticket;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
+@using BaseSolution.Infrastructure.Extensions
 @* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@inject EntityStatusExtensions _convertStatus;
 
 <MudPaper Class="pa-5">
     <MudGrid Class="mb-3">
@@ -35,23 +37,23 @@
                 <HeaderContent>
                     <MudTh>STT</MudTh>
                     <MudTh>Mã Vé</MudTh>
-                    <MudTh>Tên phim</MudTh>
-                    <MudTh>Phòng</MudTh>
-                    <MudTh>Ghế ngồi</MudTh>
-                    <MudTh>Ngày chiếu</MudTh>
-                    <MudTh>Giờ chiếu</MudTh>
-                    <MudTh>Trạng Thái</MudTh>
+                    <MudTh Style="text-align:center">Tên phim</MudTh>
+                    <MudTh Style="text-align:center">Phòng</MudTh>
+                    <MudTh Style="text-align:center">Ghế ngồi</MudTh>
+                    <MudTh Style="text-align:center">Ngày chiếu</MudTh>
+                    <MudTh Style="text-align:center">Giờ chiếu</MudTh>
+                    <MudTh Style="text-align:center">Trạng Thái</MudTh>
                     
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Mã Vé">@context.Code</MudTd>
-                    <MudTd DataLabel="Tên phim">@context.FilmName</MudTd>
-                    <MudTd DataLabel="Phòng">@context.RoomCode</MudTd>
-                    <MudTd DataLabel="Ghế ngồi">@context.SeatCode</MudTd>
-                    <MudTd DataLabel="Ngày chiếu">@context.ShowDate.ToString("dd/MM/yyyy")</MudTd>
-                    <MudTd DataLabel="Giờ chiếu">@context.ShowTime.ToString("hh : mm tt")</MudTd>
-                    <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
+                    <MudTd DataLabel="Mã Vé" Style="text-align:center">@context.Code</MudTd>
+                    <MudTd DataLabel="Tên phim" Style="text-align:center">@context.FilmName</MudTd>
+                    <MudTd DataLabel="Phòng" Style="text-align:center">@context.RoomCode</MudTd>
+                    <MudTd DataLabel="Ghế ngồi" Style="text-align:center">@context.SeatCode</MudTd>
+                    <MudTd DataLabel="Ngày chiếu" Style="text-align:center">@context.ShowDate.ToString("dd/MM/yyyy")</MudTd>
+                    <MudTd DataLabel="Giờ chiếu" Style="text-align:center">@context.ShowTime.ToString("hh : mm tt")</MudTd>
+                    <MudTd DataLabel="Trạng Thái" Style="text-align:center">@_convertStatus.ConvertForGeneral(@context.Status)</MudTd>
                 </RowTemplate>
                 <PagerContent>
                     <MudTablePager />

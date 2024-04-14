@@ -71,14 +71,15 @@
            
                 <AuthorizeView>
                     <Authorized>
-                    <MudItem xs="2" md="2" lg="2">
-                        <MudLink Color="Color.Error" Href="/logout"><MudIconButton Icon="@Icons.Material.Filled.PersonPin" Color="Color.Error">Đăng xuất</MudIconButton></MudLink>
+                    <MudItem xs="2" md="2" lg="2" Class="mt-1" Style="text-align:center">
+                        <MudText> @saveCustomerId.Name </MudText>
+                        <MudLink Color="Color.Error" Href="/logout"><MudButton Variant="Variant.Filled" Color="Color.Error">Đăng xuất</MudButton></MudLink>
                     </MudItem>
                     </Authorized>
                     <NotAuthorized>
-                        <MudItem xs="1" md="1" lg="1">
+                    <MudItem xs="2" md="2" lg="2" Class="mt-2">
 
-                        <MudLink Href="/login"><MudIconButton Icon="@Icons.Material.Filled.PersonPin" Color="Color.Success">Đăng nhập</MudIconButton></MudLink>
+                        <MudLink Href="/login"><MudButton Variant="Variant.Filled" Color="Color.Success">Tài Khoản</MudButton></MudLink>
                         
                         </MudItem>
                     </NotAuthorized>

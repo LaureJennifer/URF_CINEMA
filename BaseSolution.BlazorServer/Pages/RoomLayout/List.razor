@@ -60,7 +60,7 @@
         </YesButton>
     </MudMessageBox>
 </MudPaper>
-<BaseSolution.BlazorServer.Components.Excel.ExcelImport OnSearch="OnSearch" SearchString="@string.Empty"></BaseSolution.BlazorServer.Components.Excel.ExcelImport>
+<BaseSolution.BlazorServer.Components.Excel.ExcelImport LoadData="LoadData" SearchString="@string.Empty"></BaseSolution.BlazorServer.Components.Excel.ExcelImport>
 
 @code {
     [Inject]
@@ -72,16 +72,8 @@
     public RoomLayoutDeleteRequest _roomLayoutDeleteRequest = new();
     ViewRoomLayoutWithPaginationRequest _request = new() { PageSize = int.MaxValue - 1 };
     string searchString { get; set; } = string.Empty;
-    List<RoomLayoutDto> _lstRoomLayout { get; set; } = new();
+    List<RoomLayoutDto>? _lstRoomLayout { get; set; }
     MudMessageBox _mbox { get; set; }
-
-    private async Task CreateDialog()
-    {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
-
-        _dialogService.Show<Create>("Thêm mới bố cục phòng", closeOnEscapeKey);
-        await LoadData(string.Empty);
-    }
 
     private async Task UpdateDialog(Guid Id)
     {
@@ -101,7 +93,7 @@
         _roomLayoutDeleteRequest.Id = seat.Data.Id;
 
         bool? result = await _mbox.Show();
-        StateHasChanged();
+
     }
 
     public async Task OnConfirmDelete()
@@ -123,11 +115,12 @@
     {
 
         await LoadData(string.Empty);
-        StateHasChanged();
+
     }
 
     private async Task LoadData(string roomLayoutName)
     {
+
         if (!string.IsNullOrEmpty(roomLayoutName))
         {
             _viewRoomLayoutWithPaginationRequest.Name = roomLayoutName;
@@ -136,8 +129,9 @@
         else _viewRoomLayoutWithPaginationRequest.Name = string.Empty;
 
         var result = await _roomLayoutRepo.GetAllActive(_viewRoomLayoutWithPaginationRequest);
-        _lstRoomLayout = result.Data.Data.ToList();
-
+        var lst = result.Data.Data.ToList();
+        _lstRoomLayout = lst.OrderByDescending(x => x.CreatedTime).ToList();
+        StateHasChanged();
     }
 
     async Task OnSearch(string debouncedText)

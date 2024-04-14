@@ -5,10 +5,12 @@
 @using BaseSolution.BlazorServer.Pages.Bill;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
+@using BaseSolution.Infrastructure.Extensions
 
 @page "/bill/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@inject EntityStatusExtensions _convertStatus;
 @* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 
 <MudPaper Class="pa-5">
@@ -36,20 +38,21 @@
             <MudTable Items="@_lst" Class="mt-4">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
-                    <MudTh>Tên Khách Hàng</MudTh>
-                    <MudTh>Mô tả</MudTh>
-                    <MudTh>Tổng tiền</MudTh>
-                    <MudTh>Thời gian tạo</MudTh>
-                    <MudTh>Trạng Thái</MudTh>
+                    <MudTh Style="text-align:center">Tên Khách Hàng</MudTh>
+                    
+                    <MudTh Style="text-align:center">Tổng tiền@("VND")</MudTh>
+                    <MudTh Style="text-align:center">Thời gian tạo</MudTh>
+                    <MudTh Style="text-align:center">Mô tả</MudTh>
+                    <MudTh Style="text-align:center">Trạng Thái</MudTh>
                
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Tên Khách Hàng">@context.CustomerName</MudTd>
-                    <MudTd DataLabel="Mô Tả">@context.Description</MudTd>
-                    <MudTd DataLabel="Tổng Tiền">@context.TotalPrice</MudTd>
-                    <MudTd DataLabel="Thời gian tạo">@context.CreatedTime.ToString("dd/MM/yyyy")</MudTd>
-                    <MudTd DataLabel="Trạng Thái">@context.Status</MudTd>
+                    <MudTd DataLabel="Tên Khách Hàng" Style="text-align:center">@context.CustomerName</MudTd>
+                    <MudTd DataLabel="Tổng Tiền" Style="text-align:center"> @($"{context.TotalPrice:N0}.000 VND")</MudTd>
+                    <MudTd DataLabel="Thời gian tạo" Style="text-align:center">@context.CreatedTime.ToString("dd/MM/yyyy")</MudTd>
+                    <MudTd DataLabel="Mô Tả" Style="text-align:center">@context.Description</MudTd>
+                    <MudTd DataLabel="Trạng Thái" Style="text-align:center">@_convertStatus.ConvertForGeneral(@context.Status)</MudTd>
                 </RowTemplate>
                 <PagerContent>
                     <MudTablePager />

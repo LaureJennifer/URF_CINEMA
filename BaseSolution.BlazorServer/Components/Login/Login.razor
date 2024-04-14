@@ -186,13 +186,14 @@
 
         // lấy Id 
         JObject jsonObject = JObject.Parse(result);
-        
+
         JToken dataToken = jsonObject["data"];
         if (dataToken != null && dataToken.Type != JTokenType.Null)
         {
             string customerId = (string)jsonObject["data"]["id"];
             saveCustomerId.CustomerId = customerId;
-
+            string email = (string)jsonObject["data"]["email"];
+            saveCustomerId.Name = email;
             if (result != null)
             {
                 _snackbar.Add("Đăng nhập thành công", Severity.Success);
@@ -230,7 +231,7 @@
                 return;
                 // }
             }
-           
+
 
         }
         if (loginSuccessful==false)
@@ -251,11 +252,13 @@
         //     _navigation.NavigateTo("/");
         // }
     }
-    
+
     private async Task LoginSuccess()
     {
-        
+
         var result = await _loginRepo.SignIn(_login);
+        var data = result.UserName;
+        saveCustomerId.Name = data;
         if (result != null)
         {
             // if (result.Code.ToLower() == "Admin" || result.Code.ToLower() == "Nhân viên")

@@ -64,7 +64,7 @@ else
             </MudGrid>
 
         </MudPaper>
-        <MudButton Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddRoomLayout">Xác nhận thêm mới</MudButton>
+        <MudButton Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddRoomLayoutName">Xác nhận thêm mới</MudButton>
     }
 }
 <MudMessageBox @ref="_mbox" Title="Điền tên bố cục phòng">
@@ -90,9 +90,15 @@ else
     MudMessageBox _mbox { get; set; }
     string? _roomLayoutName { get; set; }
 
+    async Task AddRoomLayoutName()
+    {
+        bool? result = await _mbox.Show();
+
+    }
+
     async Task AddRoomLayout()
     {
-        bool? createRoomLayoutName = await _mbox.Show();
+
         if (_roomLayoutName != null)
         {
             _roomLayoutCreateRequest.Name = _roomLayoutName;
@@ -123,6 +129,7 @@ else
             _lstSeatCreateRangeRequest.Add(seatCreateRangeRequest);
         }
         var result = await _seatRepo.AddRangeAsync(_lstSeatCreateRangeRequest);
+
         if (result)
         {
             _snackBar.Add("Thêm mới danh sách ghế thành công!", Severity.Success);            
@@ -206,9 +213,14 @@ else
     [Parameter]
     public string SearchString { get; set; } = "";
     [Parameter]
-    public EventCallback<string> OnSearch { get; set; }
+    public EventCallback<string> LoadData { get; set; }
+
+    // [Parameter]
+    // public EventCallback<string> OnSearch { get; set; }
     async Task OkButton()
     {
-        await OnSearch.InvokeAsync(SearchString);
+        await AddRoomLayout();
+
+        await LoadData.InvokeAsync(SearchString);
     }
 }
