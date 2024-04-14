@@ -5,6 +5,7 @@ using BaseSolution.Application.DataTransferObjects.Ticket.Request;
 using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
+using BaseSolution.Infrastructure.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -30,6 +31,16 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
                 BaseAddress = new Uri("https://localhost:7005")
             };
             var result = await client.PostAsJsonAsync("/api/Bills", request);
+            return result.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> CreateNewPayment(CheckoutVM request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            var result = await client.PostAsJsonAsync("/api/Carts", request);
             return result.IsSuccessStatusCode;
         }
 

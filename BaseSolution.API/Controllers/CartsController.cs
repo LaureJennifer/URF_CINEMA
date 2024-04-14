@@ -2,6 +2,8 @@
 using BaseSolution.Application.DataTransferObjects.Ticket;
 using BaseSolution.Application.DataTransferObjects.VnPayment;
 using BaseSolution.Application.Interfaces.Services;
+using BaseSolution.Application.ValueObjects.Common;
+using BaseSolution.Domain.Entities;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
@@ -23,18 +25,61 @@ namespace BaseSolution.API.Controllers
             _vnPayService = vnPayService;
         }
 
-        public List<CartItem> Cart => HttpContext.Session.Get<List<CartItem>>(MySetting.CART_KEY) ?? new List<CartItem>();
-
         [HttpPost]
         public async Task<IActionResult> Checkout(CheckoutVM model, string payment = "COD")
         {
             if (ModelState.IsValid)
             {
-                if (payment == "Thanh toán VNPay")
+                //    var customerId =  HttpContext.User.Claims.SingleOrDefault(p => p.Type == AppRole.Id).Value;
+                //    var customer = new CustomerEntity();
+                //    if (model.GiongKhachHang)
+                //    {
+                //        customer = _dbContext.CustomerEntities.SingleOrDefault(kh => kh.Id == Guid.Parse(customerId));
+                //    }
+                //    var bill_ = new BillDto()
+                //    {
+                //        CustomerId = Guid.Parse(customerId),
+                //        CustomerName = model.HoTen ?? customer.Name,
+                //        TotalPrice = model.TotalPrice,
+                //        CreatedTime = DateTimeOffset.UtcNow,
+                //        Description = model.GhiChu,
+                //        Status = Domain.Enums.EntityStatus.Active
+                //    };
+                //    _dbContext.Database.BeginTransaction();
+                //    try
+                //    {
+                //        _dbContext.Database.CommitTransaction();
+                //        _dbContext.Add(bill_);
+                //        _dbContext.SaveChanges();
+                //        var cthd = new List<TicketEntity>();
+                //        cthd.Add(new TicketEntity
+                //        {
+                //            BillId = bill_.Id,
+                //            BookingId = Guid.NewGuid(),
+                //            FilmId =  model.filmID,
+                //            Price = model.TotalPrice
+                //        });
+                //        _dbContext.AddRange(cthd);
+                //        _dbContext.SaveChanges();
+                //    }
+                //    catch(Exception)
+                //    {
+                //        throw new Exception     return View("Success");
+                //    }
+                //    catch
+                //    {
+                //        db.Database.RollbackTransaction();
+                //    }
+                //}
+
+                //return View(Cart);
+                BillEntity billEntity = new();
+
+            if (payment == "Thanh toán VNPay")
                 {
                     var vnPayModel = new VnPayRequest
                     {
-                        TotalPrice = Cart.Sum(x => x.ThanhTien),
+                        TotalPrice = billEntity.TotalPrice,
                         CreatedDate = DateTime.Now,
                         Description = $"{model.HoTen} {model.DienThoai}",
                         FullName = model.HoTen,
@@ -65,20 +110,20 @@ namespace BaseSolution.API.Controllers
                     _dbContext.Add(bill);
                     _dbContext.SaveChanges();
 
-                    var cthds = new List<TicketDto>();
-                    foreach (var item in Cart)
+                    List<BookingEntity> _lst = new();
+                    var cthds = new List<TicketEntity>();
+                    foreach (var item in _lst)
                     {
-                        cthds.Add(new TicketDto
+                        cthds.Add(new TicketEntity
                         {
                             BillId = bill.Id,
                             Price = bill.TotalPrice,
+                            FilmId = item.Id,
                         });
                     }
-                    _dbContext.AddRange(cthds);
+                    _dbContext.TicketEntities.AddRange(cthds);
                     _dbContext.SaveChanges();
                     _dbContext.Database.CommitTransaction();
-
-                    HttpContext.Session.Set<List<CartItem>>(MySetting.CART_KEY, new List<CartItem>());
 
                     return Ok("Success");
                 }
@@ -88,7 +133,7 @@ namespace BaseSolution.API.Controllers
                 }
             }
 
-            return Ok(Cart);
+            return Ok("Success");
         }
         [HttpGet]
         public async Task<IActionResult> PaymentCallBack()

@@ -19,6 +19,7 @@
 @using BaseSolution.BlazorServer.Components
 @using BaseSolution.BlazorServer.Data.Extensions
 @using BaseSolution.BlazorServer.Repositories.Interfaces
+@using BaseSolution.Infrastructure.ViewModels
 @using MudBlazor
 @using System.Globalization
 @inject SaveCustomerId _saveCustomerId;
@@ -305,7 +306,39 @@
 
         }
     }
-    
+    private async Task Paymethod()
+    {
+
+        var confirm = await _dialogService.ShowMessageBox
+        (
+            "Thông báo",
+            "Xác nhận thanh toán?",
+            "Xác nhận",
+            cancelText: "Hủy"
+        );
+        if (confirm == true)
+        {
+            var bill = new CheckoutVM()
+                {
+                    BillId =  idBill,
+                    TotalPrice = _billDto.TotalPrice,
+                    DepartmentName = _bookingDto.DepartmentName,
+                    filmID = _filmDto.Id,
+                    BookingId = _bookingDto.Id,
+                    HoTen = _customerDto.Name,
+                    DepartmentId = Guid.Parse(departmentId)
+                };
+            await _billRepo.CreateNewPayment(bill);
+            _snackbar.Add("Đã thanh toán ! Vui lòng xem thông tin ở quản lí hóa đơn ", Severity.Info);
+            await LoadData();
+            StateHasChanged();
+        }
+        else
+        {
+            _snackbar.Add("Thanh toán đã được hủy", Severity.Info);
+
+        }
+    }
 
     private async Task LoadData()
     {

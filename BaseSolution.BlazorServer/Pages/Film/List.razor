@@ -8,15 +8,15 @@
 @page "/film/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-@attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")]
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 <MudPaper Class="pa-5">
     <MudText Class="mt-3" Typo="Typo.h4">Danh sách Phim</MudText>
-    <MudGrid>
-        <MudItem xs="8">
+    <MudGrid Class="mb-3">
+        <MudItem xs="9" md="9" lg="9">
             <MudButton @onclick="CreateDialog" Variant="Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
-        <MudItem xs="4">
-            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo tên" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
+        <MudItem xs="3" md="3" lg="3">
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo tên" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
         </MudItem>
     </MudGrid>
     @if (_lst == null)
@@ -34,11 +34,11 @@
             <MudTable Items="@_lst" Class="mt-4 ">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
-                    <MudTh>Mã Phim</MudTh>
+@*                     <MudTh>Mã Phim</MudTh> *@
                     <MudTh>Tên Phim</MudTh>
-                    <MudTh>Ảnh</MudTh>
+@*                     <MudTh>Ảnh</MudTh> *@
                     <MudTh>Đạo diễn</MudTh>
-                    <MudTh>Diễn viên</MudTh>
+@*                     <MudTh>Diễn viên</MudTh> *@
                     <MudTh>Ngôn Ngữ</MudTh>
                     <MudTh>Thể loại</MudTh>
                     <MudTh>Ngày khởi chiếu</MudTh>
@@ -49,15 +49,15 @@
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Mã Phim">@context.Code</MudTd>
+@*                     <MudTd DataLabel="Mã Phim">@context.Code</MudTd> *@
                     <MudTd DataLabel="Tên Phim">@context.Title</MudTd>
-                    <MudTd DataLabel="Ảnh">
+@*                     <MudTd DataLabel="Ảnh">
                         <MudAvatar>
                             <MudImage Src="@context.UrlImage"></MudImage>
                         </MudAvatar>
-                    </MudTd>
+                    </MudTd> *@
                     <MudTd DataLabel="Đạo diễn">@context.DirectedBy</MudTd>
-                    <MudTd DataLabel="Diễn viên">@context.Actor</MudTd>
+@*                     <MudTd DataLabel="Diễn viên">@context.Actor</MudTd> *@
                     <MudTd DataLabel="Ngôn Ngữ">@context.Language</MudTd>
                     <MudTd DataLabel="Thể loại">@context.Genres</MudTd>
                     <MudTd DataLabel="Ngày khởi chiếu">@context.ReleaseDate.ToString("dd/MM/yyyy")</MudTd>
@@ -105,7 +105,8 @@
         DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
 
         _dialogService.Show<Create>("Thêm mới phim", closeOnEscapeKey);
-        await LoadData(searchString);
+        await LoadData(string.Empty);
+        StateHasChanged();
     }
 
     private async Task UpdateDialog(Guid Id)
@@ -116,7 +117,8 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            await LoadData(searchString);
+            await LoadData(string.Empty);
+            StateHasChanged();
         }
     }
 
@@ -142,27 +144,35 @@
             _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
         }
         await Task.Delay(2000);
-        await LoadData(searchString);
+        await LoadData(string.Empty);
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadData(searchString);
+
+        await LoadData(string.Empty);
+        StateHasChanged();
     }
 
-    private async Task LoadData(string textSearch)
-    {
 
-        obj.Title = textSearch;
+    private async Task LoadData(string name)
+    {
+        if (!string.IsNullOrEmpty(name))
+        {
+            obj.Title = name;
+
+        }
+        else obj.Title = string.Empty;
 
         var result = await _filmRepo.GetAllActive(obj);
         _lst = result.Data.Data.ToList();
 
     }
 
-    private async Task OnSearch(string textSearch)
+    async Task OnSearch(string debouncedText)
     {
-        await LoadData(textSearch);
+        await LoadData(debouncedText);
         StateHasChanged();
     }
 }
