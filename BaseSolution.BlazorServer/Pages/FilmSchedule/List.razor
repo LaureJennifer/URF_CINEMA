@@ -73,7 +73,7 @@
         if (filmScheduleDtos != null)
         {
             <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
-                      Items="@filmScheduleDtos"
+                      Items="@filmScheduleByOrder"
                       GroupBy="@_groupDefinition"
                       GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
                       Class="mud-table-background-custom">
@@ -99,7 +99,7 @@
                     <MudTd DataLabel=""></MudTd>
                     <MudTd DataLabel="Time" Style="text-align: center">@context.ShowTime.ToLocalTime().ToString("hh:mm tt")</MudTd>
                     <MudTd DataLabel="Rooms" Style="text-align: center">
-                        @foreach (var room in @context.Rooms)
+                        @foreach (var room in @context.Rooms.DistinctBy(x=> x.Id))
                         {
                             @if (room.DepartmentId.ToString() == selectedDepartmentId)
                             {
@@ -155,10 +155,11 @@
     List<Guid>? _lstRoomId { get; set; } = new();
     FilmScheduleDeleteRequest _filmScheduleDeleteRequest = new();
     List<FilmScheduleDto> filmScheduleDtos { get; set; } = new();
+    List<FilmScheduleDto>? filmScheduleByOrder { get; set; }
     protected override async Task OnInitializedAsync()
     {
         await LoadDepartmentForSelect();
-
+        filmScheduleByOrder = filmScheduleDtos.OrderBy(x => x.ShowDate).ToList();
     }
 
     private async Task LoadDepartmentForSelect()
@@ -174,7 +175,7 @@
         selectedDepartmentId = idDepartment;
 
         await LoadDepartmentFilm(selectedDepartmentId);
-
+        StateHasChanged();
     }
 
     private async Task LoadDepartmentFilm(string idDepartment)
@@ -200,6 +201,7 @@
             selectedFilmId = _lstFilmByDepartment.First().Id.ToString();
             _filmBySelect = _lstFilmByDepartment.First(x => x.Id.ToString() == selectedFilmId);
             filmScheduleDtos = _filmBySelect.FilmSchedules.Where(x => x.Status != Domain.Enums.EntityStatus.Deleted).ToList();
+            filmScheduleByOrder = filmScheduleDtos.OrderBy(x => x.ShowDate).ToList();
         }
     }
     async Task OnSelectedFilm(string idFilm)
@@ -211,7 +213,7 @@
             filmScheduleDtos = _filmBySelect.FilmSchedules.Where(x => x.Status != Domain.Enums.EntityStatus.Deleted).ToList();
             StateHasChanged();
         }
-
+        filmScheduleByOrder = filmScheduleDtos.OrderBy(x => x.ShowDate).ToList();
         await Task.Delay(100);
     }
     // add list room -> lịch chiếu -> phim -> cơ sở
@@ -254,6 +256,7 @@
         {
             _navigate.NavigateTo("/filmschedule/list", forceLoad: true);
         }
+        StateHasChanged();
     }
 
     private async Task OnDeleteClicked(Guid idFilmSchedule)

@@ -115,16 +115,16 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             </MudItem>
             <MudItem xs="3" lg="3" md="3">
-                <AuthorizeView>
-                    <Authorized>
+                @* <AuthorizeView>
+                    <Authorized> *@
                         <MudItem xs="12" md="12" lg="12">
                             <MudText></MudText>
                             <MudButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Error">Đăng xuất</MudButton>
                         </MudItem>
-                    </Authorized>
+                    @* </Authorized>
                     <NotAuthorized>
                     </NotAuthorized>
-                </AuthorizeView>
+                </AuthorizeView> *@
             </MudItem>
         </MudGrid>
     </MudAppBar>

@@ -16,7 +16,7 @@
 {
     <MudGrid>
         <MudItem xs="3" md="3">
-            <MudSelect T="string" Label="Phim" HelperText="@(selectedYear == null ?"*Chọn năm":"")" Value="@selectedDepartmentId" ValueChanged="OnSelectedDepartment">
+            <MudSelect T="string" Label="Rạp" HelperText="@(selectedYear == null ?"*Chọn năm":"")" Value="@selectedDepartmentId" ValueChanged="OnSelectedDepartment">
                 @foreach (var department in _lstDepartmentForSelect)
                 {
                     <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
@@ -128,7 +128,7 @@ else
     string? selectedDepartment { get; set; }
     string? selectedOption { get; set; } = "filmStatisticForMonth";
     string? selectedYear { get; set; } = "2024";
-    string? selectedMonth { get; set; } = "1";
+    string? selectedMonth { get; set; } = "4";
     string? selectedQuarter { get; set; }
     FilmStatisticRequest _filmStatisticRequest = new() { PageSize = int.MaxValue-1 };
     ViewDepartmentWithPaginationRequest _request = new(){PageSize = 50};
@@ -317,7 +317,7 @@ else
                 }
                 break;
         }
-
+        StateHasChanged();
     }
 
     public class FilmStatistic

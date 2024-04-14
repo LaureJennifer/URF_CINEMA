@@ -149,7 +149,7 @@ else
     }
     private async Task LoadListFilmByDepartment()
     {
-        foreach (var filmID in _lstFilmId)
+        foreach (var filmID in _lstFilmId.Distinct().ToList())
         {
             var result = await _filmRepo.GetByIdAsync(filmID);
             var film = result.Data;
