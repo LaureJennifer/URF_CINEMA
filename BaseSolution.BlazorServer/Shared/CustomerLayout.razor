@@ -135,7 +135,7 @@
     {
         
             await LoadDepartmentForSelect();
-            SelectedDepartmentId = _lstDepartment!.First().Id.ToString();
+        SelectedDepartmentId = _lstDepartment!.Where(x => x.Id.ToString() == "091d4f10-6da5-44c1-2f17-08dc519d17d1").First().Id.ToString();
         // await LoadData();
     }
 
