@@ -1,11 +1,6 @@
 ﻿using BaseSolution.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Infrastructure.Database.Configurations
 {
@@ -16,13 +11,18 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("User");
             builder.HasKey(x => x.Id);
             builder.Property(x=>x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.RoleEntity).WithMany(x => x.Users).HasForeignKey(x => x.RoleId).IsRequired();
+            builder.HasOne(x => x.Role).WithMany(x => x.Users).HasForeignKey(x => x.RoleId).IsRequired();
             builder.Property(x=>x.Name).IsUnicode(true).IsRequired();
             builder.Property(x=>x.Code).IsRequired();
             builder.Property(x=>x.PhoneNumber).IsRequired();
             builder.Property(x=>x.Email).IsRequired();
-            builder.Property(x=>x.UserName).IsRequired();
+            builder.Property(x=>x.StartTime).IsRequired();
             builder.Property(x => x.PassWord).IsRequired();
+            builder.Property(x => x.Address).IsUnicode(true).IsRequired();
+            builder.Property(x => x.EducationLevel).IsRequired();
+            builder.Property(x => x.UrlImage).IsRequired();
+            builder.Property(x => x.IdentificationNumber).IsRequired();
+            builder.Property(x => x.DateOfBirth).IsRequired();
         }
     }
 }

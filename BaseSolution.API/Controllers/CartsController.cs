@@ -116,9 +116,9 @@ namespace BaseSolution.API.Controllers
                     {
                         cthds.Add(new TicketEntity
                         {
-                            BillId = bill.Id,
+                            //BillId = bill.Id,
                             Price = bill.TotalPrice,
-                            FilmId = item.Id,
+                            //FilmId = item.Id,
                         });
                     }
                     _dbContext.TicketEntities.AddRange(cthds);

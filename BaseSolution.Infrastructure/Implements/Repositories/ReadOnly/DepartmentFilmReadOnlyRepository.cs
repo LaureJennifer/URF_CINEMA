@@ -38,7 +38,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var departmentFilm = await _appReadOnlyDbContext.DepartmentFilmEntities.AsNoTracking().Where(c => c.Id == idDepartmentFilm && !c.Deleted).ProjectTo<DepartmentFilmDto>(_mapper.ConfigurationProvider)
+                var departmentFilm = await _appReadOnlyDbContext.DepartmentFilmEntities.AsNoTracking().Where(c => c.Id == idDepartmentFilm).ProjectTo<DepartmentFilmDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
                 return RequestResult<DepartmentFilmDto?>.Succeed(departmentFilm);

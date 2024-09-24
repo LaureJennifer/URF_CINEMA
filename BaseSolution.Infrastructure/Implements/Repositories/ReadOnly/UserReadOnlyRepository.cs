@@ -13,7 +13,6 @@ using BaseSolution.Domain.Enums;
 using BaseSolution.Infrastructure.Database.AppDbContext;
 using BaseSolution.Infrastructure.Extensions;
 using BaseSolution.Infrastructure.Implements.Services;
-using BaseSolution.Infrastructure.Migrations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -57,11 +56,11 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             }
         }
 
-        public async Task<RequestResult<UserDto>> GetUserByUserNameAsync(string userName, CancellationToken cancellationToken)
+        public async Task<RequestResult<UserDto>> GetUserByUserNameAsync(string email, CancellationToken cancellationToken)
         {
             try
             {
-                var user = await _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.UserName == userName).ProjectTo<UserDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
+                var user = await _appReadOnlyDbContext.UserEntities.AsNoTracking().Where(x => x.Email == email).ProjectTo<UserDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
                 return RequestResult<UserDto>.Succeed(user);
 
             }

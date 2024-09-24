@@ -39,7 +39,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(c => c.Id == idFilmScheduleRoom && !c.Deleted).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider)
+                var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(c => c.Id == idFilmScheduleRoom).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
 
                 return RequestResult<FilmScheduleRoomDto?>.Succeed(filmScheduleRoom);
@@ -110,7 +110,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
             try
             {               
                 var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking()
-                    .Where(x => x.FilmScheduleEntity.ShowDate == request.ShowDate && x.FilmScheduleEntity.ShowTime == request.ShowTime)
+                    .Where(x => x.FilmSchedule.ShowDate == request.ShowDate && x.FilmSchedule.ShowTime == request.ShowTime)
                     .ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(cancellationToken);
                 return RequestResult<FilmScheduleRoomDto?>.Succeed(filmScheduleRoom); 
 
@@ -169,7 +169,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
                 List<FilmScheduleRoomDto> lstFilmScheduleRooms = new();
                 foreach (var item in listIdFilmScheduleRoom)
                 {
-                    var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(c => c.Id == item && !c.Deleted).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider)
+                    var filmScheduleRoom = await _appReadOnlyDbContext.FilmScheduleRoomEntities.AsNoTracking().Where(c => c.Id == item).ProjectTo<FilmScheduleRoomDto>(_mapper.ConfigurationProvider)
                    .FirstOrDefaultAsync(cancellationToken);
                     lstFilmScheduleRooms.Add(filmScheduleRoom);
                 }

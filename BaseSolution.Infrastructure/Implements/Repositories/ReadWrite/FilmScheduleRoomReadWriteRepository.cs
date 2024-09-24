@@ -30,7 +30,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                entity.CreatedTime = DateTimeOffset.UtcNow;
 
                 await _dbContext.FilmScheduleRoomEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync();
@@ -54,10 +53,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                foreach (var entity in requests)
-                {
-                    entity.CreatedTime = DateTimeOffset.UtcNow;
-                }
+                //foreach (var entity in requests)
+                //{
+                //    entity.CreatedTime = DateTimeOffset.UtcNow;
+                //}
 
                 await _dbContext.FilmScheduleRoomEntities.AddRangeAsync(requests);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -83,9 +82,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var filmScheduleRoom_ = await GetFilmScheduleRoomByIdAsync(request.Id, cancellationToken);
 
-                filmScheduleRoom_!.Deleted = true;
-                filmScheduleRoom_.DeletedBy = request.DeletedBy;
-                filmScheduleRoom_.DeletedTime = DateTimeOffset.UtcNow;
+                //filmScheduleRoom_!.Deleted = true;
+                //filmScheduleRoom_.DeletedBy = request.DeletedBy;
+                //filmScheduleRoom_.DeletedTime = DateTimeOffset.UtcNow;
                 filmScheduleRoom_.Status = EntityStatus.Deleted;
 
                 _dbContext.FilmScheduleRoomEntities.Update(filmScheduleRoom_);
@@ -114,8 +113,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 filmScheduleRoom_!.FilmScheduleId = entity.FilmScheduleId;
                 filmScheduleRoom_.RoomId = entity.RoomId;
                 filmScheduleRoom_.Status = entity.Status;
-                filmScheduleRoom_.ModifiedBy = entity.ModifiedBy;
-                filmScheduleRoom_.ModifiedTime = DateTimeOffset.UtcNow;
 
                 _dbContext.FilmScheduleRoomEntities.Update(filmScheduleRoom_);
                 await _dbContext.SaveChangesAsync();
@@ -136,7 +133,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<FilmScheduleRoomEntity?> GetFilmScheduleRoomByIdAsync(Guid idFilmScheduleRoom, CancellationToken cancellationToken)
         {
-            var filmScheduleRoom_ = await _dbContext.FilmScheduleRoomEntities.FirstOrDefaultAsync(c => c.Id == idFilmScheduleRoom && !c.Deleted, cancellationToken);
+            var filmScheduleRoom_ = await _dbContext.FilmScheduleRoomEntities.FirstOrDefaultAsync(c => c.Id == idFilmScheduleRoom, cancellationToken);
 
             return filmScheduleRoom_;
         }

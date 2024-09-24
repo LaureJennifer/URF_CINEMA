@@ -1,11 +1,12 @@
-﻿using BaseSolution.Application.DataTransferObjects.Account;
-using BaseSolution.Application.DataTransferObjects.Account.Request;
-using BaseSolution.BlazorServer.Repositories.Interfaces;
+﻿using BaseSolution.BlazorServer.Repositories.Interfaces;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Text.Json;
+using System.IdentityModel.Tokens.Jwt;
+using BaseSolution.Application.DataTransferObjects.Account.Request;
+using BaseSolution.Application.ValueObjects.Common;
 using BaseSolution.Application.ValueObjects.Response;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
@@ -38,7 +39,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             //    return loginResponse;
             //}
             await _localStorage.SetItemAsync("token", token);
-            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.UserName);
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.Email);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return token;
             //return loginResponse;
@@ -67,7 +68,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             //}
             await _localStorage.SetItemAsync("token", token);
             await _authenticationStateProvider.GetAuthenticationStateAsync();
-            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.UserName);
+            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.Email);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return token;
             //return loginResponse;
@@ -88,24 +89,58 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             client.DefaultRequestHeaders.Authorization = null;
         }
 
-        public async Task<ViewLoginInput> SignIn(LoginInputRequest request)
+        public async Task<RefreshToken> SignIn(LoginInputRequest request)
         {
             var client = new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:7005")
             };
-            var result = await client.PostAsJsonAsync("api/Logins/SignInPassword", request);
-            var token = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(token);
-            await _localStorage.SetItemAsync("Token", token);
-            await _authenticationStateProvider.GetAuthenticationStateAsync();
-            ((ApiAuthenticationStateProvider)_authenticationStateProvider).MarkUserAsAuthenticated(request.UserName);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var loginResult = new ViewLoginInput
+            var response = await client.PostAsJsonAsync("api/Logins/Login", request);
+            if (response.IsSuccessStatusCode)
             {
-                Token = token
-            };
-            return loginResult;
+                var token = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response content: {token}");
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true // Bỏ qua phân biệt chữ hoa chữ thường
+                };
+
+                var apiResponse = JsonSerializer.Deserialize<APIResponse>(token, options);
+
+                if (apiResponse != null && apiResponse.Token != null)
+                {
+                    var refreshToken = apiResponse.Token;
+
+                    if (!string.IsNullOrEmpty(refreshToken.Token))
+                    {
+                        // Giải mã token để kiểm tra vai trò
+                        var handler = new JwtSecurityTokenHandler();
+                        var jwtToken = handler.ReadJwtToken(refreshToken.Token);
+
+                        foreach (var claim in jwtToken.Claims)
+                        {
+                            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                        }
+
+                        var roles = jwtToken.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+                        Console.WriteLine("Roles in token: " + string.Join(", ", roles));
+
+                        await _localStorage.SetItemAsync("token", refreshToken.Token);
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", refreshToken.Token);
+                        return refreshToken;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Token is null or empty");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("API response is null or invalid");
+                }
+            }
+            return null!;
         }
     }
 }

@@ -30,8 +30,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                entity.CreatedTime = DateTimeOffset.UtcNow;
-
                 await _dbContext.DepartmentFilmEntities.AddAsync(entity);
                 await _dbContext.SaveChangesAsync();
 
@@ -56,10 +54,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var departmentFilm_ = await GetDepartmentFilmByIdAsync(request.Id, cancellationToken);
 
-                departmentFilm_!.Deleted = true;
-                departmentFilm_.DeletedBy = request.DeletedBy;
-                departmentFilm_.DeletedTime = DateTimeOffset.UtcNow;
-                departmentFilm_.Status = EntityStatus.Deleted;
+                departmentFilm_!.Status = EntityStatus.Deleted;
 
                 _dbContext.DepartmentFilmEntities.Update(departmentFilm_);
                 await _dbContext.SaveChangesAsync();
@@ -87,8 +82,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 departmentFilm_!.FilmId = entity.FilmId;
                 departmentFilm_.DepartmentId = entity.DepartmentId;
                 departmentFilm_.Status = entity.Status;
-                departmentFilm_.ModifiedBy = entity.ModifiedBy;
-                departmentFilm_.ModifiedTime = DateTimeOffset.UtcNow;
 
                 _dbContext.DepartmentFilmEntities.Update(departmentFilm_);
                 await _dbContext.SaveChangesAsync(cancellationToken);
@@ -109,7 +102,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         }
         private async Task<DepartmentFilmEntity?> GetDepartmentFilmByIdAsync(Guid idDepartmentFilm_, CancellationToken cancellationToken)
         {
-            var departmentFilm_ = await _dbContext.DepartmentFilmEntities.FirstOrDefaultAsync(c => c.Id == idDepartmentFilm_ && !c.Deleted, cancellationToken);
+            var departmentFilm_ = await _dbContext.DepartmentFilmEntities.FirstOrDefaultAsync(c => c.Id == idDepartmentFilm_, cancellationToken);
 
             return departmentFilm_;
         }

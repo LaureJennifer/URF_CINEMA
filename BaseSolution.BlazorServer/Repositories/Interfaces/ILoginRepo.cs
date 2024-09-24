@@ -1,6 +1,7 @@
 ﻿using BaseSolution.Application.DataTransferObjects.Account;
 using BaseSolution.Application.DataTransferObjects.Account.Request;
-using BaseSolution.Application.ValueObjects.Response;
+using BaseSolution.Application.ValueObjects.Common;
+
 
 namespace BaseSolution.BlazorServer.Repositories.Interfaces
 {
@@ -9,6 +10,6 @@ namespace BaseSolution.BlazorServer.Repositories.Interfaces
         //Task<string> Login(LoginInputRequest request);
         Task Logout();
         Task<string> LoginCustomer(LoginInputRequest request);
-        Task<ViewLoginInput> SignIn(LoginInputRequest request);
+        Task<RefreshToken> SignIn(LoginInputRequest request);
     }
 }

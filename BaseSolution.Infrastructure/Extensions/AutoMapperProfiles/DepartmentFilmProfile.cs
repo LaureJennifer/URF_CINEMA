@@ -17,8 +17,8 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
         public DepartmentFilmProfile()
         {
             CreateMap<DepartmentFilmEntity, DepartmentFilmDto>()
-                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.DepartmentEntity.Name))
-                .ForMember(des => des.FilmTitle, opt => opt.MapFrom(x => x.FilmEntity.Title));
+                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(x => x.Department.Name))
+                .ForMember(des => des.FilmTitle, opt => opt.MapFrom(x => x.Film.Title));
 
             CreateMap<DepartmentFilmCreateRequest, DepartmentFilmEntity>();
             CreateMap<DepartmentFilmUpdateRequest, DepartmentFilmEntity>();

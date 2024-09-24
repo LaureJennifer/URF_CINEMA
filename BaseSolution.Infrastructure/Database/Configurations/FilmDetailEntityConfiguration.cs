@@ -1,11 +1,6 @@
 ﻿using BaseSolution.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Infrastructure.Database.Configurations
 {
@@ -16,8 +11,8 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("FilmDetail");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.FilmScheduleEntity).WithMany(x => x.FilmDetails).HasForeignKey(x => x.FilmScheduleId).IsRequired();
-            builder.HasOne(x => x.FilmEntity).WithMany(x => x.FilmDetails).HasForeignKey(x => x.FilmId).IsRequired();
+            builder.HasOne(x => x.FilmSchedule).WithMany(x => x.FilmDetails).HasForeignKey(x => x.FilmScheduleId).IsRequired();
+            builder.HasOne(x => x.Film).WithMany(x => x.FilmDetails).HasForeignKey(x => x.FilmId).IsRequired();
         }
     }
 }

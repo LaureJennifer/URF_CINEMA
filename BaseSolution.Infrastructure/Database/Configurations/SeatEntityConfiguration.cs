@@ -1,11 +1,6 @@
 ﻿using BaseSolution.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Infrastructure.Database.Configurations
 {
@@ -16,7 +11,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.ToTable("Seat");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasOne(x => x.RoomLayoutEntity).WithMany(x => x.Seats).HasForeignKey(x => x.RoomLayoutId).IsRequired();
+            builder.HasOne(x => x.RoomLayout).WithMany(x => x.Seats).HasForeignKey(x => x.RoomLayoutId).IsRequired();
             builder.Property(x => x.Code).IsRequired();
         }
     }

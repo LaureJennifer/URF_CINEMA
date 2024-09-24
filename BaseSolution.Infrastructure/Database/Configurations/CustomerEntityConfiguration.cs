@@ -14,10 +14,8 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.Property(x=>x.Name).IsUnicode(true).IsRequired();
             builder.Property(x=>x.Address).IsUnicode(true).IsRequired();
             builder.Property(x => x.Email).IsRequired();
-            builder.Property(x=>x.PhoneNumber).IsRequired();
-            builder.Property(x=>x.UserName).IsRequired();
+            builder.Property(x=>x.PhoneNumber);
             builder.Property(x=>x.PassWord).IsRequired();
-            builder.Property(x=>x.ConfirmPassword).IsRequired();
         }
     }
 }

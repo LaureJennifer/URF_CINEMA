@@ -1,0 +1,184 @@
+﻿@using BaseSolution.Application.DataTransferObjects.Department
+@using BaseSolution.Application.DataTransferObjects.Department.Request
+@using BaseSolution.Application.DataTransferObjects.User
+@using BaseSolution.Client.Components.Login
+@using BaseSolution.Client.Repositories.Interfaces
+@using BaseSolution.Domain.Enums
+@using BaseSolution.Infrastructure.Extensions
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
+@inject IDialogService DialogService
+@inject NavigationManager _navigationManager;
+@inject EntityStatusExtensions _entityStatusExtensions
+@inject SaveCustomerId saveCustomerId;
+@inject AuthenticationStateProvider _authProvider;
+
+<MudThemeProvider/>
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Style="background-color:#03213B">
+        <MudGrid>
+            <MudItem xs="3" md="3" lg="3">
+                <MudText Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">URF CINEMA</MudText>
+            </MudItem>
+            <MudItem xs="1" md="1" lg="1">
+                <MudText @onclick="()=>Onclick()" Class="mt-4" Style="color:#f2ffff" Typo="Typo.h6">Phim</MudText>
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2">
+                <MudText Class="mt-4" Href="/FilmSchedule" Typo="Typo.h6">Lịch chiếu</MudText>
+            </MudItem>
+            @*  <MudItem xs="2" md="2" lg="2" >
+                <MudSelect Class="mb-4" Dense="true" T="string" @bind-Value="SelectedValue" Label="Rạp URF" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.VN)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.CN)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.CA)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.DE)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.SG)" />
+                    <MudSelectItem Value="@_entityStatusExtensions.ConvertForCountry(EntityCountry.US)" />
+                </MudSelect>
+            </MudItem> *@
+            
+            <MudItem xs="3" md="3" lg="3">
+                
+            @if(_lstDepartment == null)
+            {
+                <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+            }
+            else
+            {
+                @if (_lstDepartment.Count<=0)
+                {
+                    <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+                }
+                else
+                {
+                        <MudSelect T="string" Label="Rạp" Value="SelectedDepartmentId" ValueChanged="(str)=>OnSelectedDepartment(str)">
+                    @foreach (var department in _lstDepartment)
+                    {
+                        <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                }  
+                
+                
+            }
+                          
+                
+                
+                      
+            </MudItem>
+            <MudItem xs="2" md="2" lg="2" Class="mt-1" Style="text-align:center">
+                @* <AuthorizeView>
+                    <Authorized> *@
+          @*   @if (saveCustomerId.Name != null)
+            {
+                    <MudText> @saveCustomerId.Name </MudText>
+                    <MudLink Color="Color.Error" Href="/logout"><MudButton Variant="Variant.Filled" Color="Color.Error">Đăng xuất</MudButton></MudLink>
+                }
+                else
+                { *@
+                    <MudLink Href="/login"><MudButton Variant="Variant.Filled" Color="Color.Success">Tài Khoản</MudButton></MudLink>
+               @*  }
+ *@
+                       
+                    </MudItem>
+                    @* </Authorized>
+                    <NotAuthorized> *@
+                    @* <MudItem xs="2" md="2" lg="2" Class="mt-2">
+
+                        
+                        
+                        </MudItem> *@
+                    @* </NotAuthorized>
+                </AuthorizeView> *@
+                 </MudGrid>
+       
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+    <Footer/>
+    <MudScrollToTop>
+        <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.KeyboardArrowUp" />
+    </MudScrollToTop>
+</MudLayout>
+
+@code {
+
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+
+    [Inject]
+    public IUserRepo _userRepo{ get; set; }
+
+    [Parameter]
+    public Guid IdUser{ get; set; }
+
+    List<DepartmentDto>? _lstDepartment { get; set; }
+    UserDto _userDto = new();
+    ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
+    public string SelectedDepartment { get; set; }
+    public string SelectedDepartmentId { get; set; }
+    public string SelectedValue{ get; set; }
+    public string Search { get; set; }
+    bool _drawerOpen = true;
+    private async Task LoadDepartmentForSelect()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data.Data.ToList();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+            await LoadDepartmentForSelect();
+        SelectedDepartmentId = _lstDepartment!.Where(x => x.Id.ToString() == "091d4f10-6da5-44c1-2f17-08dc519d17d1").First().Id.ToString();
+        // await LoadData();
+    }
+
+    async Task LoadData()
+    {
+        var result = await _userRepo.GetByIdAsync(IdUser);
+        _userDto = result.Data!;
+    }
+
+
+    async Task OnSelectedDepartment(string idDepartment)
+    {       
+        SelectedDepartmentId = idDepartment;
+        await Task.Delay(100);
+        _navigationManager.NavigateTo($"/home/{idDepartment}", forceLoad: true);
+           
+        
+
+        
+    }
+
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     await LoadDepartmentForSelect();
+    //     SelectedDepartmentId = _lstDepartment.First().Id.ToString();
+    // }
+    
+
+
+    private void Onclick()
+    {
+        // Chuyển hướng đến trang đặt vé với thông tin phim
+        _navigationManager.NavigateTo($"/");
+    }
+    
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    
+    private void OpenDialog()
+    {
+        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Login>("", closeOnEscapeKey);
+    }
+}

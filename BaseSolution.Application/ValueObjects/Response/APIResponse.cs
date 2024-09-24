@@ -15,5 +15,6 @@ namespace BaseSolution.Application.ValueObjects.Response
         public string? Message { get; set; }
         [JsonPropertyName("data")]
         public object Data { get; set; } = new();
+        public RefreshToken Token { get; set; } = null!;
     }
 }

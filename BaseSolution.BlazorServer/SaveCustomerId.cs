@@ -15,6 +15,7 @@ namespace BaseSolution.BlazorServer
         public Type LayoutOption { get; set; } = typeof(CustomerLayout);
 
         public Roles RoleCode { get; set; }
+        public string Token {  get; set; }
 
     }
 }

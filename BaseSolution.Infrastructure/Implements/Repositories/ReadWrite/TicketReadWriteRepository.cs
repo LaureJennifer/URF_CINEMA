@@ -86,9 +86,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 var ticket_ = await GetTicketByIdAsync(entity.Id, cancellationToken);
 
                 ticket_!.Code = string.IsNullOrWhiteSpace(entity.Code) ? ticket_.Code : entity.Code; ;
-                ticket_.FilmId = entity.FilmId;
+                //ticket_.FilmId = entity.FilmId;
                 ticket_.BookingId = entity.BookingId;
-                ticket_.BillId = entity.BillId;
+                //ticket_.BillId = entity.BillId;
                 ticket_.Status = entity.Status;
                 ticket_.ModifiedBy = entity.ModifiedBy;
                 ticket_.ModifiedTime = DateTimeOffset.UtcNow;

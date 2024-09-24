@@ -1,10 +1,5 @@
 ﻿using BaseSolution.Domain.Entities.Base;
 using BaseSolution.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
@@ -16,11 +11,22 @@ namespace BaseSolution.Domain.Entities
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string IdentificationNumber { get; set; }
+        public string Address { get; set; }
+        public DateTimeOffset DateOfBirth { get; set; }
+        public bool Gender { get; set; }
+        public DateTimeOffset StartTime { get; set; } // Thời gian bắt đầu làm việc
+        public string EducationLevel { get; set; } // Trình độ học vấn
         public string  UrlImage { get; set; }
-        public string UserName {  get; set; }
 
         public string PassWord { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public RoleEntity RoleEntity { get; set; }
+        public virtual RoleEntity Role { get; set; }
+
+        public virtual List<ShiftUserEntity> ShiftUsers { get; set; }
+        public virtual List<TicketEntity> Tickets { get; set; }
+        public virtual List<BookingEntity> Bookings { get; set; }
+        public virtual List<BillEntity> Bills { get; set; }
+
     }
 }

@@ -18,9 +18,9 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
         {
             CreateMap<FilmScheduleRoomEntity, FilmScheduleRoomDto>()
                                 .ForMember(des => des.Id, opt => opt.MapFrom(x =>x.Id))
-                .ForMember(des => des.ShowDate, opt => opt.MapFrom(x => x.FilmScheduleEntity.ShowDate))
-                .ForMember(des => des.ShowTime, opt => opt.MapFrom(x => x.FilmScheduleEntity.ShowTime))
-                .ForMember(des => des.RoomCode, opt => opt.MapFrom(x => x.RoomEntity.Code));
+                .ForMember(des => des.ShowDate, opt => opt.MapFrom(x => x.FilmSchedule.ShowDate))
+                .ForMember(des => des.ShowTime, opt => opt.MapFrom(x => x.FilmSchedule.ShowTime))
+                .ForMember(des => des.RoomCode, opt => opt.MapFrom(x => x.Room.Code));
             CreateMap<FilmScheduleRoomCreateRangeRequest, FilmScheduleRoomEntity>();
             CreateMap<FilmScheduleRoomCreateRequest, FilmScheduleRoomEntity>();
             CreateMap<FilmScheduleRoomUpdateRequest, FilmScheduleRoomEntity>();

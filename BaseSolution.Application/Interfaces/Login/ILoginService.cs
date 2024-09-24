@@ -12,7 +12,7 @@ namespace BaseSolution.Application.Interfaces.Login
 {
     public interface ILoginService
     {
-        Task<string> Login(string request,CancellationToken cancellation);
+        Task<RequestResult<ViewLoginInput>> Login(LoginInputRequest request,CancellationToken cancellation);
         Task<RequestResult<ViewLoginInput>> LoginCustomer(LoginInputRequest request);
         Task<RequestResult<ViewLoginInput>> SignIn(LoginInputRequest request);
     }

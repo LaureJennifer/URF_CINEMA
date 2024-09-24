@@ -39,7 +39,7 @@ namespace BaseSolution.API.Controllers
             _mapper = mapper;
         }
         [HttpPost]
-        public async Task<IActionResult> Login(string request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login(LoginInputRequest request, CancellationToken cancellationToken)
         {
             LoginViewModel vm = new(_loginService, _localizationService);
                 await vm.HandleAsync(request, cancellationToken);
