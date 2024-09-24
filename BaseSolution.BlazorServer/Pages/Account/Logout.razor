@@ -1,4 +1,4 @@
-﻿@page "/logout"
+﻿@* @page "/logout"
 @using BaseSolution.Application.DataTransferObjects.Department
 @using BaseSolution.Application.DataTransferObjects.Department.Request
 @using BaseSolution.BlazorServer.Repositories.Interfaces
@@ -17,7 +17,7 @@
     protected async override Task OnInitializedAsync()
     {
         await LoadDepartment();
-        saveCustomerId.LayoutOption = typeof(CustomerLayout);
+        // saveCustomerId.LayoutOption = typeof(CustomerLayout);
         await _loginRepo.Logout();
         saveCustomerId.CustomerId = null;
         saveCustomerId.Name = null;
@@ -28,4 +28,4 @@
         var result = await _departmentRepo.GetAllActive(_request);
         _lstDepartment = result.Data.Data.ToList();
     }
-}
+} *@

@@ -12,7 +12,7 @@ namespace BaseSolution.BlazorServer
         public string Name { get;set; }
         public List<BookingDto> ListBooking { get; set; }
 
-        public Type LayoutOption { get; set; } = typeof(CustomerLayout);
+        public Type LayoutOption { get; set; } = typeof(MainLayout);
 
         public Roles RoleCode { get; set; }
         public string Token {  get; set; }
