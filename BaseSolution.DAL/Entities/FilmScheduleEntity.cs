@@ -1,10 +1,5 @@
 ﻿using BaseSolution.Domain.Entities.Base;
 using BaseSolution.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
@@ -13,10 +8,11 @@ namespace BaseSolution.Domain.Entities
         public Guid Id { get; set; }
         public DateTimeOffset ShowDate { get; set; }
         public DateTimeOffset ShowTime { get; set; }
+        public string? Description { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public List<FilmDetailEntity> FilmDetails { get; set; }
-        public List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
-        public List<BookingEntity> Bookings { get; set; }
+        public virtual List<FilmDetailEntity> FilmDetails { get; set; }
+        public virtual List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
+        public virtual List<BookingEntity> Bookings { get; set; }
 
     }
 }

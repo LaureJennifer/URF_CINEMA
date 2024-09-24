@@ -16,13 +16,13 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
                 .ForMember(des => des.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(des => des.SeatId, opt => opt.MapFrom(src => src.SeatId))
                 .ForMember(des => des.RoomId, opt => opt.MapFrom(src => src.RoomId))
-                .ForMember(des => des.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
-                .ForMember(des => des.FilmId, opt => opt.MapFrom(src => src.FilmId))
-                .ForMember(des => des.FilmScheduleId, opt => opt.MapFrom(src => src.FilmScheduleId))
-                .ForMember(des => des.SeatCode, opt => opt.MapFrom(src => src.SeatEntity.Code))
-                .ForMember(des => des.RoomCode, opt => opt.MapFrom(src => src.RoomEntity.Code))
+                //.ForMember(des => des.DepartmentId, opt => opt.MapFrom(src => src.DepartmentId))
+                //.ForMember(des => des.FilmId, opt => opt.MapFrom(src => src.FilmId))
+                //.ForMember(des => des.FilmScheduleId, opt => opt.MapFrom(src => src.FilmScheduleId))
+                .ForMember(des => des.SeatCode, opt => opt.MapFrom(src => src.Seat.Code))
+                .ForMember(des => des.RoomCode, opt => opt.MapFrom(src => src.Room.Code))
                 .ForMember(des => des.ExpiredTime, opt => opt.MapFrom(src => src.ExpiredTime))
-                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(src => src.DepartmentEntity.Name));
+              /*  .ForMember(des => des.DepartmentName, opt => opt.MapFrom(src => src.Department.Name))*/;
                 
 
             CreateMap<BookingCreateRequest, BookingEntity>();

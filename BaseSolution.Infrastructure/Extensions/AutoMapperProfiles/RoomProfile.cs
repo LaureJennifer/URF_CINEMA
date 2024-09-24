@@ -12,9 +12,9 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
         public RoomProfile()
         {
             CreateMap<RoomEntity, RoomDto>()
-                .ForMember(des => des.RoomLayoutName, opt => opt.MapFrom(src => src.RoomLayoutEntity.Name))
-                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(src => src.DepartmentEntity.Name))
-                .ForMember(des => des.DepartmentAddress, opt => opt.MapFrom(src => src.DepartmentEntity.Address));
+                .ForMember(des => des.RoomLayoutName, opt => opt.MapFrom(src => src.RoomLayout.Name))
+                .ForMember(des => des.DepartmentName, opt => opt.MapFrom(src => src.Department.Name))
+                .ForMember(des => des.DepartmentAddress, opt => opt.MapFrom(src => src.Department.Address));
                 
             CreateMap<RoomCreateRequest, RoomEntity>();
             CreateMap<RoomUpdateRequest, RoomEntity>();

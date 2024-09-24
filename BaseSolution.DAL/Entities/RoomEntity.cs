@@ -1,10 +1,5 @@
 ﻿using BaseSolution.Domain.Entities.Base;
 using BaseSolution.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
@@ -15,12 +10,13 @@ namespace BaseSolution.Domain.Entities
         public Guid DepartmentId { get; set; }
         public int Capacity { get; set; } //Sức chứa
         public string Code { get; set; }
-        public string SoundSystem { get; set; }
-        public string ScreenSize { get; set; }
+        public string? SoundSystem { get; set; }
+        public string? ScreenSize { get; set; }
+        public string? RoomType { get; set; }  //Loại phòng
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public RoomLayoutEntity RoomLayoutEntity { get; set; }
-        public DepartmentEntity DepartmentEntity { get; set; }
-        public List<BookingEntity> Bookings { get; set; }
-        public List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
+        public virtual RoomLayoutEntity RoomLayout{ get; set; }
+        public virtual DepartmentEntity Department { get; set; }
+        public virtual List<BookingEntity> Bookings { get; set; }
+        public virtual List<FilmScheduleRoomEntity> FilmScheduleRooms { get; set; }
     }
 }

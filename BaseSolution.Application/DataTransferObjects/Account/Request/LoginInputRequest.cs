@@ -12,7 +12,7 @@ namespace BaseSolution.Application.DataTransferObjects.Account.Request
     {
         [Required]
         [MaxLength(50)]
-        public string UserName { get; set; }
+        public string Email { get; set; }
         [Required]
         [MaxLength(50)]
         public string Password { get; set; }
@@ -20,7 +20,7 @@ namespace BaseSolution.Application.DataTransferObjects.Account.Request
         {
             public LoginValication()
             {
-                RuleFor(x => x.UserName).NotEmpty().WithMessage("UserName is required");
+                RuleFor(x => x.Email).NotEmpty().WithMessage("Email is required");
                 RuleFor(x => x.Password).NotEmpty().WithMessage("Password is required");
             }
         }

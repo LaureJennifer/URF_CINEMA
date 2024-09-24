@@ -12,10 +12,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
+using BaseSolution.Infrastructure.Extensions;
 
 namespace BaseSolution.Infrastructure.ViewModels.Login
 {
-    public class LoginViewModel : ViewModelBase<string>
+    public class LoginViewModel : ViewModelBase<LoginInputRequest>
     {
         private readonly ILoginService _loginService;
         private readonly ILocalizationService _localizationService;
@@ -24,15 +25,15 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
             _loginService = loginService;
             _localizationService = localizationService;
         }
-        public async override Task HandleAsync(string data, CancellationToken cancellationToken)
+        public async override Task HandleAsync(LoginInputRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await _loginService.Login(data,cancellationToken);
-                //Data = result.Data!;
-                //Success = result.Success;
-                //ErrorItems = result.Errors;
-                //Message = result.Message;
+                var result = await _loginService.Login(request,cancellationToken);
+                Data = GenToken.GenerateToken(result.Data!);
+                Success = result.Success;
+                ErrorItems = result.Errors;
+                Message = result.Message;
                 return;
             }
             catch (Exception)
@@ -47,60 +48,5 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
                 };
             }
         }
-        //private TokenModel GenerateToken(ViewLoginInput userEntity)
-        //{
-        //    var jwtTokenHandler = new JwtSecurityTokenHandler();
-        //    var secretKeyBytes = Encoding.UTF8.GetBytes(_appSetting.SecretKey);
-
-        //    var roles = GetRoleById(userEntity.RoleId);
-        //    var tokenDescription = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(new[]
-        //        {
-        //            new Claim(ClaimTypes.Name, userEntity.Name),
-        //            new Claim(ClaimTypes.Email,userEntity.Email),
-        //            new Claim("UserName",userEntity.UserName),
-        //            new Claim("Id",userEntity.Id.ToString()),
-
-        //            new Claim(ClaimTypes.Role, roles?.ToString()),
-        //        }),
-        //            Expires = DateTime.UtcNow.AddDays(1),
-        //            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey
-        //        (secretKeyBytes), SecurityAlgorithms.HmacSha256Signature)
-        //    };
-            
-        //    var token = jwtTokenHandler.CreateToken(tokenDescription);
-
-        //    var accessToken = jwtTokenHandler.WriteToken(token);
-
-        //    return new TokenModel
-        //    {
-        //        AccessToken = accessToken
-        //    };
-        //}
-
-        //private string GenerateRefreshToken()
-        //{
-        //    var random = new byte[32];
-        //    using ( var rng = RandomNumberGenerator.Create())
-        //    {
-        //        rng.GetBytes(random);
-
-        //        return Convert.ToBase64String(random);
-        //    }
-        //}
-
-        //public string GetRoleById(Guid roleId)
-        //{
-        //    using (var _dbcontext = new AppReadOnlyDbContext())
-        //    {
-        //        var role = _dbcontext.RoleEntities.FirstOrDefault(x => x.Id == roleId);
-        //        if (role != null)
-        //        {
-        //            return role.Code;
-        //        }
-        //        throw new Exception("Quyền không tồn tại!");
-        //    }
-        //}
     }
 }

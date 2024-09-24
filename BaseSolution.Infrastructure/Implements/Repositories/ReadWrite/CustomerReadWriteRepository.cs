@@ -88,7 +88,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
         {
             try
             {
-                var user = await _dbContext.CustomerEntities.FirstOrDefaultAsync(c => c.UserName.ToUpper() == request.UserName.ToUpper() && c.PassWord == request.PassWord && !c.Deleted);
+                var user = await _dbContext.CustomerEntities.FirstOrDefaultAsync(c => c.Email.ToUpper() == request.Email.ToUpper() && c.PassWord == request.PassWord && !c.Deleted);
                 request.CreatedTime = DateTimeOffset.UtcNow;
                 
                 await _dbContext.CustomerEntities.AddAsync(request);
@@ -139,7 +139,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 // Update value to existed Customer
                 customer_!.Name = string.IsNullOrWhiteSpace(entity.Name) ? customer_.Name : entity.Name;
                 customer_.PassWord = string.IsNullOrWhiteSpace(entity.PassWord) ? customer_.PassWord : entity.PassWord;
-                customer_.UserName = string.IsNullOrWhiteSpace(entity.UserName) ? customer_.UserName : entity.UserName;
                 customer_.PhoneNumber = entity.PhoneNumber;
                 customer_.Email = string.IsNullOrWhiteSpace(entity.Email) ? customer_.Email : entity.Email;
                 customer_.Status = entity.Status;

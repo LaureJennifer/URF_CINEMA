@@ -1,10 +1,5 @@
 ﻿using BaseSolution.Domain.Entities.Base;
 using BaseSolution.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
@@ -15,8 +10,9 @@ namespace BaseSolution.Domain.Entities
         public Guid BillId { get; set; }
         public DateTimeOffset TransactionDate { get; set; }
         public double Price { get; set; }
+        public string TransactionReferenceNumber { get; set; } // Số tham chiếu giao dịch
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public BillEntity BillEntity { get; set; }
-        public PaymentMethodEntity PaymentMethodEntity { get; set; }
+        public virtual BillEntity Bill { get; set; }
+        public virtual PaymentMethodEntity PaymentMethod { get; set; }
     }
 }

@@ -1,10 +1,5 @@
 ﻿using BaseSolution.Domain.Entities.Base;
 using BaseSolution.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseSolution.Domain.Entities
 {
@@ -14,7 +9,7 @@ namespace BaseSolution.Domain.Entities
         public string Code { get; set; }
         public string Title { get; set; }
         public string TrailerURL { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public string PosterURL { get; set; }
         public string UrlImage { get; set; }
         public string DirectedBy { get; set; }
@@ -27,10 +22,10 @@ namespace BaseSolution.Domain.Entities
         
         public string AgeRating { get; set; }
         public EntityStatus Status { get; set; } = EntityStatus.Active;
-        public List<DepartmentFilmEntity> DepartmentFilms { get; set;}
-        public List<FilmDetailEntity> FilmDetails{ get; set;}
-        public List<TicketEntity> Tickets { get; set;}
-        public List<BookingEntity> Bookings { get; set; }
+        public virtual List<DepartmentFilmEntity> DepartmentFilms { get; set;}
+        public virtual List<FilmDetailEntity> FilmDetails{ get; set;}
+        public virtual List<TicketEntity> Tickets { get; set;}
+        public virtual List<BookingEntity> Bookings { get; set; }
 
     }
 }

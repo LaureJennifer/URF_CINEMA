@@ -15,7 +15,7 @@ namespace BaseSolution.Infrastructure.Extensions.AutoMapperProfiles
         public LoginProfile()
         {
             CreateMap<UserEntity, ViewLoginInput>()
-                .ForMember(des => des.Code, opt => opt.MapFrom(src => src.RoleEntity.Code));
+                .ForMember(des => des.Code, opt => opt.MapFrom(src => src.Role.Code));
             ;
             CreateMap<LoginInputRequest, UserEntity>();
             CreateMap<CustomerEntity, ViewLoginInput>();

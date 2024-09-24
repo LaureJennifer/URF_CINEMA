@@ -103,7 +103,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadOnly
         {
             try
             {
-                var customer_ =  await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(x=>x.UserName == name && !x.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
+                var customer_ =  await _appReadOnlyDbContext.CustomerEntities.AsNoTracking().Where(x=>x.Email == name && !x.Deleted).ProjectTo<CustomerDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(cancellationToken);
                 return RequestResult<CustomerDto?>.Succeed(customer_);
             }

@@ -1,0 +1,24 @@
+﻿@page "/videoplayer"
+<video src="@VideoUrl" @ref="videoPlayerRef"></video>
+
+<MudButton OnClick="TogglePlay">Play/Pause</MudButton>
+
+@code {
+    private bool isPlaying = false;
+    private string VideoUrl = "https://youtu.be/vXPFT0Zy4Oo";
+    private ElementReference videoPlayerRef;
+
+    private void TogglePlay()
+    {
+        // if (isPlaying)
+        // {
+        //     videoPlayerRef.InvokeAsync<bool>("pause");
+        // }
+        // else
+        // {
+        //     videoPlayerRef.InvokeAsync<bool>("play");
+        // }
+
+        // isPlaying = !isPlaying;
+    }
+}

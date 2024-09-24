@@ -38,52 +38,12 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
             _localizationService = localizationService;
             _currentUser = currentUser;
         }
-        public async Task<string> Login(string tokenLogin, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var principal = TokenDecoding.DecodeToken(tokenLogin);
-
-                var userName = principal.Claims.FirstOrDefault(c => c.Type == "username")?.Value ?? throw new Exception("UserName không được để trống!");
-
-                var email = principal.Claims.FirstOrDefault(c => c.Type == "email")?.Value ?? throw new Exception("Email không được để trống!");
-                var localhost = (principal.Claims.FirstOrDefault(c => c.Type == "localhost")?.Value) ?? throw new Exception("Địa chỉ Localhost không được để trống!");
-                var role1 = principal.Claims.FirstOrDefault(c => c.Type == "roleNames")?.Value ?? throw new Exception("Quyền không được để trống!");
-
-                var user = await FindByUserNameAsync(userName) ?? throw new Exception("Tài khoản không tồn tại!");
-
-                //var role = await _dbContext.RoleEntities.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Guid.Parse(role1));
-
-                var roles = await _dbContext.RoleEntities.FirstOrDefaultAsync(x => x.Id == user.RoleId);
-                //if (user.Password != loginVM.Password)
-                //{
-                //    throw new Exception("Mật khẩu không đúng!");
-                //}
-                var claims = new List<Claim>()
-                            {
-                                new(AppRole.Id, user.Id.ToString()),
-                                new(ClaimTypes.Name, user.UserName),
-                                new(ClaimTypes.Email, user.Email)
-                            };
-                if (roles != null)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, roles.Code));
-                }
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                return TokenEncoding.GenerateToken(claimsIdentity);
-            }
-            catch (Exception ex)
-            {
-                return new($"Có lỗi xảy ra vui lòng thử lại! {ex.Message}");
-
-            }
-        }
 
         public async Task<RequestResult<ViewLoginInput>> LoginCustomer(LoginInputRequest request)
         {
             try
             {
-                var result = _dbContext.CustomerEntities.AsNoTracking().Where(x => x.UserName == request.UserName && x.PassWord == request.Password)
+                var result = _dbContext.CustomerEntities.AsNoTracking().Where(x => x.Email == request.Email && x.PassWord == request.Password)
                  .ProjectTo<ViewLoginInput>(_mapper.ConfigurationProvider).FirstOrDefault();
                 return RequestResult<ViewLoginInput>.Succeed(result);
 
@@ -121,7 +81,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
                                     RoleId = r.Id,
                                     Role = r.Code,
                                     Id = u.Id,
-                                    UserName = u.UserName,
                                     Email = u.Email,
                                     PassWord = u.PassWord,
                                     Name = u.Name,
@@ -133,7 +92,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
         {
             try
             {
-                var user = await FindByUserNameAsync(request.UserName) ?? throw new Exception("Tài khoản không tồn tại!");
+                var user = await FindByUserNameAsync(request.Email) ?? throw new Exception("Tài khoản không tồn tại!");
 
                 var userName = await _dbContext.UserEntities.FirstOrDefaultAsync(x => x.Name.ToLower() == user.Name.ToLower());
                 var Email = await _dbContext.UserEntities.FirstOrDefaultAsync(x => x.Email.ToLower() == user.Email.ToLower());
@@ -172,8 +131,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
                     Email = user.Email,
                     Name = user.UserName,
                     RoleId = user.RoleId,
-                    Code = user.Role,
-                    Token = token
+                    Code = user.Role
                 };
 
                 return RequestResult<ViewLoginInput>.Succeed(loginResult);
@@ -189,6 +147,27 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
         }
     });
                 return errorResult;
+            }
+        }
+
+        public async Task<RequestResult<ViewLoginInput>> Login(LoginInputRequest request, CancellationToken cancellation)
+        {
+            try
+            {
+                var result = _dbContext.UserEntities.AsNoTracking().Where(x => x.Email.ToLower() == request.Email.ToLower() && x.PassWord == request.Password && !x.Deleted)
+                 .ProjectTo<ViewLoginInput>(_mapper.ConfigurationProvider).FirstOrDefault();
+                return RequestResult<ViewLoginInput>.Succeed(result);
+
+            }
+            catch (Exception e)
+            {
+                return RequestResult<ViewLoginInput>.Fail(_localizationService["Login fail"], new[]
+               {
+                    new ErrorItem
+                    {
+                        Error = e.Message,
+                    }
+});
             }
         }
     }
