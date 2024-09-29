@@ -1,0 +1,83 @@
+﻿@using BaseSolution.BlazorServer.Data.ValueObjects.Common
+@using BaseSolution.Domain.Entities
+@using Blazored.Toast.Services
+@using static MudBlazor.CategoryTypes
+
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
+@inject IToastService ToastService;
+
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudItem>
+            @if (imageUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@imageUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_productEntity.Name" Placeholder="Tên sản phẩm*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_productEntity.Price" Placeholder="Giá*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_productEntity.Quantity" Placeholder="Số lượng*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_productEntity.Description" Placeholder="Mô tả(nếu có)*" />
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Primary" OnClick="()=>OnButtonClicked()">Thêm mới</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
+
+    public ProductEntity _productEntity = new();
+
+    public string imageUrl { get; set; } = "";
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    ImageHandle imageHandle = new();
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        imageUrl = @"\image\Product\" + await imageHandle.AddImage(file, "Product");
+        files.Add(file);
+    }
+
+    private async Task OnButtonClicked()
+    {
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+    }
+
+
+    void Cancel() => _mudDialog.Cancel();
+}
+

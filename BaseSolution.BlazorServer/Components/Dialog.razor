@@ -1,4 +1,5 @@
-﻿@page "/videoplayer"
+﻿@using MudBlazor;
+@page "/videoplayer"
 <video src="@VideoUrl" @ref="videoPlayerRef"></video>
 
 <MudButton OnClick="TogglePlay">Play/Pause</MudButton>

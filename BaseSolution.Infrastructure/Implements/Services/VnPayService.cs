@@ -1,5 +1,4 @@
-﻿using Azure;
-using BaseSolution.Application.DataTransferObjects.VnPayment;
+﻿using BaseSolution.Application.DataTransferObjects.VnPayment;
 using BaseSolution.Application.Interfaces.Services;
 using BaseSolution.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Http;

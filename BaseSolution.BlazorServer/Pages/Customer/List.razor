@@ -4,10 +4,13 @@
 @using BaseSolution.BlazorServer.Pages.Customer;
 @using BaseSolution.BlazorServer.Repositories.Interfaces
 @using BaseSolution.Domain.Entities;
+@using BaseSolution.Infrastructure.Extensions
 
 @page "/customer/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@inject EntityStatusExtensions _convert
+@inject NavigationManager _navigationManager
 @* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 
 <MudPaper Class="pa-5">
@@ -16,7 +19,7 @@
             <MudText Class="mt-3" Typo="Typo.h4">Danh sách khách hàng</MudText>
         </MudItem>
         <MudItem xs="3" md="3" lg="3">
-            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo tên" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo tên" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
         </MudItem>
     </MudGrid>
     @if (_lst == null)
@@ -35,12 +38,12 @@
                 <HeaderContent>
                     <MudTh>STT</MudTh>
                     <MudTh>Ảnh</MudTh>
-                    <MudTh>Mã Khách Hàng</MudTh>
                     <MudTh>Tên Khách Hàng</MudTh>
-                    <MudTh>Ngày sinh</MudTh>
                     <MudTh>Email</MudTh>
                     <MudTh>Số điện thoại</MudTh>
-                    <MudTh>Địa chỉ</MudTh>
+                    <MudTh>Tổng chi tiêu</MudTh>
+                    <MudTh>Tổng điểm</MudTh>
+                    <MudTh>Trạng thái</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
@@ -49,12 +52,15 @@
                             <MudImage Src="@context.UrlImage"></MudImage>
                         </MudAvatar>
                     </MudTd>
-                    <MudTd DataLabel="Mã Khách Hàng">@context.Code</MudTd>
                     <MudTd DataLabel="Tên Khách Hàng">@context.Name</MudTd>
-                    <MudTd DataLabel="Ngày sinh">@context.DateOfBirth.ToString("dd/MM/yyyy")</MudTd>
                     <MudTd DataLabel="Email">@context.Email</MudTd>
                     <MudTd DataLabel="SĐT">@context.PhoneNumber</MudTd>
-                    <MudTd DataLabel="Địa chỉ">@context.Address</MudTd>
+                    <MudTd DataLabel="Tổng chi tiêu">@context.TotalSpent vnd</MudTd>
+                    <MudTd DataLabel="Tổng điểm">@context.TotalLoyaltyPoints</MudTd>
+                    <MudTd DataLabel="Status">@_convert.ConvertForGeneral(@context.Status)</MudTd>
+                    <MudTd DataLabel="" Style="text-align: center;">
+                        <MudIconButton Title="Xem chi tiết" Icon="@Icons.Material.Filled.ViewTimeline" OnClick="()=>NavigateToDetails(context.Id.ToString())"></MudIconButton>
+                    </MudTd>
                 </RowTemplate>
                 <PagerContent>
                     <MudTablePager />
@@ -101,5 +107,10 @@
     async Task OnSearch(string debouncedText)
     {
         await LoadData(debouncedText);
+    }
+
+    void NavigateToDetails(string customerId)
+    {
+        _navigationManager.NavigateTo($"/customer/details/{customerId}");
     }
 }

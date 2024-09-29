@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using BaseSolution.Application.DataTransferObjects.Role.Request;
 using BaseSolution.Application.DataTransferObjects.Room.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadOnly;

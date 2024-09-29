@@ -5,12 +5,9 @@ namespace BaseSolution.Infrastructure.Database.AppDbContext
 {
     public class AppReadWriteDbContext : DbContext
     {
+        public AppReadWriteDbContext(DbContextOptions<AppReadWriteDbContext> options) : base(options)
+        {
 
-        public AppReadWriteDbContext()
-        {
-        }
-        public AppReadWriteDbContext(DbContextOptions options) : base(options)
-        {
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,7 +37,6 @@ namespace BaseSolution.Infrastructure.Database.AppDbContext
         public DbSet<PaymentMethodEntity> PaymentMethodEntities { get; set; }
         public DbSet<ProductEntity> ProductEntities { get; set; }
         public DbSet<PromotionEntity> PromotionEntities { get; set; }
-
         public DbSet<RoleEntity> RoleEntities { get; set; }
         public DbSet<RoomEntity> RoomEntities { get; set; }
         public DbSet<RoomLayoutEntity> RoomLayoutEntities { get; set; }

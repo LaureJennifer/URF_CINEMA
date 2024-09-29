@@ -25,13 +25,13 @@
 @inject NavigationManager _navigation
 @inject SaveCustomerId saveCustomerId;
 <MudItem xs="12" md="12" lg="12" Style="text-align:center">
-    <MudButton Class="mt-4" @onclick="OpenLoginDialog" Variant="Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF">Đăng nhập</MudButton>
+    <MudButton Class="mt-4" @onclick="OpenLoginDialog" Variant="MudBlazor.Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF">Đăng nhập</MudButton>
 </MudItem>
 
 @code {
     private void OpenLoginDialog()
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
 
         DialogService.Show<Login>("", closeOnEscapeKey);
     }

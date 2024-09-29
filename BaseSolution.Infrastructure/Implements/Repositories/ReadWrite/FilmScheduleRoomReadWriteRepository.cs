@@ -85,7 +85,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
                 //filmScheduleRoom_!.Deleted = true;
                 //filmScheduleRoom_.DeletedBy = request.DeletedBy;
                 //filmScheduleRoom_.DeletedTime = DateTimeOffset.UtcNow;
-                filmScheduleRoom_.Status = EntityStatus.Deleted;
+                filmScheduleRoom_!.Status = EntityStatus.Deleted;
 
                 _dbContext.FilmScheduleRoomEntities.Update(filmScheduleRoom_);
                 await _dbContext.SaveChangesAsync();

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
+using Radzen;
 using System.Text;
 
 namespace BaseSolution.BlazorServer
@@ -45,36 +46,9 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddEventBus(builder.Configuration);
             builder.Services.AddFluentValidation();
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddConfigAPI(builder.Configuration);
+            builder.Services.AddConfigAPI(builder.Configuration); //Dependencies Injection
             builder.Services.AddBlazoredToast();
-
-            //builder.Services.AddScoped<AuthenticationStateProvider, ApiAuthenticationStateProvider>();
-            //builder.Services.AddTransient<IBookingRepo, BookingRepo>();
-            //builder.Services.AddTransient<IFilmRepo, FilmRepo>();
-            //builder.Services.AddTransient<IUserRepo, UserRepo>();
-            //builder.Services.AddTransient<IRoleRepo, RoleRepo>();
-            //builder.Services.AddTransient<ICustomerRepo, CustomerRepo>();
-            //builder.Services.AddTransient<ITicketRepo, TicketRepo>();
-            //builder.Services.AddTransient<IBillRepo, BillRepo>();
-            //builder.Services.AddTransient<IRoomRepo, RoomRepo>();
-            //builder.Services.AddTransient<IDepartmentRepo, DepartmentRepo>();
-            //builder.Services.AddTransient<IFilmDetailRepo, FilmDetailRepo>();
-            //builder.Services.AddTransient<IRoomLayoutRepo, RoomLayoutRepo>();
-            //builder.Services.AddTransient<IRoomRepo, RoomRepo>();
-            //builder.Services.AddTransient<ISeatRepo, SeatRepo>();
-            //builder.Services.AddTransient<IFilmScheduleRoomRepo, FilmScheduleRoomRepo>();
-            //builder.Services.AddTransient<IBillStatisticRepo, BillStatisticRepo>();
-            //builder.Services.AddTransient<IFilmStatisticRepo, FilmStatisticRepo>();
-            //builder.Services.AddTransient<IDepartmentFilmRepo, DepartmentFilmRepo>();
-            //builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
-            //builder.Services.AddTransient<IPaymentMethodRepo, PaymentMethodRepo>();
-            //builder.Services.AddTransient<IRoomByFilmScheduleRepo, RoomByFilmScheduleRepo>();
-            //builder.Services.AddTransient<IFilmScheduleRepo, FilmScheduleRepo>();
-            //builder.Services.AddTransient<ISendMailCustomer, SendMailCustomer>();
-            //builder.Services.AddTransient<ILoginRepo, LoginRepo>();
-
-            //builder.Services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
-            //builder.Services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
+            builder.Services.AddRadzenComponents();
             builder.Services.AddSingleton<SaveCustomerId>(); //Service để lưu IdCustomer và list Booking
             builder.Services.Configure<RecaptchaOption>(builder.Configuration.GetSection(nameof(RecaptchaOption)));
             builder.Services.AddSession(options =>

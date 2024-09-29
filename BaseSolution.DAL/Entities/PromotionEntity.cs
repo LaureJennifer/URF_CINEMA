@@ -15,7 +15,7 @@ namespace BaseSolution.Domain.Entities
         public string? ImageUrl { get; set; }
         public DateTimeOffset StartTime { get; set; }
         public DateTimeOffset EndTime { get; set; }
-        public EntityStatus EntityStatus { get; set; } = EntityStatus.Active;
+        public EntityStatus Status { get; set; } = EntityStatus.Active;
         public virtual List<CustomerPromotionEntity> CustomerPromotions { get; set; }
 
     }

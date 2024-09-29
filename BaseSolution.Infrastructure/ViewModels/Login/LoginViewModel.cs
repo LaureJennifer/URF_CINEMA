@@ -30,7 +30,7 @@ namespace BaseSolution.Infrastructure.ViewModels.Login
             try
             {
                 var result = await _loginService.Login(request,cancellationToken);
-                Data = GenToken.GenerateToken(result.Data!);
+                Data = /*GenToken.GenerateToken(*/result.Data!;//);
                 Success = result.Success;
                 ErrorItems = result.Errors;
                 Message = result.Message;

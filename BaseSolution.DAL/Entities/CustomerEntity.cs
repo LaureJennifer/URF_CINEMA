@@ -17,7 +17,7 @@ namespace BaseSolution.Domain.Entities
         public DateTimeOffset DateOfBirth { get; set; }
         public bool Gender { get; set; }
         public double TotalSpent { get; set; } // Tổng chi tiêu
-        public string CustomerType { get; set; } // Loại khách  hàng (Regular,Vip,Platinum...)
+        public string? CustomerType { get; set; } // Loại khách  hàng (Regular,Vip,Platinum...)
         public int TotalLoyaltyPoints { get; set; } // Tổng điểm của khách hàng
         public DateTimeOffset LoyaltyPointsExpiry { get; set; } // Thời hạn của điểm
         public EntityStatus Status { get; set; } = EntityStatus.Active;

@@ -44,7 +44,7 @@ else
                                     @if (seat.Price != 0)
                                     {
 
-                                        <MudButton Variant="Variant.Outlined" Color="GetButtonColor(seat)" Class="mx-1">
+                                        <MudButton Variant="MudBlazor.Variant.Outlined" Color="GetButtonColor(seat)" Class="mx-1">
                                             @seat.Code
                                         </MudButton>
                                     }
@@ -64,7 +64,7 @@ else
             </MudGrid>
 
         </MudPaper>
-        <MudButton Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddRoomLayoutName">Xác nhận thêm mới</MudButton>
+        <MudButton Variant="MudBlazor.Variant.Filled" Style="background-color:#083151;color:#F2FFFF" OnClick="AddRoomLayoutName">Xác nhận thêm mới</MudButton>
     }
 }
 <MudMessageBox @ref="_mbox" Title="Điền tên bố cục phòng">

@@ -10,7 +10,7 @@
                 <MudInputLabel For="payDate">Ngày thanh toán "vnp_TransactionDate"(*)</MudInputLabel>
                 <MudTextField @bind-Value="payDate" Id="payDate" Placeholder="yyyyMMddHHmmss" Class="form-control" />
             </MudItem>
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="btnQuery_Click">QueryDr</MudButton>
+        <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Default" OnClick="btnQuery_Click">QueryDr</MudButton>
         <MudPaper>@displayResult</MudPaper>
     </MudForm>
 </MudContainer>

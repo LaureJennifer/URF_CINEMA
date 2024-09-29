@@ -23,7 +23,7 @@
 
     <MudGrid Class="mb-3">
         <MudItem xs="6" md="6">
-            <MudButton OnClick="@(async()=> await CreateDialog(Guid.Parse(selectedFilmId),Guid.Parse(selectedDepartmentId)))" Variant="Variant.Filled" Color="Color.Success"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+            <MudButton OnClick="@(async()=> await CreateDialog(Guid.Parse(selectedFilmId),Guid.Parse(selectedDepartmentId)))" Variant="MudBlazor.Variant.Filled" Color="Color.Success"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
         <MudItem xs="3" md="3">
             <MudSelect T="string" Label="Rạp" Value="@selectedDepartmentId" ValueChanged="(str)=>OnSelectedDepartment(str)">
@@ -111,8 +111,8 @@
                     </MudTd>
 
                     <MudTd DataLabel="Function" Style="text-align: center">
-                        <MudIconButton OnClick="@(async()=> await UpdateDialog(Guid.Parse(selectedFilmId),Guid.Parse(selectedDepartmentId),context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                        <MudIconButton OnClick="@(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                        <MudIconButton OnClick="@(async()=> await UpdateDialog(Guid.Parse(selectedFilmId),Guid.Parse(selectedDepartmentId),context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="@(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
 
                     </MudTd>
                 </RowTemplate>
@@ -136,7 +136,6 @@
         </MudButton>
     </YesButton>
 </MudMessageBox>
-
 
 @code {
 
@@ -165,7 +164,7 @@
     private async Task LoadDepartmentForSelect()
     {
         var result = await _departmentRepo.GetAllActive(_request);
-        _lstDepartment = result.Data.Data.ToList();
+        _lstDepartment = result.Data!.Data!.ToList();
         selectedDepartmentId = _lstDepartment.First().Id.ToString();
         await LoadDepartmentFilm(_lstDepartment.First().Id.ToString());
     }
@@ -182,7 +181,7 @@
     {
         _viewDepartmentFilmWithPaginationRequest.DepartmentId = Guid.Parse(idDepartment);
         var result = await _departmentFilmRepo.GetAllActive(_viewDepartmentFilmWithPaginationRequest);
-        _lstFilmId = result.Data.Data.Select(x => x.FilmId).ToList();
+        _lstFilmId = result.Data!.Data!.Select(x => x.FilmId).ToList();
         await LoadListFilmForSelectByDepartment(_lstFilmId);
     }
 
@@ -236,7 +235,7 @@
 
     private async Task CreateDialog(Guid? filmId, Guid? departmentId)
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
         var parameters = new DialogParameters();
         parameters.Add(nameof(Create.idFilm), filmId);
         parameters.Add(nameof(Create.idDepartment), departmentId);

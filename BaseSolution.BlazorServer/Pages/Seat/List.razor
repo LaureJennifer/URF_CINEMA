@@ -64,8 +64,8 @@
                     <MudTd DataLabel="Giá">@context.Price</MudTd>
                     <MudTd DataLabel="Trạng thái" Style="text-align:center">@context.Status</MudTd>
                     <MudTd>
-                        <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                        <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
                     </MudTd>
                 </RowTemplate>
                 <PagerContent>
@@ -109,7 +109,7 @@
 
     private async Task CreateDialog()
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
 
         _dialogService.Show<Create>("Thêm mới ghế", closeOnEscapeKey);
         await LoadData(string.Empty);

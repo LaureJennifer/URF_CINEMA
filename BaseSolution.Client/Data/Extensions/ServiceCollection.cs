@@ -38,7 +38,7 @@ namespace BaseSolution.Client.Data.Extensions
             services.AddTransient<IFilmScheduleRepo, FilmScheduleRepo>();
             services.AddTransient<ISendMailCustomer, SendMailCustomer>();
             services.AddTransient<ILoginRepo, LoginRepo>();
-            services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
+            //services.AddTransient<IFileHandlingReadWriteRepository, FileHandlingReadWriteRepository>();
             services.AddTransient<IFileHandlingReadOnlyRepository, FileHandlingReadOnlyRepository>();
 
             return services;

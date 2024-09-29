@@ -1,21 +1,16 @@
-﻿@using BaseSolution.Application.DataTransferObjects.User
-@using BaseSolution.Application.DataTransferObjects.User.Request
-@using BaseSolution.Application.ValueObjects.Common
-@using BaseSolution.BlazorServer.Components.User;
-@using BaseSolution.BlazorServer.Repositories.Interfaces
-@using BaseSolution.Domain.Entities;
-@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@using System.Security.Claims
-
-@page "/user/list"
+﻿@page "/product/list"
+@using BaseSolution.BlazorServer.Components.Product
+@using BaseSolution.Domain.Entities
+@using BaseSolution.Infrastructure.Extensions
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
-@inject AuthenticationStateProvider _authProvider;
-@inject ProtectedSessionStorage _session;
+@inject EntityStatusExtensions _convert
+@inject NavigationManager _navigationManager
+@* @inject ProtectedSessionStorage _session;
 @attribute [Authorize(Roles = "Admin,Staff")]
-
+ *@
 <MudPaper Class="pa-5">
-    <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách sản phẩm</MudText>
     <MudGrid>
         <MudItem xs="8">
             <MudButton @onclick="CreateDialog" Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
@@ -32,33 +27,33 @@
     {
         if (_lst.Count == 0)
         {
-            <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+            <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
         }
         else
         {
             <MudTable Items="@_lst" Class="mt-4" Hover="true" FixedHeader="true">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
-                    <MudTh>Mã nhân viên</MudTh>
                     <MudTh>Ảnh</MudTh>
-                    <MudTh>Họ và tên</MudTh>
-                    <MudTh>Số điện thoại</MudTh>
-                    <MudTh>Email</MudTh>
-                    <MudTh>Quyền</MudTh>
+                    <MudTh>Tên sản phẩm</MudTh>
+                    <MudTh>Giá</MudTh>
+                    <MudTh>Số lượng</MudTh>
+                    <MudTh>Trạng thái</MudTh>
                     <MudTh>Hành động</MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
-                    <MudTd DataLabel="Mã nhân viên">@context.Code</MudTd>
                     <MudTd DataLabel="Ảnh">
                         <MudAvatar>
-                            <MudImage Src="@context.UrlImage"></MudImage>
+                            <MudImage Src="@context.ImageUrl"></MudImage>
                         </MudAvatar>
                     </MudTd>
-                    <MudTd DataLabel="Họ và Tên">@context.Name</MudTd>
-                    <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
-                    <MudTd DataLabel="Email">@context.Email</MudTd>
-                    <MudTd DataLabel="Quyền">@context.Role</MudTd>
+                    <MudTd DataLabel="Tên sản phẩm">@context.Name</MudTd>
+                    <MudTd DataLabel="Giá">@context.Price</MudTd>
+                    <MudTd DataLabel="Số lượng">@context.Quantity</MudTd>
+                    <MudTd DataLabel="Status">@_convert.ConvertForGeneral(@context.Status)</MudTd>
+                    <MudTd DataLabel="" Style="text-align: center;"><MudIconButton Title="Xem chi tiết" Icon="@Icons.Material.Filled.ViewTimeline" OnClick="()=>NavigateToDetails(context.Id.ToString())"></MudIconButton>
+                        </MudTd>
                     <MudTd>
                         <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
                         <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
@@ -67,7 +62,7 @@
                 <PagerContent>
                     <MudTablePager />
                 </PagerContent>
-            </MudTable>   
+            </MudTable>
         }
     }
 </MudPaper>
@@ -82,13 +77,9 @@
     </YesButton>
 </MudMessageBox>
 @code {
-    [Inject]
-    public IUserRepo _userRepo{ get; set; }
-
-    public List<UserDto>? _lst { get; set; }
-
-    public ViewUserWithPaginationRequest obj = new() { PageSize = int.MaxValue - 1 };
-    public UserDeleteRequest _userDelete = new();
+    public List<ProductEntity> _lst = new List<ProductEntity>{
+        new ProductEntity(){Id = Guid.NewGuid(), Code = "P1" , Name = "Coca Cola", ImageUrl = "https://tse3.mm.bing.net/th?id=OIP.X-adLBlOLF-U7qcCxxT_-QHaQd&pid=Api&P=0&h=180",Price = 50000,Description = "A",Quantity = 150 ,Status = Domain.Enums.EntityStatus.Active}
+    };
 
     string searchString = "";
 
@@ -98,15 +89,15 @@
     {
         MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
 
-        _dialogService.Show<Create>("Thêm mới nhân viên", closeOnEscapeKey);
+        _dialogService.Show<Create>("Thêm mới sản phẩm", closeOnEscapeKey);
         await LoadData(searchString);
     }
 
     private async Task UpdateDialog(Guid Id)
     {
         var parameters = new DialogParameters<Update>();
-        parameters.Add(x => x.idUser, Id);
-        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin nhân viên", parameters);
+        parameters.Add(x => x.idProduct, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin sản phẩm", parameters);
         var result = await dialog.Result;
         if (!result.Canceled)
         {
@@ -115,31 +106,17 @@
         }
     }
 
-    private List<string> _lstrole = new();
+    void NavigateToDetails(string productId)
+    {
+        _navigationManager.NavigateTo($"/product/details/{productId}");
+    }
 
     private async Task OnDeleteClicked(Guid Id)
     {
-        var user = await _userRepo.GetByIdAsync(Id);
-        var data = user.Data;
-        _userDelete.Id = data.Id;
-        _userDelete.DeletedTime = DateTime.Now;
-        bool? result = await _mbox.Show();
-        StateHasChanged();
     }
 
     public async Task OnConfirmDelete()
     {
-        var removeConfirm = await _userRepo.RemoveAsync(_userDelete);
-        if (removeConfirm.Success)
-        {
-            _snackbar.Add("Xóa thành công", Severity.Success);
-        }
-        else
-        {
-            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
-        }
-        await Task.Delay(2000);
-        await LoadData(searchString);
     }
 
     protected override async Task OnInitializedAsync()
@@ -150,12 +127,6 @@
 
     private async Task LoadData(string textSearch)
     {
-
-        obj.Name = textSearch;
-
-        var result = await _userRepo.GetAllActive(obj);
-        _lst = result.Data.Data.ToList();
-        StateHasChanged();
 
     }
     async Task OnSearch(string debouncedText)
