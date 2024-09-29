@@ -68,7 +68,7 @@
                                 <MudItem xs="4" md="4">
                                     <MudGrid>
                                         <MudItem xs="12" md="12" Style="text-align:center">
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" Class="mx-1">.</MudButton>
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Tertiary" Class="mx-1">.</MudButton>
                                         </MudItem>
                                         <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
                                             Ghế thường
@@ -78,7 +78,7 @@
                                 <MudItem xs="4" md="4">
                                     <MudGrid>
                                         <MudItem xs="12" md="12" Style="text-align:center">
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Warning" Class="mx-1">.</MudButton>
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Warning" Class="mx-1">.</MudButton>
                                         </MudItem>
                                         <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
                                             Ghế VIP
@@ -93,7 +93,7 @@
                                 <MudItem xs="4" md="4">
                                     <MudGrid>
                                         <MudItem xs="12" md="12" Style="text-align:center">
-                                            <MudButton Variant="Variant.Filled" Color="Color.Success" Class="mx-1">.</MudButton>
+                                            <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mx-1">.</MudButton>
                                         </MudItem>
                                         <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
                                             Đang chọn
@@ -103,7 +103,7 @@
                                 <MudItem xs="4" md="4">
                                     <MudGrid>
                                         <MudItem xs="12" md="12" Style="text-align:center">
-                                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mx-1">.</MudButton>
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Primary" Class="mx-1">.</MudButton>
                                         </MudItem>
                                         <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
                                             Đã chọn
@@ -113,7 +113,7 @@
                              <MudItem xs="4" md="4">
                                  <MudGrid>
                                      <MudItem xs="12" md="12" Style="text-align:center">
-                                         <MudButton Variant="Variant.Outlined" Color="Color.Error" Class="mx-1">.</MudButton>
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Error" Class="mx-1">.</MudButton>
                                      </MudItem>
                                      <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
                                          Đã bán
@@ -293,23 +293,23 @@ else
         await Task.Delay(100);       
     }
 
-    Variant GetButtonVariant(SeatDto seat)
+    MudBlazor.Variant GetButtonVariant(SeatDto seat)
     {
         
         var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
         if (soldSeat != null)
         {
-            return Variant.Outlined;
+            return MudBlazor.Variant.Outlined;
         }
         else
         {
             var keptSeat = _lstBookingForCompare.Where(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.YourSeat && x.CreatedTime != createdTime).OrderByDescending(x => x.ExpiredTime).FirstOrDefault();
             if (keptSeat!=null && keptSeat.ExpiredTime > createdTime)
             {
-                return Variant.Outlined;
+                return MudBlazor.Variant.Outlined;
             }
             else
-                return clickedSeats.Contains(seat) ? Variant.Filled : Variant.Outlined;
+                return clickedSeats.Contains(seat) ? MudBlazor.Variant.Filled : MudBlazor.Variant.Outlined;
         }
 
     }

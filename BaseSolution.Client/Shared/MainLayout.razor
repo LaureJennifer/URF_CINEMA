@@ -79,7 +79,7 @@
                 }
                 else
                 { *@
-                    <MudLink Href="/login"><MudButton Variant="Variant.Filled" Color="Color.Success">Tài Khoản</MudButton></MudLink>
+                <MudLink Href="/login"><MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Success">Tài Khoản</MudButton></MudLink>
                @*  }
  *@
                        
@@ -177,7 +177,7 @@
     
     private void OpenDialog()
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
 
         DialogService.Show<Login>("", closeOnEscapeKey);
     }

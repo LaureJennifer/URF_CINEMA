@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using BaseSolution.Application.DataTransferObjects.Department.Request;
 using BaseSolution.Application.Interfaces.Repositories.ReadWrite;
 using BaseSolution.Application.Interfaces.Services;

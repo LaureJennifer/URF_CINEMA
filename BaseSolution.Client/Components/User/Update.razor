@@ -43,13 +43,6 @@
                 }
             </MudItem>
             <MudItem xs="6" sm="6" md="6">
-                <MudTextField @bind-Value="_userDto.UserName" Placeholder="Tên tài khoản*" />
-                @if (_showUserNameError)
-                {
-                    <div class="error-message">Tên tài khoản không được để trống.</div>
-                }
-            </MudItem>
-            <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_userDto.PassWord" Placeholder="Mật khẩu*" />
                 @if (_showPasswordError)
                 {
@@ -87,7 +80,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -153,7 +146,6 @@
         if (string.IsNullOrEmpty(_userDto.Name)) { countError++; _showNameError = true; } else { _showNameError = false; }
         if (string.IsNullOrEmpty(_userDto.PhoneNumber)) { countError++; _showPhoneError = true; } else { _showPhoneError = false; }
         if (string.IsNullOrEmpty(_userDto.Email)) { countError++; _showMailError = true; } else { _showMailError = false; }
-        if (string.IsNullOrEmpty(_userDto.UserName)) { countError++; _showUserNameError = true; } else { _showUserNameError = false; }
         if (string.IsNullOrEmpty(_userDto.PassWord)) { countError++; _showPasswordError = true; } else { _showPasswordError = false; }
         if (string.IsNullOrEmpty(_selectedRoleId)) { countError++; _showRoleError = true; } else { _showRoleError = false; }
         if (IsValidPhoneNumber(_userDto.PhoneNumber) == false) { countError++; _showPhoneAError = true; } else { _showPhoneAError = false; }

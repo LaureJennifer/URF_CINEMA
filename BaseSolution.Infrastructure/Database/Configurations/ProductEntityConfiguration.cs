@@ -13,6 +13,7 @@ namespace BaseSolution.Infrastructure.Database.Configurations
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
             builder.Property(x => x.Code).IsRequired();
             builder.Property(x => x.Name).IsUnicode(true).IsRequired();
+            builder.Property(x => x.Quantity).IsRequired();
         }
     }
 }

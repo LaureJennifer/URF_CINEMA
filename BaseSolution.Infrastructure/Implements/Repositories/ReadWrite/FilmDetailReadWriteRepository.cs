@@ -55,8 +55,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
             {
                 var filmDetail_ = await GetFilmDetailByIdAsync(request.Id, cancellationToken);
 
-                filmDetail_!.Status = EntityStatus.Deleted;
-
                 _dbContext.FilmDetailEntities.Update(filmDetail_);
                 await _dbContext.SaveChangesAsync();
 
@@ -82,7 +80,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.ReadWrite
 
                 filmDetail_!.FilmId = entity.FilmId;
                 filmDetail_.FilmScheduleId = entity.FilmScheduleId;
-                filmDetail_.Status = entity.Status;
 
                 _dbContext.FilmDetailEntities.Update(filmDetail_);
                 await _dbContext.SaveChangesAsync();

@@ -6,8 +6,8 @@ namespace BaseSolution.Domain.Entities
     public class BillEntity : EntityBase
     {
         public Guid Id { get; set; }
-        public Guid? CustomerId { get; set; }
-        public Guid DepartmentId { get; set; }
+        public Guid CustomerId { get; set; }
+        public Guid? DepartmentId { get; set; }
         public string Code  { get;set;  }
         public string? Description { get; set; }
         public double TotalPrice { get; set; }

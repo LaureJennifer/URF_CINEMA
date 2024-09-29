@@ -102,6 +102,7 @@
         fill: #F2FFFF;
     }
 </style>
+<RadzenComponents />
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -118,7 +119,7 @@
                     <Authorized> *@
                         <MudItem xs="12" md="12" lg="12">
                             <MudText></MudText>
-                            <MudButton Class="mt-4" @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Error">Đăng xuất</MudButton>
+                            <MudButton Class="mt-4" @onclick="OpenDialog" Variant="MudBlazor.Variant.Filled" Color="Color.Error">Đăng xuất</MudButton>
                         </MudItem>
                     @* </Authorized>
                     <NotAuthorized>

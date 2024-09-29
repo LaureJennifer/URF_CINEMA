@@ -69,7 +69,7 @@ else
                                     <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thời gian : @item.Duration phút</MudText>
                                     <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Ngày chiếu : @item.ReleaseDate.ToLocalTime().ToString("dd/MM/yyyy")</MudText>
                                     <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4">Thể loại : @item.Genres</MudText>
-                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4"><MudButton @onclick="() => Order(item.Id)" Variant="Variant.Filled" Style="background-color:#083151;color:#F2FFFF" Class="mt-3">Đặt vé</MudButton> </MudText>
+                                    <MudText Align="Align.Start" Style="color:#4B6886" Class="ml-4"><MudButton @onclick="() => Order(item.Id)" Variant="MudBlazor.Variant.Filled" Style="background-color:#083151;color:#F2FFFF" Class="mt-3">Đặt vé</MudButton> </MudText>
                                 </MudItem>
                             }
 
@@ -126,7 +126,7 @@ else
     }
     private void OpenDialog()
     {
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
 
         DialogService.Show<TrailerFilm>("Trailer phim", closeOnEscapeKey);
     }

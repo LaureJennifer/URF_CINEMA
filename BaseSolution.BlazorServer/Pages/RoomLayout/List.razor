@@ -15,7 +15,7 @@
             <MudText Class="mt-3" Typo="Typo.h4">Danh sách bố cục phòng chiếu</MudText>
         </MudItem>
         <MudItem xs="3" md="3">
-            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo mã" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo mã" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
         </MudItem>
 
     </MudGrid>
@@ -39,8 +39,8 @@
                 <MudTd DataLabel="Tên bố cục" Style="text-align:center">@context.Name</MudTd>
                 <MudTd DataLabel="Trạng thái" Style="text-align:center">@context.Status</MudTd>
                 <MudTd>
-                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
-                    <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                    <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
                 </MudTd>
             </RowTemplate>
             <PagerContent>

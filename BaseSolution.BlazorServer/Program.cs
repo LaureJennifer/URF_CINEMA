@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
+using Radzen;
 using System.Text;
 
 namespace BaseSolution.BlazorServer
@@ -45,8 +46,9 @@ namespace BaseSolution.BlazorServer
             builder.Services.AddEventBus(builder.Configuration);
             builder.Services.AddFluentValidation();
             builder.Services.AddAuthorizationCore();
-            builder.Services.AddConfigAPI(builder.Configuration);
+            builder.Services.AddConfigAPI(builder.Configuration); //Dependencies Injection
             builder.Services.AddBlazoredToast();
+            builder.Services.AddRadzenComponents();
             builder.Services.AddSingleton<SaveCustomerId>(); //Service để lưu IdCustomer và list Booking
             builder.Services.Configure<RecaptchaOption>(builder.Configuration.GetSection(nameof(RecaptchaOption)));
             builder.Services.AddSession(options =>

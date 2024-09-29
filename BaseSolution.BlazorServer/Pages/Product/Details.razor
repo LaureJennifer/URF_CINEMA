@@ -1,0 +1,53 @@
+﻿@page "/product/details/{productId}"
+@using BaseSolution.Domain.Entities
+@using BaseSolution.Infrastructure.Extensions
+@inject EntityStatusExtensions _convert;
+@* @attribute [Authorize(Roles = "ADMIN")] *@
+
+<MudText Color="Color.Primary" Class="mb-5" Typo="Typo.h4">Thông tin chi tiết sản phẩm</MudText>
+
+@if (_product == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" md="6" Style="margin-top:32px">
+            <MudSimpleTable>
+                <MudTr>
+                    <MudTd>Mã sản phẩm</MudTd>
+                    <MudTd DataLabel="ProductCode">@_product.Code</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Tên sản phẩm</MudTd>
+                    <MudTd DataLabel="ProductName">@_product.Name</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd DataLabel="Ảnh">
+                        <MudImage Src="@_product.ImageUrl"></MudImage>
+                    </MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Giá</MudTd>
+                    <MudTd DataLabel="ProductPrice">@_product.Price</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Số lượng</MudTd>
+                    <MudTd DataLabel="ProductQuantity">@_product.Quantity</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Mô tả</MudTd>
+                    <MudTd DataLabel="ProductDescription">@_product.Description</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Trạng thái</MudTd>
+                    <MudTd>@_convert.ConvertForGeneral(_product.Status)</MudTd>
+                </MudTr>
+            </MudSimpleTable>
+        </MudItem>
+    </MudGrid>
+}
+@code{
+    ProductEntity _product = new ProductEntity();
+}

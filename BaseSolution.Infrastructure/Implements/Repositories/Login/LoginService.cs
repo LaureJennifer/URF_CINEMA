@@ -60,9 +60,9 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
             }
         }
 
-        public async Task<UserDto> FindByUserNameAsync(string username)
+        public async Task<UserDto> FindByEmailAsync(string email)
         {
-            var result = (await GetListActiveAsync()).FirstOrDefault(c => c.UserName == username);
+            var result = (await GetListActiveAsync()).FirstOrDefault(c => c.Email == email);
 
             return result;
         }
@@ -92,7 +92,7 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
         {
             try
             {
-                var user = await FindByUserNameAsync(request.Email) ?? throw new Exception("Tài khoản không tồn tại!");
+                var user = await FindByEmailAsync(request.Email) ?? throw new Exception("Tài khoản không tồn tại!");
 
                 var userName = await _dbContext.UserEntities.FirstOrDefaultAsync(x => x.Name.ToLower() == user.Name.ToLower());
                 var Email = await _dbContext.UserEntities.FirstOrDefaultAsync(x => x.Email.ToLower() == user.Email.ToLower());
@@ -111,9 +111,6 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
                 if (password != null)
                     claims.Add(new Claim("Password", password.ToString()));
 
-                if (!string.IsNullOrEmpty(user.UserName))
-                    claims.Add(new Claim("UserName", user.UserName));
-
                 var roles = await _dbContext.RoleEntities.FirstOrDefaultAsync(x => x.Id == user.RoleId);
                 if (roles != null)
                 {
@@ -126,10 +123,10 @@ namespace BaseSolution.Infrastructure.Implements.Repositories.Login
                 var loginResult = new ViewLoginInput
                 {
                     Id = user.Id,
-                    UserName = user.UserName,
+                    UserName = user.Email,
                     Password = user.PassWord,
                     Email = user.Email,
-                    Name = user.UserName,
+                    Name = user.Name,
                     RoleId = user.RoleId,
                     Code = user.Role
                 };

@@ -98,7 +98,7 @@
                         {
                             <MudGrid>
                                 <MudItem xs="12" md="12" lg="12" Style="color:darkred;">
-                                    <MudField Label="Chọn thẻ thanh toán" Variant="Variant.Text" InnerPadding="false">
+                                    <MudField Label="Chọn thẻ thanh toán" Variant="MudBlazor.Variant.Text" InnerPadding="false">
                                         <MudSelect T="string" @bind-Value="@SelectedOption">
                                             @foreach (var item in _lstPayment)
                                             {
