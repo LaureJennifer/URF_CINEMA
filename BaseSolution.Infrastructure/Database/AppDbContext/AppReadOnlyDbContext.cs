@@ -3126,7 +3126,7 @@ namespace BaseSolution.Infrastructure.Database.AppDbContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=ADMIN\\SQLEXPRESS;Initial Catalog=DA1_Cinema;Integrated Security=True;TrustServerCertificate=true");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-RTLBH4I\\SQLEXPRESS;Initial Catalog=DA1_Cinema;Integrated Security=True;TrustServerCertificate=true");
             }
         }
         #region DBSet
