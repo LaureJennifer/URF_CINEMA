@@ -1,0 +1,105 @@
+﻿@using URF_Cinema.Application.DataTransferObjects.Bill
+@using URF_Cinema.Application.DataTransferObjects.Bill.Request
+@using URF_Cinema.Application.ValueObjects.Common
+@using URF_Cinema.Manage.Components.Dialog.Bill
+@using URF_Cinema.Manage.Components.Pages.Bill;
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Domain.Entities;
+@using URF_Cinema.Infrastructure.Extensions
+
+@page "/bill/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+@inject EntityStatusExtensions _convertStatus;
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
+
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách hóa đơn</MudText>
+    <MudGrid>
+        <MudItem xs="8">
+        </MudItem>
+        <MudItem xs="4">
+            <MudInput Value="@searchString" ValueChanged="(string str)=>OnSearch(str)" Placeholder="Tìm kiếm theo mã" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Class="ml-5 mt-2"></MudInput>
+        </MudItem>
+    </MudGrid>
+
+    @if (_lst == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        if (_lst.Count == 0)
+        {
+            <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+        }
+        else
+        {
+            <MudTable Items="@_lst" Class="mt-4">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh Style="text-align:center">Tên Khách Hàng</MudTh>
+                    
+                    <MudTh Style="text-align:center">Tổng tiền@("VND")</MudTh>
+                    <MudTh Style="text-align:center">Thời gian tạo</MudTh>
+                    <MudTh Style="text-align:center">Mô tả</MudTh>
+                    <MudTh Style="text-align:center">Trạng Thái</MudTh>
+               
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
+                    <MudTd DataLabel="Tên Khách Hàng" Style="text-align:center">@context.CustomerName</MudTd>
+                    <MudTd DataLabel="Tổng Tiền" Style="text-align:center"> @($"{context.TotalPrice:N0}.000 VND")</MudTd>
+                    <MudTd DataLabel="Thời gian tạo" Style="text-align:center">@context.CreatedTime.ToString("dd/MM/yyyy")</MudTd>
+                    <MudTd DataLabel="Mô Tả" Style="text-align:center">@context.Description</MudTd>
+                    <MudTd DataLabel="Trạng Thái" Style="text-align:center">@_convertStatus.ConvertForGeneral(@context.Status)</MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+        }
+    }
+</MudPaper>
+
+@code {
+    [Inject]
+    public IBillRepo _billRepo { get; set; }
+
+    public List<BillDto>? _lst { get; set; }
+
+    public ViewBillWithPaginationRequest obj = new() { PageSize = int.MaxValue - 1 };
+    public BillDeleteRequest _billDelete = new();
+
+    string searchString = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _billRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
+    }
+    private async Task LoadData(string textSearch)
+    {
+
+        obj.CustomerName = textSearch;
+
+        var result = await _billRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
+
+    }
+
+    private async Task OnSearch(string textSearch)
+    {
+        await LoadData(textSearch);
+        StateHasChanged();
+    }
+}
+
+

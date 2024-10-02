@@ -1,0 +1,444 @@
+﻿@page "/seat-map"
+@using URF_Cinema.Application.DataTransferObjects.Booking
+@using URF_Cinema.Application.DataTransferObjects.Booking.Request
+@using URF_Cinema.Application.DataTransferObjects.Seat
+@using URF_Cinema.Application.DataTransferObjects.Seat.Request
+@using URF_Cinema.Client.Repositories.Interfaces
+@using URF_Cinema.Domain.Enums
+@inject ISnackbar _snackBar;
+@inject NavigationManager _navigate;
+@* lưu booking *@
+@if (_roomLayoutDtoId != Guid.Empty)
+{
+    <MudGrid Class="mb-7 mt-3">
+        <MudItem xs="3" md="3" Style="color:#F2FFFF;">
+            <MudText Typo="Typo.h5">Ghế của bạn</MudText>
+
+            <MudText Class="mb-3">@_lstseatSelecteds.Count() Ghế</MudText>
+            <MudGrid>
+
+                @foreach (var seat in _lstseatSelecteds)
+                {
+                    <MudItem>
+                        <MudPaper Class="pa-1" Style="background-color:#012C57;color:#B3B07D">@seat.Code</MudPaper>
+                    </MudItem>
+                }
+
+            </MudGrid>
+
+            <MudGrid>
+                <MudItem xs="12" md="12">
+                    <MudGrid>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;">Ghế thường</MudItem>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;text-align:center">@_lstseatSelecteds.Where(x => x.Type == EntityTypeSeat.normal).Count()</MudItem>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;text-align:right">@(_lstseatSelecteds.FirstOrDefault(x => x.Type == EntityTypeSeat.normal) == null ? 0 : _lstseatSelecteds.FirstOrDefault(x => x.Type == EntityTypeSeat.normal).Price)</MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudGrid>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;">Ghế VIP</MudItem>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;text-align:center">@_lstseatSelecteds.Where(x => x.Type == EntityTypeSeat.vip).Count()</MudItem>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;text-align:right">
+                            @(_lstseatSelecteds.FirstOrDefault(x => x.Type == EntityTypeSeat.vip) == null ? 0 : _lstseatSelecteds.FirstOrDefault(x => x.Type == EntityTypeSeat.vip).Price)
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudGrid>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;"><MudText Typo="Typo.h6">Total</MudText></MudItem>
+                        <MudItem xs="4" md="4"></MudItem>
+                        <MudItem xs="4" md="4" Style="color:#F2FFFF;text-align:right">
+                            <MudText Typo="Typo.h6">@Total</MudText>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+            </MudGrid>
+
+            <MudItem Style="text-align:center">
+                <MudButton OnClick="()=>OrderSeat()" Style="background-color:#d1a647;color:black;" FullWidth>Thanh toán(Tiếp theo)</MudButton>
+            </MudItem>
+
+        </MudItem>
+        <MudItem xs="9" md="9">
+            <MudGrid>
+                <MudItem xs="12" md="12" Class="mb-5">
+                    <MudGrid>
+                        <MudItem xs="4" md="4">
+                            <MudGrid>
+                                <MudItem xs="4" md="4">
+                                    <MudGrid>
+                                        <MudItem xs="12" md="12" Style="text-align:center">
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Tertiary" Class="mx-1">.</MudButton>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
+                                            Ghế thường
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem xs="4" md="4">
+                                    <MudGrid>
+                                        <MudItem xs="12" md="12" Style="text-align:center">
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Warning" Class="mx-1">.</MudButton>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
+                                            Ghế VIP
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                        <MudItem xs="4" md="4"></MudItem>
+                        <MudItem xs="4" md="4">
+                            <MudGrid>
+                                <MudItem xs="4" md="4">
+                                    <MudGrid>
+                                        <MudItem xs="12" md="12" Style="text-align:center">
+                                            <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mx-1">.</MudButton>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
+                                            Đang chọn
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem xs="4" md="4">
+                                    <MudGrid>
+                                        <MudItem xs="12" md="12" Style="text-align:center">
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Primary" Class="mx-1">.</MudButton>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
+                                            Đã chọn
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                                <MudItem xs="4" md="4">
+                                    <MudGrid>
+                                        <MudItem xs="12" md="12" Style="text-align:center">
+                                            <MudButton Variant="MudBlazor.Variant.Outlined" Color="Color.Error" Class="mx-1">.</MudButton>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">
+                                            Đã bán
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                            </MudGrid>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudPaper Style="background-color:#04192E">
+
+                        <MudText Align="Align.Center" Style="color:#F2FFFF" Class="mb-2">MÀN HÌNH</MudText>
+                        <MudGrid>
+                            @foreach (var rowGroup in _lstSeat.GroupBy(x => x.Row).OrderBy(group => group.Key))
+                            {
+                                var rowGr = rowGroup.OrderBy(x => x.SeatColumn);
+
+                                <MudItem xs="12" md="12">
+                                    <MudGrid>
+                                        <MudItem xs="1" md="1" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">@rowGr.Select(x => x.Row).First()</MudItem>
+                                        <MudItem xs="10" md="10" Style="text-align:center">
+                                            @foreach (var seat in rowGr)
+                                            {
+
+                                                @if (seat.Price != 0)
+                                                {
+
+                                                    <MudButton Variant="GetButtonVariant(seat)" Color="GetButtonColor(seat)" Class="mx-1" OnClick="(() =>HandleSeatClick(seat))">
+                                                        @seat.Code
+                                                    </MudButton>
+                                                }
+                                                else
+                                                {
+
+                                                    <MudButton Style="visibility:hidden;" Class="mx-1">
+                                                        @seat.Code
+                                                    </MudButton>
+                                                }
+                                            }
+                                        </MudItem>
+                                        <MudItem xs="1" md="1" Class="d-flex align-center justify-center text-center" Style="color:#F2FFFF">@rowGr.Select(x => x.Row).First()</MudItem>
+                                    </MudGrid>
+                                </MudItem>
+                            }
+                        </MudGrid>
+
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+
+
+        </MudItem>
+    </MudGrid>
+
+}
+else
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+
+}<MudMessageBox @ref="_mbox" Title="Có ghế đã được thanh toán, mời chọn lại!">
+    <MessageContent>
+
+    </MessageContent>
+    <YesButton>
+        <MudButton Color="Color.Primary" OnClick="NavigateToRoom">
+            Chọn lại
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
+@code {
+    [Parameter] public string filmId { get; set; }
+    [Parameter] public string filmScheduleId { get; set; }
+    [Parameter] public string roomId { get; set; }
+    [Parameter] public DateTimeOffset createdTime { get; set; }
+    [Parameter] public string departmentId { get; set; }
+    [Parameter] public string customerId { get; set; }
+    [Inject] ISeatRepo _seatRepo { get; set; }
+    [Inject] IRoomRepo _roomRepo { get; set; }
+    [Inject] IBookingRepo _bookingRepo { get; set; }
+    BookingCreateRequest _bookingCreateRequest = new();
+    BookingUpdateRequest _bookingUpdateRequest = new();
+    ViewSeatWithPaginationRequest request = new();
+    List<SeatDto> _lstSeat { get; set; } = new();
+    List<BookingDto> _lstBookingSold { get; set; } = new();
+    List<BookingDto> _lstBooking { get; set; } = new();
+    List<BookingDto> _lstBookingForCompare { get; set; } = new();
+    ViewBookingWithPaginationRequest _bookingRequest = new() { PageSize = int.MaxValue - 1 };
+    HashSet<SeatDto> clickedSeats = new HashSet<SeatDto>();
+    List<SeatDto> _lstseatSelecteds = new List<SeatDto>();
+    MudMessageBox _mbox { get; set; }
+    string @meses { get; set; } = "";
+    Guid _roomLayoutDtoId { get; set; }
+    double Total { get; set; } = 0;
+    List<BookingDto> _lstBookingForPayment { get; set; } = new();
+    protected async override Task OnInitializedAsync()
+    {
+        await GetRoomById(roomId);
+        await LoadListSeat(_roomLayoutDtoId);
+        await GetListBooking();
+        StateHasChanged();
+    }
+
+    private async Task GetRoomById(string roomId)
+    {
+        var result = await _roomRepo.GetByIdAsync(Guid.Parse(roomId));
+        _roomLayoutDtoId = result.Data.RoomLayoutId;
+
+    }
+
+    async Task LoadListSeat(Guid roomlayoutId)
+    {
+        request.RoomLayoutId = roomlayoutId;
+        request.PageSize = int.MaxValue - 1;
+        var result = await _seatRepo.GetAllActive(request);
+        _lstSeat = result.Data.Data.ToList();
+    }
+
+    async Task OrderSeat()
+    {
+        if (_lstseatSelecteds.Count > 0)
+        {
+            await GetListBooking();
+            foreach (var booking in _lstBooking)
+            {
+                var x = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == booking.SeatId && x.SeatStatus == EntityStatus.SoldOut && x.CreatedTime != createdTime);
+                if (x != null)
+                {
+                    _lstBookingSold.Add(booking);
+                    var rs = _lstseatSelecteds.FirstOrDefault(y => y.Id == x.SeatId);
+                    if (rs != null)
+                    {
+                        _lstseatSelecteds.Remove(rs!);
+                        Total -= rs!.Price;
+                    }
+
+                }
+            }
+
+            if (_lstBookingSold.Count() != 0)
+            {
+
+                bool? result = await _mbox.ShowAsync();
+            }
+            else
+            {
+                // foreach (var seat in _lstseatSelecteds)
+                // {
+                //     await UpdateBookingSeat(seat, EntityStatus.SoldOut);
+                // }
+                foreach (var booking in _lstBooking)
+                {
+                    if (_lstseatSelecteds.Select(x => x.Id).Contains(booking.SeatId))
+                    {
+                        _lstBookingForPayment.Add(booking);
+                    }
+
+                }
+                // _saveCustomerId.ListBooking = _lstBookingForPayment.DistinctBy(x => x.SeatId).ToList();
+                _navigate.NavigateTo($"/payment/{departmentId}/{customerId}/{Total.ToString()}");
+
+            }
+
+        }
+        else
+            _snackBar.Add("Bạn chưa chọn ghế nào!", Severity.Warning);
+        StateHasChanged();
+    }
+
+    public async Task NavigateToRoom()
+    {
+
+        foreach (var booking in _lstBookingSold)
+        {
+            _lstBooking.Remove(booking);
+        }
+        _lstBookingSold.Clear();
+        await Task.Delay(100);
+    }
+
+    MudBlazor.Variant GetButtonVariant(SeatDto seat)
+    {
+
+        var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
+        if (soldSeat != null)
+        {
+            return MudBlazor.Variant.Outlined;
+        }
+        else
+        {
+            var keptSeat = _lstBookingForCompare.Where(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.YourSeat && x.CreatedTime != createdTime).OrderByDescending(x => x.ExpiredTime).FirstOrDefault();
+            if (keptSeat != null && keptSeat.ExpiredTime > createdTime)
+            {
+                return MudBlazor.Variant.Outlined;
+            }
+            else
+                return clickedSeats.Contains(seat) ? MudBlazor.Variant.Filled : MudBlazor.Variant.Outlined;
+        }
+
+    }
+    Color GetButtonColor(SeatDto seat)
+    {
+
+        var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
+        if (soldSeat != null)
+        {
+
+            return Color.Error;
+        }
+        else
+        {
+            var keptSeat = _lstBookingForCompare.Where(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.YourSeat && x.CreatedTime != createdTime).OrderByDescending(x => x.ExpiredTime).FirstOrDefault();
+            if (keptSeat != null && keptSeat.ExpiredTime > createdTime)
+            {
+
+                return Color.Primary;
+            }
+            else
+            {
+                if (seat.Type == EntityTypeSeat.vip)
+                {
+                    return clickedSeats.Contains(seat) ? Color.Success : Color.Warning;
+                }
+                else
+                    return clickedSeats.Contains(seat) ? Color.Success : Color.Tertiary;
+            }
+        }
+
+    }
+
+    async Task HandleSeatClick(SeatDto seat)
+    {
+
+        var soldSeat = _lstBookingForCompare.FirstOrDefault(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.SoldOut);
+        var keptSeat = _lstBookingForCompare.Where(x => x.SeatId == seat.Id && x.SeatStatus == EntityStatus.YourSeat && x.CreatedTime != createdTime).OrderByDescending(x => x.ExpiredTime).FirstOrDefault();
+
+        if (soldSeat != null) { return; }
+        else
+            if (keptSeat != null && keptSeat.ExpiredTime > createdTime) { return; }
+        else
+            if (_lstseatSelecteds.Count < 5)
+        {
+            if (clickedSeats.Contains(seat))
+            {
+                clickedSeats.Remove(seat);
+                _lstseatSelecteds.Remove(seat);
+                Total -= seat.Price;
+                await UpdateBookingSeat(seat, EntityStatus.Deleted);
+
+            }
+            else
+            {
+                clickedSeats.Add(seat);
+                _lstseatSelecteds.Add(seat);
+                Total += seat.Price;
+                await CreateBookingSeat(seat);
+            }
+        }
+        else _snackBar.Add("Đạt giới hạn ghế được chọn, không thể chọn thêm", Severity.Warning);
+
+
+    }
+    async Task CreateBookingSeat(SeatDto seat)
+    {
+        _bookingCreateRequest.SeatId = seat.Id;
+        _bookingCreateRequest.RoomId = Guid.Parse(roomId);
+        _bookingCreateRequest.CreatedTime = createdTime;
+        _bookingCreateRequest.ExpiredTime = createdTime.AddMinutes(2);
+        _bookingCreateRequest.SeatStatus = EntityStatus.YourSeat;
+        _bookingCreateRequest.DepartmentId = Guid.Parse(departmentId);
+        _bookingCreateRequest.FilmId = Guid.Parse(filmId); ;
+        _bookingCreateRequest.FilmScheduleId = Guid.Parse(filmScheduleId);
+        var result = await _bookingRepo.AddAsync(_bookingCreateRequest);
+        if (result)
+        {
+            _snackBar.Add("Thêm thành công!", Severity.Success);
+            _bookingRequest.SeatId = _bookingCreateRequest.SeatId;
+            _bookingRequest.RoomId = _bookingCreateRequest.RoomId;
+            _bookingRequest.CreatedTime = _bookingCreateRequest.CreatedTime;
+            _bookingRequest.ExpiredTime = _bookingCreateRequest.ExpiredTime;
+            _bookingRequest.SeatStatus = _bookingCreateRequest.SeatStatus;
+            _bookingRequest.DepartmentId = _bookingCreateRequest.DepartmentId;
+            _bookingRequest.FilmId = _bookingCreateRequest.FilmId;
+            _bookingRequest.FilmScheduleId = _bookingCreateRequest.FilmScheduleId;
+            var booking = await _bookingRepo.GetAllActive(_bookingRequest);
+            var bookingDto = booking.Data.FirstOrDefault();
+            if (bookingDto != null)
+                _lstBooking.Add(bookingDto);
+        }
+        else
+            _snackBar.Add("Thêm thất bại!", Severity.Error);
+
+    }
+    async Task UpdateBookingSeat(SeatDto seat, EntityStatus status)
+    {
+        var bookingUpdate = _lstBooking.FirstOrDefault(x => x.SeatId == seat.Id && x.RoomId.ToString() == roomId && x.DepartmentId.ToString() == departmentId && x.FilmId.ToString() == filmId && x.FilmScheduleId.ToString() == filmScheduleId && x.SeatStatus != EntityStatus.SoldOut);
+        if (bookingUpdate != null)
+        {
+            _bookingUpdateRequest.Id = bookingUpdate!.Id;
+            _bookingUpdateRequest.SeatStatus = status;
+        }
+        var result = await _bookingRepo.UpdateAsync(_bookingUpdateRequest);
+        if (result)
+        {
+            _snackBar.Add("Cập nhật thành công!", Severity.Success);
+
+        }
+        else
+            _snackBar.Add("Cập nhật thất bại!", Severity.Error);
+        StateHasChanged();
+
+    }
+    async Task GetListBooking()
+    {
+        _bookingRequest.RoomId = Guid.Parse(roomId);
+        _bookingRequest.DepartmentId = Guid.Parse(departmentId);
+        _bookingRequest.FilmId = Guid.Parse(filmId);
+        _bookingRequest.FilmScheduleId = Guid.Parse(filmScheduleId);
+        var result = await _bookingRepo.GetAllForCompare(_bookingRequest);
+        _lstBookingForCompare = result.Data.ToList();
+
+    }
+
+}
+
+
+

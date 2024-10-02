@@ -1,0 +1,167 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using URF_Cinema.Application.DataTransferObjects.User
+@using URF_Cinema.Application.DataTransferObjects.User.Request
+@using URF_Cinema.Application.ValueObjects.Common
+@using URF_Cinema.Manage.Components.Dialog.User;
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Domain.Entities;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using System.Security.Claims
+
+@page "/user/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+@inject AuthenticationStateProvider _authProvider;
+@inject ProtectedSessionStorage _session;
+@attribute [Authorize(Roles = "Admin,Staff")]
+
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách nhân viên</MudText>
+    <MudGrid>
+        <MudItem xs="8">
+            <MudButton @onclick="CreateDialog" Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+        </MudItem>
+        <MudItem xs="4">
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo mã" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+        </MudItem>
+    </MudGrid>
+    @if (_lst == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        if (_lst.Count == 0)
+        {
+            <MudAlert Severity="Severity.Warning" >Không có dữ liệu</MudAlert>
+        }
+        else
+        {
+            <MudTable Items="@_lst" Class="mt-4" Hover="true" FixedHeader="true">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Mã nhân viên</MudTh>
+                    <MudTh>Ảnh</MudTh>
+                    <MudTh>Họ và tên</MudTh>
+                    <MudTh>Số điện thoại</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Quyền</MudTh>
+                    <MudTh>Hành động</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Stt">@(_lst.IndexOf(context) + 1)</MudTd>
+                    <MudTd DataLabel="Mã nhân viên">@context.Code</MudTd>
+                    <MudTd DataLabel="Ảnh">
+                        <MudAvatar>
+                            <MudImage Src="@context.UrlImage"></MudImage>
+                        </MudAvatar>
+                    </MudTd>
+                    <MudTd DataLabel="Họ và Tên">@context.Name</MudTd>
+                    <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
+                    <MudTd DataLabel="Email">@context.Email</MudTd>
+                    <MudTd DataLabel="Quyền">@context.Role</MudTd>
+                    <MudTd>
+                        <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>   
+        }
+    }
+</MudPaper>
+<MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+    <MessageContent>
+        Xác nhận xóa nhân viên!
+    </MessageContent>
+    <YesButton>
+        <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+            Xác nhận
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
+@code {
+    [Inject]
+    public IUserRepo _userRepo{ get; set; }
+
+    public List<UserDto>? _lst { get; set; }
+
+    public ViewUserWithPaginationRequest obj = new() { PageSize = int.MaxValue - 1 };
+    public UserDeleteRequest _userDelete = new();
+
+    string searchString = "";
+
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog()
+    {
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
+
+        _dialogService.Show<Create>("Thêm mới nhân viên", closeOnEscapeKey);
+        await LoadData(searchString);
+    }
+
+    private async Task UpdateDialog(Guid Id)
+    {
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.idUser, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin nhân viên", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData(searchString);
+            StateHasChanged();
+        }
+    }
+
+    private List<string> _lstrole = new();
+
+    private async Task OnDeleteClicked(Guid Id)
+    {
+        var user = await _userRepo.GetByIdAsync(Id);
+        var data = user.Data;
+        _userDelete.Id = data.Id;
+        _userDelete.DeletedTime = DateTime.Now;
+        bool? result = await _mbox.ShowAsync();
+        StateHasChanged();
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        var removeConfirm = await _userRepo.RemoveAsync(_userDelete);
+        if (removeConfirm.Success)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+        }
+        await Task.Delay(2000);
+        await LoadData(searchString);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData(searchString);
+
+    }
+
+    private async Task LoadData(string textSearch)
+    {
+
+        obj.Name = textSearch;
+
+        var result = await _userRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
+        StateHasChanged();
+
+    }
+    async Task OnSearch(string debouncedText)
+    {
+        await LoadData(debouncedText);
+    }
+}

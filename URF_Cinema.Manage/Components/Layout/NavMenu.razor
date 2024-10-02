@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using URF_Cinema.Manage.Data.Extensions
+@inject AuthenticationStateProvider _authProvider;
+
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Statistic.BillStatistic">Doanh thu</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Statistic.FilmStatistic">Bộ phim ăn khách</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Department.List">Rạp</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.RoomLayout.List">Bố cục phòng chiếu</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Room.List">Phòng chiếu</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Seat.List">Ghế</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Film.List">Phim</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.FilmSchedule.List">Lịch Chiếu</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Bill.List">Hóa đơn</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Ticket.List">Vé</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.User.List">Nhân viên</MudNavLink>
+</MudNavMenu>
+<MudNavMenu Color="Color.Primary">
+    <MudNavLink Href="@RouteManager.Customer.List" Style="text-decoration:none;">Khách hàng</MudNavLink>
+</MudNavMenu>
+@code {
+    private MudTheme _customTheme = new()
+        {
+            // Palette = new Palette()
+            // {
+            //     Primary = "#F97E0C"
+            // }
+        };
+
+    private async Task HandleNavLinkClick()
+    {
+        // Perform any necessary logic before navigation
+        // Prevent the default behavior
+        await Task.CompletedTask;
+    }
+}

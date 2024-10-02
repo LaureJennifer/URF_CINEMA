@@ -1,0 +1,112 @@
+﻿@page "/room/{departmentId}/{customerId}/{filmId}/{filmScheduleId}/{roomId}"
+@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Application.DataTransferObjects.Room
+@using URF_Cinema.Application.DataTransferObjects.RoomLayout
+@using URF_Cinema.Manage.Components
+@using URF_Cinema.Manage.Repositories.Interfaces
+@if (roomId == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudPaper Square="true" Style="background-color:#04192E">
+
+        <MudContainer Fixed="true">
+            <MudCarousel Style="height:200px;color:#F5F5F5;" ShowArrows="@arrows" ShowBullets="@bullets" EnableSwipeGesture="@enableSwipeGesture" AutoCycle="@autocycle" TData="object">
+                <ChildContent>
+                    @if (_lst == null)
+                    {
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                    }
+                    else
+                    {
+                        if (_lst.Count <= 0)
+                        {
+                            <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+                        }
+                        else
+                        {
+                            @foreach (var item in _lst)
+                            {
+                                <MudCarouselItem Transition="transition" Class="ml-3">
+                                    <MudImage Src="@item.PosterURL" Style="width:97%;height:90%" Alt="Swedish Farm House" Elevation="25" Class="rounded-lg ma-4" />
+                                </MudCarouselItem>
+                            }
+                        }
+                    }
+                </ChildContent>
+            </MudCarousel>
+            <MudGrid>
+                <MudItem xs="12" md="12">
+                    @if (_roomLayoutDtoId != Guid.Empty)
+                    {
+                        <URF_Cinema.BlazorServer.Components.RoomLayout.RoomLayout filmId="@filmId" filmScheduleId="@filmScheduleId" roomId="@roomId" createdTime="@createdTime" departmentId="@departmentId" customerId="@customerId"></URF_Cinema.BlazorServer.Components.RoomLayout.RoomLayout>
+                    }
+                    else
+                    {
+                        <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+                    }
+                </MudItem>
+            </MudGrid>
+
+        </MudContainer>
+    </MudPaper>
+}
+
+@code {
+    [Parameter]
+    public string filmId { get; set; }
+    [Parameter]
+    public string filmScheduleId { get; set; }
+    [Parameter]
+    public string roomId { get; set; }
+    [Parameter]
+    public string customerId { get; set; }
+    [Parameter] 
+    public string departmentId { get; set; }
+    [Inject] IRoomRepo _roomRepo { get; set; }
+    [Inject] IRoomLayoutRepo _roomLayoutRepo { get; set; }
+    [Inject] IFilmRepo _filmRepo { get; set; }
+    DateTimeOffset createdTime = DateTimeOffset.UtcNow;
+    List<FilmDto>? _lst { get; set; }
+    Guid _roomLayoutDtoId { get; set; }
+    RoomLayoutDto _roomLayoutDto { get; set; }
+    int TotalSeconds = 300;
+    bool arrows = true;
+    bool bullets = true;
+    bool enableSwipeGesture = true;
+    bool autocycle = true;
+    Transition transition = Transition.Slide;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        await LoadLayout();
+    }
+
+    private async Task GetRoomById(string roomId)
+    {
+        var result = await _roomRepo.GetByIdAsync(Guid.Parse(roomId));
+        _roomLayoutDtoId = result.Data.RoomLayoutId;
+    }
+
+    private async Task LoadLayout()
+    {
+        await GetRoomById(roomId);
+        var result = await _roomLayoutRepo.GetByIdAsync(_roomLayoutDtoId);
+        _roomLayoutDto = result.Data;
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _filmRepo.GetAll();
+        _lst = result.Data.Data.ToList();
+    }
+
+    void CloseChip()
+    {
+        // Code..
+    }
+}
