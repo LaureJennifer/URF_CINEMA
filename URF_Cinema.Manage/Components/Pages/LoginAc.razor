@@ -1,0 +1,41 @@
+﻿@page "/login"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using URF_Cinema.Application.DataTransferObjects.Account
+@using URF_Cinema.Application.DataTransferObjects.Account.Request
+@using URF_Cinema.Application.DataTransferObjects.Customer
+@using URF_Cinema.Application.DataTransferObjects.Customer.Request
+@using URF_Cinema.Application.DataTransferObjects.Department
+@using URF_Cinema.Application.DataTransferObjects.Department.Request
+@using URF_Cinema.Application.DataTransferObjects.DepartmentFilm.Request
+@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Application.DataTransferObjects.Film.Request
+@using URF_Cinema.Application.DataTransferObjects.Role
+@using URF_Cinema.Application.DataTransferObjects.Role.Request
+@using URF_Cinema.Application.DataTransferObjects.User
+@using URF_Cinema.Application.DataTransferObjects.User.Request
+@using URF_Cinema.Manage.Components.Dialog.Login
+@using URF_Cinema.Manage.Components.Dialog.SignUp;
+@using URF_Cinema.Manage.Components.Dialog.ForgotPassword;
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using Newtonsoft.Json.Linq
+
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigation
+<MudItem xs="12" md="12" lg="12" Style="text-align:center">
+    <MudButton Class="mt-4" @onclick="OpenLoginDialog" Variant="MudBlazor.Variant.Filled" Icon="@Icons.Material.Filled.PersonPin" Style="background-color:#F2FFFF">Đăng nhập</MudButton>
+</MudItem>
+
+@code{
+    private void OpenLoginDialog()
+    {
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
+
+        DialogService.Show<Login>("", closeOnEscapeKey);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1000);
+    }
+}

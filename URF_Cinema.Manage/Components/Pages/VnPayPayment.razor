@@ -1,0 +1,85 @@
+﻿@using URF_Cinema.Application.DataTransferObjects.Seat
+@using URF_Cinema.Manage.Components
+@using URF_Cinema.Manage.Data.Extensions
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using MudBlazor
+@page "/pay/vnpay/{total}"
+
+<MudContainer>
+    <MudGrid>
+        <MudItem xs="4" Class="mb-4">
+            <MudText Class="d-flex justify-content-between align-items-center mb-3">
+                <MudText>Đơn hàng</MudText>
+                <MudBadge Color="Color.Secondary" Pill="true">1</MudBadge>
+            </MudText>
+            <MudList T="string" Dense="true">
+                <MudListItem Dense="true" Class="d-flex justify-content-between lh-condensed">
+                    <MudItem>
+                       @*  @for() *@
+                        <MudText Typo="Typo.h6"></MudText>
+                        <MudText Typo="Typo.caption">Thanh toán hóa đơn</MudText>
+                    </MudItem>
+                    <MudText Class="text-muted">@totalPrice.ToString("C0")₫</MudText>
+                </MudListItem>
+                <MudListItem Dense="true" Class="d-flex justify-content-between">
+                    <MudText>Tổng tiền thanh toán</MudText>
+                    <MudText Typo="Typo.body1">100.000₫</MudText>
+                </MudListItem>
+            </MudList>
+        </MudItem>
+
+        <MudItem xs="8">
+            <MudText Typo="Typo.h4">Chọn phương thức thanh toán:</MudText>
+            <MudText Typo="Typo.h5" Class="mb-3">Chuyển hướng sang VNPAY chọn phương thức thanh toán</MudText>
+            <MudRadioGroup T="string">
+                <MudRadio T="string" Checked="true">Cổng thanh toán VNPAYQR</MudRadio>
+            </MudRadioGroup>
+
+            <MudText Typo="Typo.h5" Class="mb-3">Tách phương thức thanh toán tại site của Merchant</MudText>
+            <MudRadioGroup T="string" @bind-value="SelectedOption">
+                <MudRadio T="string">Thanh toán qua ứng dụng hỗ trợ VNPAYQR</MudRadio>
+                <MudRadio T="string">ATM-Tài khoản ngân hàng nội địa</MudRadio>
+                <MudRadio T="string">Thanh toán qua thẻ quốc tế</MudRadio>
+            </MudRadioGroup>
+
+            <MudText Typo="Typo.h5">Chọn ngôn ngữ thanh toán:</MudText>
+            <MudRadioGroup T="string">
+                <MudRadio T="string" Checked="true">Tiếng việt</MudRadio>
+                <MudRadio T="string">Tiếng anh</MudRadio>
+            </MudRadioGroup>
+
+            <MudButton Variant="MudBlazor.Variant.Filled" Color="Color.Primary" OnClick="btnPay_Click">Thanh toán</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+@code{
+    [Parameter] public string total { set; get; }
+    public string SelectedOption { get; set; }
+    string Checked;
+
+    [Inject]
+    public ISeatRepo _seatRepo{ get; set; }
+    [Inject]
+    public IBillRepo _billRepo{ get; set; }
+    Decimal totalPrice { get; set; } = 0;
+
+    protected async override Task OnInitializedAsync()
+    {
+        totalPrice = decimal.Parse(total);
+        await Task.Delay(1000);
+    }
+    private void Reset()
+    {
+        SelectedOption = null;
+    }
+    private void btnPay_Click()
+    {
+        SelectedOption = null;
+    }
+    List<SeatDto> _lst = new();
+
+    public async Task GetSeat()
+    {
+        // var result = _seatRepo.Get
+    }
+}

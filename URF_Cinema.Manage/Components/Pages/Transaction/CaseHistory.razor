@@ -1,0 +1,134 @@
+﻿@page "/casehistory"
+@using URF_Cinema.Manage.Components
+@using URF_Cinema.Manage.Data.Extensions
+@using Dialog = URF_Cinema.Manage.Components.Dialog
+@inject NavigationManager manager;
+@inject IDialogService DialogService
+
+
+    <MudAppBar Style="background-color:#261D30" Fixed="false" Elevation="0">
+    <MudLink Href="/myaccount"><MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos" Color="Color.Inherit" Edge="Edge.Start" /></MudLink>
+    <MudText>Lịch sử giao dịch</MudText>
+        <MudSpacer />
+    </MudAppBar>
+    
+<MudPaper Height="1200px" Width="100%" Style="background-color:#180F20">
+    <MudContainer Fixed="true">
+        <MudPaper Height="0px" Width="100%" Square="true" Style="background-color:#180F20">
+            <MudGrid Style="background-color:#180F20">
+                <MudItem xs="12" md="8" Style="background-color:#180F20">
+                    <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
+                        <MudButton @onclick="OpenDialog" Variant="MudBlazor.Variant.Filled" Style="background-color:#180F20" FullWidth>
+                            <MudItem xs="12" md="4" Class="d-flex justify-center align-center" Style="height:10px;">
+                                <MudImage Src="https://tse2.mm.bing.net/th?id=OIP.28bgeV4gAtA0jQckI7dAUgHaMd&pid=Api&P=0&h=220" Width="100" Height="150" Alt="Swedish Farm House" Elevation="1" Class="rounded-lg ma-4" />
+                            </MudItem>
+                            <MudItem xs="12" md="8" Style="background-color:#180F20">
+                                <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
+                                    @* <MudPaper Class="pa-3" Elevation="6" Style="background-color:#180F20"> *@
+                                        <MudText Align="Align.Left" Style="color:white"> Tên phim: </MudText>
+                                        <MudText Align="Align.Left" Style="color:white"> Rạp chiếu: </MudText>
+                                        <MudText Align="Align.Left" Style="color:white"> Ngày chiếu: </MudText>
+                                        <MudText Align="Align.Left" Style="color:white"> Giờ chiếu: </MudText>
+                                        <MudText Align="Align.Left" Style="color:white"> Phòng chiếu: </MudText>
+                                        <MudText Align="Align.Left" Style="color:white"> Ghế ngồi: </MudText>
+                                    @* </MudPaper> *@
+                                </MudPaper>
+                            </MudItem>
+                        </MudButton>
+                    </MudPaper>
+                    <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
+                        <MudButton @onclick="OpenDialog" Variant="MudBlazor.Variant.Filled" Style="background-color:#180F20" FullWidth>
+                            <MudItem xs="12" md="4" Class="d-flex justify-center align-center" Style="height:10px;">
+                                <MudImage Src="https://tse2.mm.bing.net/th?id=OIP.28bgeV4gAtA0jQckI7dAUgHaMd&pid=Api&P=0&h=220" Width="100" Height="150" Alt="Swedish Farm House" Elevation="1" Class="rounded-lg ma-4" />
+                            </MudItem>
+                            <MudItem xs="12" md="8" Style="background-color:#180F20">
+                                <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
+                                    @* <MudPaper Class="pa-3" Elevation="6" Style="background-color:#180F20"> *@
+                                    <MudText Align="Align.Left" Style="color:white"> Tên phim: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Rạp chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Ngày chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Giờ chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Phòng chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Ghế ngồi: </MudText>
+                                    @* </MudPaper> *@
+                                </MudPaper>
+                            </MudItem>
+                        </MudButton>
+                    </MudPaper>
+                    <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
+                        <MudButton @onclick="OpenDialog" Variant="MudBlazor.Variant.Filled" Style="background-color:#180F20" FullWidth>
+                            <MudItem xs="12" md="4" Class="d-flex justify-center align-center" Style="height:10px;">
+                                <MudImage Src="https://tse2.mm.bing.net/th?id=OIP.28bgeV4gAtA0jQckI7dAUgHaMd&pid=Api&P=0&h=220" Width="100" Height="150" Alt="Swedish Farm House" Elevation="1" Class="rounded-lg ma-4" />
+                            </MudItem>
+                            <MudItem xs="12" md="8" Style="background-color:#180F20">
+                                <MudPaper Class="pa-4 mt-6 mt-lg-16" Elevation="0" Style="background-color:#180F20">
+                                    @* <MudPaper Class="pa-3" Elevation="6" Style="background-color:#180F20"> *@
+                                    <MudText Align="Align.Left" Style="color:white"> Tên phim: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Rạp chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Ngày chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Giờ chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Phòng chiếu: </MudText>
+                                    <MudText Align="Align.Left" Style="color:white"> Ghế ngồi: </MudText>
+                                    @* </MudPaper> *@
+                                </MudPaper>
+                            </MudItem>
+                        </MudButton>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    </MudContainer>
+</MudPaper>
+<MudPaper Height="180px" Width="100%" Style="background-color:#261D30">
+    <MudContainer Fixed="true">
+        <MudPaper Height="0px" Width="100%" Square="true">
+            <MudPaper Class=" pa-4 align-start d-flex" Style="width: 100%; background-color:#261D30;" Outlined="true">
+                <MudPaper Class="pa-3" Elevation="6" Style="background-color:#261D30">
+                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 380px; background-color:#261D30" Outlined="true">
+                        <MudText Align="Align.Left" Style="color:white" Typo="Typo.h6">URF CINEMAS</MudText>
+                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
+                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
+                        <MudText Align="Align.Left" Style="color:white">URF Mỹ Đình, Hà Nội - Hotline 0349485127</MudText>
+                    </MudGrid>
+                </MudPaper>
+                <MudSpacer />
+                <MudPaper Class="pa-3" Elevation="6">
+                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 150px; background-color:#261D30" Outlined="true">
+                        <MudText Style="color:white" Typo="Typo.h6">FOLLOW US</MudText>
+                        <MudText Style="color:white">
+                            <MudIcon Icon="@Icons.Custom.Brands.Facebook"
+                                     Style="color:white" />
+                        </MudText>
+                    </MudGrid>
+                </MudPaper>
+                <MudSpacer />
+                <MudPaper Class="pa-3" Elevation="6">
+                    <MudGrid Class=" pa-4 align-start d-flex" Style="width: 380px; background-color:#261D30" Outlined="true">
+                        <MudText Style="color:white" Typo="Typo.body1" Align="Align.Right">HOTLINE : 0349485127, 0349485127</MudText>
+                        <MudText Style="color:white">Email : trangdkph46130@gmail.com</MudText>
+                    </MudGrid>
+                </MudPaper>
+            </MudPaper>
+        </MudPaper>
+    </MudContainer>
+</MudPaper>
+    
+
+@code {
+    // private MudTheme _customTheme = new()
+    //     {
+    //         Palette = new Palette()
+    //         {
+    //             Primary = CustomPalette.DarkBackgroundColor
+    //         }
+    //     };
+    private void open()
+    {
+        manager.NavigateTo("");
+    }
+    private void OpenDialog()
+    {
+        // var options = new MudBlazor.DialogOptions { CloseOnEscapeKey = true };
+        // DialogService.Show<Dialog>("Simple Dialog", options);
+    }
+}

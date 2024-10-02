@@ -1,0 +1,225 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor
+@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Application.DataTransferObjects.Film.Request
+@using URF_Cinema.Manage.Data.ValueObjects.Common
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Domain.Entities
+@using URF_Cinema.Domain.Enums
+@using static MudBlazor.CategoryTypes
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Code" Required="true" ErrorText="@GetErrorText(_filmDto.Code)" Placeholder="Mã phim*" Validation="ValidateCode" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Title" Required="true" ErrorText="@GetErrorText(_filmDto.Title)" Placeholder="Tên phim*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.DirectedBy" Required="true" ErrorText="@GetErrorText(_filmDto.DirectedBy)" Placeholder="Đạo diễn*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Actor" Required="true" ErrorText="@GetErrorText(_filmDto.Actor)" Placeholder="Diễn viên*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Language" Required="true" ErrorText="@GetErrorText(_filmDto.Language)" Placeholder="Ngôn ngữ*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Genres" Required="true" ErrorText="@GetErrorText(_filmDto.Genres)" Placeholder="Thể loại*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudDatePicker @bind-date="_releaseDate" Required="true" ErrorText="@GetError(_releaseDate)" Placeholder="Ngày khởi chiếu*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Duration" Required="true" ErrorText="@GetErrorText(_filmDto.Duration)" Placeholder="Thời lượng*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.Script" Required="true" ErrorText="@GetErrorText(_filmDto.Script)" Placeholder="Định dạng phim*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_filmDto.AgeRating" Required="true" ErrorText="@GetErrorText(_filmDto.AgeRating)" Placeholder="Độ tuổi*" />
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
+                     <ActivatorContent>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">Ảnh</MudButton>
+                     </ActivatorContent>
+                </MudFileUpload>
+            </MudItem>
+            @if (imageUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@imageUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadPosterFiles">
+                     <ActivatorContent>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">Ảnh</MudButton>
+                     </ActivatorContent>
+                </MudFileUpload>
+            </MudItem>
+            @if (posterUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@posterUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+        <MudGrid Class="mt-3">
+            <MudItem xs="6" sm="6" md="6">
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadTrailerFiles">
+                     <ActivatorContent>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload">Ảnh</MudButton>
+                     </ActivatorContent>
+                </MudFileUpload>
+            </MudItem>
+            @if (trailerUrl != null)
+            {
+                <MudItem xs="6" sm="6" md="6">
+                    <MudImage Style="width:60%;" Src="@trailerUrl" />
+                </MudItem>
+            }
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
+    [Inject]
+    public IFilmRepo _filmRepo { get; set; }
+
+    public FilmDto _filmDto = new();
+    private List<FilmDto> _lstFilm { get; set; }
+
+    public FilmCreateRequest obj = new();
+    public ViewFilmWithPaginationRequest film_ = new();
+
+    public string imageUrl { get; set; } = "";
+    public string posterUrl { get; set; } = "";
+    public string trailerUrl { get; set; } = "";
+
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    ImageHandle imageHandle = new();
+    DateTime? _releaseDate { get; set; }
+
+
+    private async Task UploadFiles(IBrowserFile file)
+    {
+        imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
+        files.Add(file);
+    }
+
+    private async Task UploadPosterFiles(IBrowserFile file)
+    {
+        posterUrl = @"\poster\Film\" + await imageHandle.AddImage(file, "Film");
+        files.Add(file);
+    }
+
+    private async Task UploadTrailerFiles(IBrowserFile file)
+    {
+        posterUrl = @"\trailer\Film\" + await imageHandle.AddImage(file, "Film");
+        files.Add(file);
+    }
+
+    private async Task OnButtonClicked()
+    {
+        obj.Code = _filmDto.Code;
+        obj.Title = _filmDto.Title;
+        obj.DirectedBy = _filmDto.DirectedBy;
+        obj.Actor = _filmDto.Actor;
+        obj.Language = _filmDto.Language;
+        obj.UrlImage = imageUrl;
+        obj.PosterURL = posterUrl;
+        obj.TrailerURL = trailerUrl;
+        obj.Genres = _filmDto.Genres;
+        obj.Duration = _filmDto.Duration;
+        DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
+        obj.ReleaseDate = releaseDATE;
+        obj.Script = _filmDto.Script;
+        obj.AgeRating = _filmDto.AgeRating;
+
+        bool? confirm = await DialogService.ShowMessageBox(
+     "Xác nhận",
+     "Bạn có chắc thêm mới?",
+     yesText: "Xác nhận", cancelText: "Hủy");
+        if (confirm == true)
+        {
+            var result = await _filmRepo.AddAsync(obj);
+            if (result == true)
+            {
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Thêm thành công", Severity.Success);
+                _navigate.NavigateTo("/film/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Thêm thất bại",
+                        Severity.Error
+                );
+            }
+        }
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _filmRepo.GetAllActive(film_);
+        if (result != null)
+        {
+            _lstFilm = result.Data.Data.ToList();
+        }
+    }
+
+    void Cancel() => _mudDialog.Cancel();
+
+    private string GetError(DateTime? date)
+    {
+        if (date == null)
+        {
+            return "Vui lòng chọn ngày khởi chiếu.";
+        }
+        return string.Empty;
+    }
+
+    private string GetErrorText(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return "Vui lòng nhập giá trị.";
+        }
+
+        // Kiểm tra các điều kiện khác (nếu cần)
+
+        return null;
+    }
+    private string ValidateCode(string value)
+    {
+        if (_lstFilm.Any(d => d.Code == value))
+        {
+            return "Mã phim đã tồn tại.";
+        }
+
+        return null;
+    }
+}

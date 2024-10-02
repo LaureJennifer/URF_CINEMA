@@ -1,0 +1,331 @@
+﻿@page "/film-statistic"
+
+@using MudBlazor
+@using URF_Cinema.Application.DataTransferObjects.Bill
+@using URF_Cinema.Application.DataTransferObjects.Bill.Request
+@using URF_Cinema.Application.DataTransferObjects.Department
+@using URF_Cinema.Application.DataTransferObjects.Department.Request
+@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Application.DataTransferObjects.Film.Request
+@using URF_Cinema.Application.Interfaces.Repositories.ReadOnly
+@using URF_Cinema.Application.Interfaces.Services
+@using URF_Cinema.Application.ValueObjects.Common
+@using URF_Cinema.Application.ValueObjects.Pagination
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Infrastructure.ViewModels.Statistic.Bill
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
+@if (_lstDepartmentForSelect != null && _lstMonthForSelect != null)
+{
+    <MudGrid>
+        <MudItem xs="3" md="3">
+            <MudSelect T="string" Label="Rạp" HelperText="@(selectedYear == null ?"*Chọn năm":"")" Value="@selectedDepartmentId" ValueChanged="OnSelectedDepartment">
+                @foreach (var department in _lstDepartmentForSelect)
+                {
+                    <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                }
+                <MudSelectItem T="string" Value="@(Guid.Empty.ToString())">Tất cả các phim</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="3" md="3">
+            <MudSelect T="string" Label="Thống kê" Value="@selectedOption" HelperText="@(selectedDepartmentId == null ?"*Chọn cơ sở":"")" ValueChanged="(str)=>OnSelectedOption(str)">
+                <MudSelectItem T="string" Value="@("filmStatisticForMonth")">theo tháng</MudSelectItem>
+                <MudSelectItem T="string" Value="@("filmStatisticForQuarter")">theo quý</MudSelectItem>
+                <MudSelectItem T="string" Value="@("filmStatisticForYear")">theo năm</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        @if (_showListMonth)
+        {
+            <MudItem xs="3" md="3">
+                <MudSelect T="string" Label="Tháng" Value="@selectedMonth" HelperText="@(selectedDepartmentId == null ?"*Chọn cơ sở":"")" ValueChanged="(str)=>OnSelectedMonth(str)">
+                    @foreach (var month in _lstMonthForSelect)
+                    {
+                        <MudSelectItem T="string" Value="@($"{month}")">Tháng @month</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        }
+        @if (_showListQuarter)
+        {
+            <MudItem xs="3" md="3">
+                <MudSelect T="string" Label="Quý" Value="@selectedQuarter" HelperText="@(selectedDepartmentId == null ?"*Chọn cơ sở":"")" ValueChanged="(str)=>OnSelectedQuarter(str)">
+                    @foreach (var quarter in _lstQuarterForSelect)
+                    {
+                        <MudSelectItem T="string" Value="@($"{quarter}")">Quý @quarter</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        }
+
+
+        <MudItem xs="3" md="3">
+            <MudSelect T="string" Label="Năm" Value="@selectedYear" ValueChanged="OnSelectedYear">
+                @foreach (var year in _lstYearForSelect)
+                {
+                    <MudSelectItem T="string" Value="@($"{year}")"></MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+
+    </MudGrid>
+    <MudGrid>
+        <MudItem xs="12" md="10">
+            <MudText Class="d-flex align-center" Color="Color.Default" Typo="Typo.h6">
+                <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.LabelImportant"></MudIcon> Thống kê bộ phim ăn khách
+            </MudText>
+        </MudItem>
+
+    </MudGrid>
+
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" md="1"></MudItem>
+        <MudItem xs="12" md="10">
+            @if (filmStatistics == null)
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+            else
+            {
+                @if (filmStatistics.Count > 0)
+                {
+                    <MudTable Items="@filmStatistics">
+                        <HeaderContent>
+                            <MudTh>STT</MudTh>
+                            <MudTh>Tên phim</MudTh>
+                            <MudTh>Lượt xem</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="STT">@(filmStatistics.IndexOf(context) + 1)</MudTd>
+                            <MudTd DataLabel="Film Name">@context.FilmName</MudTd>
+                                <MudTd DataLabel="Total Views">@context.TotalViews</MudTd>
+                            </RowTemplate>
+                            <PagerContent>
+                                <MudTablePager />
+                            </PagerContent>
+                        </MudTable>
+                }
+            }
+        </MudItem>
+        <MudItem xs="12" md="1"></MudItem>
+    </MudGrid>
+}
+else
+{
+    <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+}
+
+@code {
+    [Inject] private IFilmStatisticRepo _filmStatisticRepo { get; set; }
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+    PaginationResponse<FilmStatisticForQuarterDto> _top10FilmStatisticForQuarterDtos { get; set; }
+    PaginationResponse<FilmStatisticForMonthDto> _top10FilmStatisticForMonthDtos { get; set; }
+    PaginationResponse<FilmStatisticForYearDto> _top10FilmStatisticForYearDtos { get; set; }
+    List<FilmStatisticForQuarterDto> _filmStatisticForQuarterDtos { get; set; }
+    List<FilmStatisticForMonthDto> _filmStatisticForMonthDtos { get; set; }
+    List<FilmStatisticForYearDto> _filmStatisticForYearDtos { get; set; }
+    List<DepartmentDto>? _lstDepartmentForSelect { get; set; }
+    List<string>? _lstYearForSelect { get; set; } = new List<string>(){"2024"};
+    List<string>? _lstMonthForSelect { get; set; } = new List<string>() { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" };
+    List<string>? _lstQuarterForSelect = new List<string>() { "1", "2", "3", "4" };
+    string? selectedDepartmentId { get; set; }
+    string? selectedDepartment { get; set; }
+    string? selectedOption { get; set; } = "filmStatisticForMonth";
+    string? selectedYear { get; set; } = "2024";
+    string? selectedMonth { get; set; } = "4";
+    string? selectedQuarter { get; set; }
+    FilmStatisticRequest _filmStatisticRequest = new() { PageSize = int.MaxValue-1 };
+    ViewDepartmentWithPaginationRequest _request = new(){PageSize = 50};
+    List<FilmStatistic> filmStatistics = new();
+    bool _showListMonth { get; set; } = true;
+    bool _showListQuarter { get; set; } = false;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDepartmentForSelect();
+
+        await LoadTimeForSelect();
+
+    }
+
+    private async Task LoadDepartmentForSelect()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartmentForSelect = result.Data.Data.ToList();
+        selectedDepartmentId = _lstDepartmentForSelect.First().Id.ToString();
+    }
+
+    private async Task LoadGeneral(string option)
+    {
+        switch (option)
+        {
+            case "filmStatisticForMonth":
+                var resultMonth = await _filmStatisticRepo.GetFilmStatisticsForMonthAsync(_filmStatisticRequest);
+                _filmStatisticForMonthDtos = resultMonth;
+                break;
+            case "filmStatisticForQuarter":
+                var resultQuarter = await _filmStatisticRepo.GetFilmStatisticsForQuarterAsync(_filmStatisticRequest);
+                _filmStatisticForQuarterDtos = resultQuarter;
+                break;
+            case "filmStatisticForYear":
+                var resultYear = await _filmStatisticRepo.GetFilmStatisticsForYearAsync(_filmStatisticRequest);
+                _filmStatisticForYearDtos = resultYear;
+                break;
+            default:
+                break;
+        }
+    }
+
+    async Task OnSelectedDepartment(string idDepartment)
+    {
+        selectedDepartmentId = idDepartment;
+
+        await OnSelectedOption(selectedOption);
+    }
+
+    async Task OnSelectedMonth(string month)
+    {
+        selectedMonth = month;
+        await OnSelectedOption(selectedOption);
+    }
+
+    async Task OnSelectedQuarter(string quarter)
+    {
+        selectedQuarter = quarter;
+        await OnSelectedOption(selectedOption);
+    }
+
+    private async Task LoadTimeForSelect()
+    {
+        var result = await _filmStatisticRepo.GetFilmStatisticsForMonthAsync(_filmStatisticRequest);
+        if (result.Count!=0)
+            _lstYearForSelect = result.OrderBy(x => x.Year).Select(x => x.Year.ToString()).Distinct().ToList();
+    }
+
+    async Task OnSelectedYear(string year)
+    {
+        selectedYear = year;
+        await OnSelectedOption(selectedOption);
+
+    }
+
+    async Task OnSelectedOption(string option)
+    {
+        selectedOption = option;
+        await LoadGeneral(selectedOption);
+        if (selectedDepartmentId != Guid.Empty.ToString())
+        {
+            selectedDepartment = _lstDepartmentForSelect.FirstOrDefault(x => x.Id == Guid.Parse(selectedDepartmentId)).Name;
+        }
+
+        switch (selectedOption)
+        {
+            case "filmStatisticForMonth":
+                _showListMonth = true;
+                _showListQuarter = false;
+                if (_filmStatisticForMonthDtos != null)
+                {
+
+
+                    if (selectedDepartmentId == Guid.Empty.ToString())
+                    {
+                        filmStatistics = _filmStatisticForMonthDtos
+                        .Where(dto => dto.Month.ToString() == selectedMonth && dto.Year.ToString() == selectedYear)
+                        .GroupBy(dto => dto.FilmName)
+                        .Select(group => new FilmStatistic
+                            {
+                                FilmName = group.Key,
+                                TotalViews = group.Sum(dto => dto.Views)
+                            })
+                        .OrderByDescending(dto => dto.TotalViews)
+                        .Take(10)
+                        .ToList();
+                    }
+                    else
+                    {
+
+                        filmStatistics = _filmStatisticForMonthDtos
+                                     .Where(f => f.Month.ToString() == selectedMonth && f.Year.ToString() == selectedYear && f.DepartmentName == selectedDepartment)
+                                     .OrderByDescending(f => f.Views)
+                                     .Take(10)
+                                     .Select(f => new FilmStatistic { FilmName = f.FilmName, TotalViews = f.Views })
+                                     .ToList();
+                    }
+                }
+                break;
+            case "filmStatisticForQuarter":
+                _showListMonth = false;
+                _showListQuarter = true;
+                if (_filmStatisticForQuarterDtos != null)
+                {
+
+                    if (selectedDepartmentId == Guid.Empty.ToString())
+                    {
+
+                        filmStatistics = _filmStatisticForQuarterDtos
+                        .Where(dto => dto.Quarter.ToString() == selectedQuarter && dto.Year.ToString() == selectedYear)
+                        .GroupBy(dto => dto.FilmName)
+                        .Select(group => new FilmStatistic
+                            {
+                                FilmName = group.Key,
+                                TotalViews = group.Sum(dto => dto.Views)
+                            })
+                        .OrderByDescending(dto => dto.TotalViews)
+                        .Take(10)
+                        .ToList();
+                    }
+                    else
+                    {
+                        filmStatistics = _filmStatisticForQuarterDtos
+                                     .Where(f => f.Quarter.ToString() == selectedQuarter && f.Year.ToString() == selectedYear && f.DepartmentName == selectedDepartment)
+                                     .OrderByDescending(f => f.Views)
+                                     .Take(10)
+                                     .Select(f => new FilmStatistic { FilmName = f.FilmName, TotalViews = f.Views })
+                                     .ToList();
+                    }
+
+                }
+                break;
+            case "filmStatisticForYear":
+                _showListMonth = false;
+                _showListQuarter = false;
+                if (_filmStatisticForYearDtos != null)
+                {
+                    if (selectedDepartmentId == Guid.Empty.ToString())
+                    {
+
+                        filmStatistics = _filmStatisticForYearDtos
+                            .Where(dto => dto.Year.ToString() == selectedYear)
+                            .GroupBy(dto => dto.FilmName)
+                            .Select(group => new FilmStatistic
+                                {
+                                    FilmName = group.Key,
+                                    TotalViews = group.Sum(dto => dto.Views)
+                                })
+                            .OrderByDescending(dto => dto.TotalViews)
+                            .Take(10)
+                            .ToList();
+                    }
+                    else
+                    {
+                        filmStatistics = _filmStatisticForYearDtos.Where(f => f.Year.ToString() == selectedYear && f.DepartmentName == selectedDepartment)
+                            .GroupBy(f => f.FilmName)
+                            .Select(group => new FilmStatistic
+                                {
+                                    FilmName = group.Key,
+                                    TotalViews = group.Sum(f => f.Views)
+                                })
+                            .OrderByDescending(f => f.TotalViews)
+                            .Take(10)
+                            .ToList();
+                    }
+                }
+                break;
+        }
+        StateHasChanged();
+    }
+
+    public class FilmStatistic
+    {
+        public string FilmName { get; set; }
+        public int TotalViews { get; set; }
+    }
+}
+

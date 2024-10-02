@@ -1,0 +1,84 @@
+﻿@page "/customer/details/{customerId}"
+@using URF_Cinema.Application.DataTransferObjects.Customer
+@using URF_Cinema.Application.DataTransferObjects.User
+@using URF_Cinema.Domain.Entities
+@using URF_Cinema.Infrastructure.Extensions
+@inject EntityStatusExtensions _convert;
+@* @attribute [Authorize(Roles = "ADMIN")] *@
+
+<MudText Color="Color.Primary" Class="mb-5" Typo="Typo.h4">Thông tin chi tiết nhân viên</MudText>
+
+@if (_customerDto == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" md="6" Style="margin-top:32px">
+            <MudSimpleTable>
+                <MudTr>
+                    <MudTd>Mã khách hàng</MudTd>
+                    <MudTd DataLabel="UserCode">@_customerDto.Code</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Tên khách hàng</MudTd>
+                    <MudTd DataLabel="UserName">@_customerDto.Name</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd DataLabel="Ảnh">
+                        <MudImage Src="@_customerDto.UrlImage"></MudImage>
+                    </MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Số căn cước công dân</MudTd>
+                    <MudTd DataLabel="UserIdentificationNumber">@_customerDto.IdentificationNumber</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Email</MudTd>
+                    <MudTd DataLabel="UserEmail">@_customerDto.Email</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Số điện thọai</MudTd>
+                    <MudTd DataLabel="CustomerPhoneNumber">@_customerDto.PhoneNumber</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Địa chỉ</MudTd>
+                    <MudTd DataLabel="UserAddress">@_customerDto.Address</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Ngày sinh</MudTd>
+                    <MudTd DataLabel="CustomerDateOfBirth">@_customerDto.DateOfBirth</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Giới tính</MudTd>
+                    <MudTd DataLabel="UserGender">@_customerDto.Gender</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Tổng chi tiêu</MudTd>
+                    <MudTd DataLabel="UserTotalSpent">@_customerDto.TotalSpent</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Tổng điểm khách hàng</MudTd>
+                    <MudTd DataLabel="UserTotalLoyaltyPoints">@_customerDto.TotalLoyaltyPoints</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Thời hạn của điểm</MudTd>
+                    <MudTd DataLabel="UserLoyaltyPointsExpiry">@_customerDto.LoyaltyPointsExpiry</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Loại khách hàng</MudTd>
+                    <MudTd DataLabel="UserType">@_customerDto.CustomerType</MudTd>
+                </MudTr>
+                <MudTr>
+                    <MudTd>Trạng thái</MudTd>
+                    <MudTd>@_convert.ConvertForGeneral(_customerDto.Status)</MudTd>
+                </MudTr>
+            </MudSimpleTable>
+        </MudItem>
+    </MudGrid>
+}
+@code {
+    CustomerDto _customerDto = new CustomerDto();
+    
+}

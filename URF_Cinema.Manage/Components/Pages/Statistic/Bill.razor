@@ -1,0 +1,382 @@
+﻿@page "/bill-statistic"
+@using URF_Cinema.Application.DataTransferObjects.Bill
+@using URF_Cinema.Application.DataTransferObjects.Bill.Request
+@using URF_Cinema.Application.DataTransferObjects.Department
+@using URF_Cinema.Application.DataTransferObjects.Department.Request
+@using URF_Cinema.Application.Interfaces.Repositories.ReadOnly
+@using URF_Cinema.Application.Interfaces.Services
+@using URF_Cinema.Application.ValueObjects.Common
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Infrastructure.ViewModels.Statistic.Bill
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
+@if (_lstDepartment != null)
+{
+    <MudGrid>
+        <MudItem xs="3" md="3">
+            <MudSelect T="string" Label="Rạp" HelperText="@(selectedYear == null ?"*Chọn năm":"")" Value="@selectedDepartmentId" ValueChanged="OnSelectedDepartment">
+                @foreach (var department in _lstDepartment)
+                {
+                    <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                }
+                <MudSelectItem T="string" Value="@(Guid.Empty.ToString())">Tất cả các rạp</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="3" md="3">
+            <MudSelect T="string" Label="Thống kê" Value="@selectedOption" HelperText="@(selectedDepartmentId == null ?"*Chọn cơ sở":"")" ValueChanged="(str)=>OnSelectedOption(str)">
+                <MudSelectItem T="string" Value="@("billStatisticForMonth")">theo tháng</MudSelectItem>
+                <MudSelectItem T="string" Value="@("billStatisticForQuarter")">theo quý</MudSelectItem>
+                <MudSelectItem T="string" Value="@("billStatisticForYear")">theo năm</MudSelectItem>
+            </MudSelect>
+        </MudItem>
+        @if (selectedOption == "billStatisticForMonth" || selectedOption == "billStatisticForQuarter")
+        {
+            <MudItem xs="3" md="3">
+                <MudSelect T="string" Label="Năm" Value="@selectedYear" ValueChanged="OnSelectedYear">
+                    @foreach (var year in _lstYearForSelect)
+                    {
+                        <MudSelectItem T="string" Value="@($"{year}")"></MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        }
+
+    </MudGrid>
+    <MudGrid>
+        <MudItem xs="12" md="10">
+            <MudText Class="d-flex align-center" Color="Color.Default" Typo="Typo.h6">
+                <MudIcon Color="Color.Primary" Icon="@Icons.Material.Filled.LabelImportant"></MudIcon> Thống kê doanh thu
+            </MudText>
+        </MudItem>
+
+    </MudGrid>
+
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" md="10">
+            @if (_hasError)
+            {
+                <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+            }
+            else
+            {
+
+                <MudItem xs="12" md="12">
+                    <div style="height:60vh; max-height:500px;" id="bill-statistic"></div>
+                </MudItem>
+            }
+        </MudItem>
+
+    </MudGrid>
+
+}
+else
+{
+    <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+}
+
+@code {
+
+    [Inject] IJSRuntime jsRuntime { get; set; }
+    [Inject] private IBillStatisticRepo _billStatisticRepo { get; set; }
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+    BillStatisticRequest _billStatisticRequest = new(){PageSize = int.MaxValue-1};
+    ViewDepartmentWithPaginationRequest _request = new(){PageSize=50};
+    List<DepartmentDto>? _lstDepartment { get; set; }
+    List<BillStatisticForQuarterDto> _billStatisticForQuarterDtos { get; set; }
+    List<BillStatisticForMonthDto> _billStatisticForMonthDtos { get; set; }
+    List<BillStatisticForYearDto> _billStatisticForYearDtos { get; set; }
+    List<string> customPalette = new List<string>() { "#FF0000", "#FFA500", "#FFFF00", "#00FF00", "#00FFFF", "#0000FF", "#8A2BE2", "#FF00FF", "#800080", "#FFC0CB", "#008000", "#800000" };
+    List<string>? _lstYearForSelect { get; set; } = new List<string>() { "2024" };
+    string? selectedDepartmentId { get; set; }
+    string? selectedDepartment { get; set; }
+    string? selectedOption = "billStatisticForMonth";
+    string? selectedYear { get; set; } = "2024";
+    string label = "Doanh thu";
+    bool _hasError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDepartmentForSelect();
+
+        await LoadYearForSelect();
+
+    }
+
+    private async Task LoadDepartmentForSelect()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data.Data.ToList();
+        selectedDepartmentId = _lstDepartment.First().Id.ToString();
+    }
+
+    private async Task LoadGeneral(string option)
+    {
+        switch (option)
+        {
+            case "billStatisticForMonth":
+                var resultMonth = await _billStatisticRepo.GetBillStatisticsForMonthAsync(_billStatisticRequest);
+                _billStatisticForMonthDtos = resultMonth;
+                break;
+            case "billStatisticForQuarter":
+                var resultQuarter = await _billStatisticRepo.GetBillStatisticsForQuarterAsync(_billStatisticRequest);
+                _billStatisticForQuarterDtos = resultQuarter;
+                break;
+            case "billStatisticForYear":
+                var resultYear = await _billStatisticRepo.GetBillStatisticsForYearAsync(_billStatisticRequest);
+                _billStatisticForYearDtos = resultYear;
+                break;
+            default:
+                break;
+        }
+    }
+
+    async Task OnSelectedDepartment(string idDepartment)
+    {
+        selectedDepartmentId = idDepartment;
+
+        await OnSelectedOption(selectedOption);
+    }
+
+    private async Task LoadYearForSelect()
+    {
+        _billStatisticRequest.PageNumber = 1;
+        _billStatisticRequest.PageSize = 50;
+        var result = await _billStatisticRepo.GetBillStatisticsForYearAsync(_billStatisticRequest);
+        if (result.Count != 0)
+        _lstYearForSelect = result.OrderBy(x => x.Year).Select(x => x.Year.ToString()).Distinct().ToList();
+        
+    }
+
+    async Task OnSelectedYear(string year)
+    {
+        selectedYear = year;
+
+        await OnSelectedOption(selectedOption);
+
+    }
+
+    async Task OnSelectedOption(string option)
+    {
+        selectedOption = option;
+        await LoadGeneral(selectedOption);
+        if (selectedDepartmentId != Guid.Empty.ToString())
+        {
+            selectedDepartment = _lstDepartment.FirstOrDefault(x => x.Id == Guid.Parse(selectedDepartmentId)).Name;
+        }
+
+
+        switch (selectedOption)
+        {
+            case "billStatisticForMonth":
+                List<string> months = new() { "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" };
+
+                if (_billStatisticForMonthDtos != null)
+                {
+
+                    if (string.IsNullOrEmpty(selectedYear))
+                    {
+                        if (selectedDepartmentId == Guid.Empty.ToString())
+                        {
+                            var result = Enumerable.Range(1, 12)
+                            .GroupJoin(
+                                _billStatisticForMonthDtos.Where(x => x.Year == 2024)
+                                    .GroupBy(x => x.Month)
+                                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Revenue)),
+                                month => month,
+                                dto => dto.Key,
+                                (month, dtos) => dtos.FirstOrDefault().Value != null ? dtos.FirstOrDefault().Value : 0.0
+                            )
+                            .ToList();
+
+                            await GenerChart(customPalette, months, label, result);
+                        }
+                        else
+                        {
+                            var result = Enumerable.Range(1, 12)
+                                    .GroupJoin(
+                                        _billStatisticForMonthDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == 2024),
+                                        month => month,
+                                        dto => dto.Month,
+                                        (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                    )
+                                    .ToList();
+
+                            await GenerChart(customPalette, months, label, result);
+                        }
+                    }
+                    else
+                    {
+
+                        if (selectedDepartmentId == Guid.Empty.ToString())
+                        {
+                            var result = Enumerable.Range(1, 12)
+                            .GroupJoin(
+                                _billStatisticForMonthDtos.Where(x => x.Year.ToString() ==selectedYear)
+                                    .GroupBy(x => x.Month)
+                                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Revenue)),
+                                month => month,
+                                dto => dto.Key,
+                                (month, dtos) => dtos.FirstOrDefault().Value != null ? dtos.FirstOrDefault().Value : 0.0
+                            )
+                            .ToList();
+
+                            await GenerChart(customPalette, months, label, result);
+                        }
+                        else
+                        {
+                            var result = Enumerable.Range(1, 12)
+                                        .GroupJoin(
+                                            _billStatisticForMonthDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == Convert.ToInt32(selectedYear)),
+                                            month => month,
+                                            dto => dto.Month,
+                                            (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                        )
+                                        .ToList();
+
+                            await GenerChart(customPalette, months, label, result);
+                        }
+                    }
+                }
+                break;
+            case "billStatisticForQuarter":
+                List<string> quarters = new() { "Quý 1", "Quý 2", "quý 3", "quý 4" };
+
+                if (_billStatisticForQuarterDtos != null)
+                {
+                    if (string.IsNullOrEmpty(selectedYear))
+                    {
+                        if (selectedDepartmentId == Guid.Empty.ToString())
+                        {
+
+                            var result = Enumerable.Range(1, 4)
+                            .GroupJoin(
+                                _billStatisticForQuarterDtos.Where(x => x.Year == 2024)
+                                    .GroupBy(x => x.Quarter)
+                                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Revenue)),
+                                quarter => quarter,
+                                dto => dto.Key,
+                                (month, dtos) => dtos.FirstOrDefault().Value != null ? dtos.FirstOrDefault().Value : 0.0
+                            )
+                            .ToList();
+
+                            await GenerChart(customPalette, quarters, label, result);
+                        }
+                        else
+                        {
+                            var result = Enumerable.Range(1, 4)
+                                    .GroupJoin(
+                                        _billStatisticForQuarterDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == 2024),
+                                        quarter => quarter,
+                                        dto => dto.Quarter,
+                                        (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                    )
+                                    .ToList();
+
+                            await GenerChart(customPalette, quarters, label, result);
+                        }
+                    }
+                    else
+                    {
+                        if (selectedDepartmentId == Guid.Empty.ToString())
+                        {
+                            var result = Enumerable.Range(1, 4)
+                            .GroupJoin(
+                                _billStatisticForQuarterDtos.Where(x => x.Year.ToString() == selectedYear)
+                                    .GroupBy(x => x.Quarter)
+                                    .ToDictionary(g => g.Key, g => g.Sum(x => x.Revenue)),
+                                quarter => quarter,
+                                dto => dto.Key,
+                                (month, dtos) => dtos.FirstOrDefault().Value != null ? dtos.FirstOrDefault().Value : 0.0
+                            )
+                            .ToList();
+
+                            await GenerChart(customPalette, quarters, label, result);
+                        }
+                        else
+                        {
+                            var result = Enumerable.Range(1, 4)
+                                        .GroupJoin(
+                                            _billStatisticForQuarterDtos.Where(x => x.DepartmentName == selectedDepartment && x.Year == Convert.ToInt32(selectedYear)),
+                                            quarter => quarter,
+                                            dto => dto.Quarter,
+                                            (month, dtos) => dtos.FirstOrDefault()?.Revenue ?? 0
+                                        )
+                                        .ToList();
+
+                            await GenerChart(customPalette, quarters, label, result);
+                        }
+
+                    }
+                }
+                break;
+            case "billStatisticForYear":
+                selectedYear = " ";
+                if (_billStatisticForYearDtos != null)
+                {
+                    if (selectedDepartmentId == Guid.Empty.ToString())
+                    {
+                        var resultDictionary = _billStatisticForYearDtos
+                         .GroupBy(x => x.Year)
+                         .Select(g => new
+                         {
+                             Year = g.Key,
+                             TotalRevenue = g.Sum(x => x.Revenue)
+                         })
+                         .ToList();
+                        var result = resultDictionary.OrderBy(x => x.Year).Select(x => x.TotalRevenue).ToList();
+
+                        await GenerChart(customPalette, _lstYearForSelect, label, result);
+                    }
+                    else
+                    {
+                        var result = _lstYearForSelect.OrderBy(year => year).Select(year => _billStatisticForYearDtos
+                          .Where(dto => dto.Year.ToString() == year && dto.DepartmentName == selectedDepartment)
+                          .Select(dto => dto.Revenue).FirstOrDefault()).ToList();
+
+                        await GenerChart(customPalette, _lstYearForSelect, label, result);
+                    }
+                }
+                break;
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+
+            if (string.IsNullOrEmpty(selectedYear))
+            {
+                if (_lstYearForSelect != null)
+                {
+                    if (_lstYearForSelect!.Count > 0)
+                    {
+                        await OnSelectedYear(_lstYearForSelect.First().ToString());
+
+                        StateHasChanged();
+                    }
+                    if (string.IsNullOrWhiteSpace(selectedDepartment))
+                    {
+                        if (_lstDepartment != null)
+                        {
+                            if (_lstDepartment!.Count > 0)
+                            {
+                                OnSelectedDepartment(selectedDepartmentId);
+                                await OnSelectedOption(selectedOption);
+
+                                StateHasChanged();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    async Task GenerChart(List<string> customPalette, List<String> years, string label, List<double> result)
+    {
+        await jsRuntime.InvokeVoidAsync("createStatisticBarChart", customPalette, years, label, result, "bill-statistic");
+
+    }
+}
+

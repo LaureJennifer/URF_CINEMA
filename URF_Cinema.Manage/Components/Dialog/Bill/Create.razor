@@ -1,0 +1,120 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using URF_Cinema.Application.DataTransferObjects.Bill
+@using URF_Cinema.Application.DataTransferObjects.Bill.Request
+@using URF_Cinema.Application.DataTransferObjects.Customer
+@using URF_Cinema.Manage.Data.ValueObjects.Common
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Domain.Enums
+@using static MudBlazor.CategoryTypes
+
+@inject IDialogService DialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
+
+<MudDialog>
+    <DialogContent>
+        <MudGrid>
+            <MudItem xs="6" sm="6" md="6">
+                <MudSelect T="string" Placeholder="Khách hàng" Class="mb-2"
+                           AnchorOrigin="Origin.BottomCenter" @bind-Value="@customerId" For="@(() => customerId)">
+                    @foreach (var item in _lstCustomer)
+                    {
+                        <MudSelectItem Value="@item.Id.ToString()">@item.Name</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_billDto.TotalPrice" Placeholder="Tổng tiền*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_billDto.TicketQuantity" Placeholder="Tổng vé*" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudDatePicker Placeholder="Ngày tạo*" DateFormat="dd/MM/yyyy" @bind-Value="_billDto.CreatedTime" />
+            </MudItem>
+            <MudItem xs="6" sm="6" md="6">
+                <MudTextField @bind-Value="_billDto.Description" Placeholder="Mô tả*" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_billDto.Status" For="@(() => _billDto.Status)">
+                    <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Pending">Chờ</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForActivation">Chờ hoạt động</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForConfirmation">Chờ kích hoạt</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
+                    <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Primary" OnClick="OnButtonClicked">Thêm mới</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
+
+    [Inject]
+    public IBillRepo _billRepo { get; set; }
+
+    public BillDto _billDto = new();
+    public List<BillDto> _lstBill = new();
+    List<CustomerDto> _lstCustomer = new();
+
+    private string customerId;
+
+    public BillCreateRequest obj = new();
+    public ViewBillWithPaginationRequest bill_ = new();
+
+    private async Task OnButtonClicked()
+    {
+        obj.CustomerId = Guid.Parse(customerId);
+        obj.TotalPrice = _billDto.TotalPrice;
+        obj.Description = _billDto.Description;
+        bool? confirm = await DialogService.ShowMessageBox(
+     "Xác nhận",
+     "Bạn có chắc thêm mới?",
+     yesText: "Xác nhận", cancelText: "Hủy");
+        if (confirm == true)
+        {
+            var result = await _billRepo.AddAsync(obj);
+            if (result == true)
+            {
+                _mudDialog.Close(DialogResult.Ok(true));
+                _snackbar.Add("Thêm thành công", Severity.Success);
+                _navigate.NavigateTo("/bill/list");
+                StateHasChanged();
+            }
+            else
+            {
+                _snackbar.Add
+                (
+                    "Thêm thất bại",
+                        Severity.Error
+                );
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+
+        var result = await _billRepo.GetAllActive(bill_);
+        if (result != null)
+        {
+            _lstBill = result.Data.Data.ToList();
+        }
+    }
+
+
+    void Cancel() => _mudDialog.Cancel();
+}

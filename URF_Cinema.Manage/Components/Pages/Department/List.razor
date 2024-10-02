@@ -1,0 +1,288 @@
+﻿@using URF_Cinema.Application.DataTransferObjects.Department
+@using URF_Cinema.Application.DataTransferObjects.Department.Request
+@using URF_Cinema.Application.ValueObjects.Common
+@using URF_Cinema.Manage.Components.Dialog.Department;
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Domain.Entities;
+@using URF_Cinema.Domain.Enums
+@using URF_Cinema.Infrastructure.Extensions
+
+@page "/department/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+@inject EntityStatusExtensions _entityStatusExtensions
+@* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
+
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Typo="Typo.h4">Danh sách rạp</MudText>
+    <MudGrid Class="mb-3">
+        <MudItem xs="9" md="9" lg="9">
+            <MudButton @onclick="CreateDialog" Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+        </MudItem>
+        <MudItem xs="3" md="3" lg="3">
+            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo tên" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+        </MudItem>
+    </MudGrid>
+    @if (_lst == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        if (_lst.Count == 0)
+        {
+            <MudAlert Severity="Severity.Warning">Không có dữ liệu</MudAlert>
+        }
+        else
+        {
+            <MudTable Items="@_lst" Class="mt-4 ">
+                <HeaderContent>
+                    <MudTh>STT</MudTh>
+                    <MudTh>Mã Rạp</MudTh>
+                    <MudTh>Tên Rạp</MudTh>
+                    <MudTh>Địa chỉ</MudTh>
+                    <MudTh>Số điện thoại</MudTh>
+                    <MudTh>Email</MudTh>
+                    <MudTh>Chức năng</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="STT">@(_lst.IndexOf(context) + 1)</MudTd>
+                    <MudTd DataLabel="Mã Rạp">@context.Code</MudTd>
+                    <MudTd DataLabel="Tên Rạp">@context.Name</MudTd>
+                    <MudTd DataLabel="Địa chỉ">@context.Address @GetAddressDetails(context.AddressCode)</MudTd>
+                    <MudTd DataLabel="Số điện thoại">@context.PhoneNumber</MudTd>
+                    <MudTd DataLabel="Email">@context.Email</MudTd>
+                    <MudTd>
+                        <MudIconButton OnClick="@(async()=> await UpdateDialog(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+            <MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+                <MessageContent>
+                    Xác nhận xóa rạp!
+                </MessageContent>
+                <YesButton>
+                    <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+                        Xác nhận
+                    </MudButton>
+                </YesButton>
+            </MudMessageBox>
+        }
+    }
+</MudPaper>
+
+@code {
+    [Inject]
+    public IDepartmentRepo _departmentRepo { get; set; }
+
+    public List<DepartmentDto>? _lst { get; set; }
+
+    public ViewDepartmentWithPaginationRequest obj = new () { PageSize = int.MaxValue - 1 };
+    public DepartmentDeleteRequest _departmentDelete = new();
+
+    string searchString = string.Empty;
+    [Parameter]
+    public Guid idDepartment { set; get; }
+
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog()
+    {
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
+
+        _dialogService.Show<Create>("Thêm mới rạp", closeOnEscapeKey);
+        await LoadData(string.Empty);
+        StateHasChanged();
+    }
+
+    private async Task UpdateDialog(Guid Id)
+    {
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(x => x.idDepartment, Id);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin rạp", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            await LoadData(string.Empty);
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnDeleteClicked(Guid Id)
+    {
+        var user = await _departmentRepo.GetByIdAsync(Id);
+        var data = user.Data;
+        _departmentDelete.Id = data.Id;
+        _departmentDelete.DeletedTime = DateTime.Now;
+        bool? result = await _mbox.ShowAsync();
+        StateHasChanged();
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        var removeConfirm = await _departmentRepo.RemoveAsync(_departmentDelete);
+        if (removeConfirm.Success)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại" + removeConfirm.Errors, Severity.Error);
+        }
+        await Task.Delay(2000);
+        await LoadData(string.Empty);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await LoadData(string.Empty);
+
+    }
+    async Task OnSearch(string debouncedText)
+    {
+        await LoadData(debouncedText);
+    }
+
+    private async Task LoadData(string name)
+    {
+        if (!string.IsNullOrEmpty(name))
+        {
+            obj.Name = name;
+
+        }
+        else obj.Name = string.Empty;
+
+        var result = await _departmentRepo.GetAllActive(obj);
+        _lst = result.Data.Data.ToList();
+        StateHasChanged();
+
+    }
+
+    public string GetAddressDetails(string addressCode)
+    {
+        string[] parts = addressCode.Split('-');
+        try
+        {
+            if (parts.Length == 3)
+            {
+                string country = ConvertForCountry(parts[0]);
+                string city = ConvertForCity(parts[1]);
+                string district = ConvertForDistrict(parts[2]);
+
+                return ($" quận {district} - thành phố {city} - quốc gia {country}");
+            }
+            else
+            {
+                return "Mã không hợp lệ";
+            }
+        }
+        catch(Exception ex)
+        {
+            return "Lỗi" + ex.Message;
+        }
+
+    }
+    public string ConvertForCountry(string status)
+    {
+        switch (status)
+        {
+            case "01":
+                return "Việt Nam";
+            case "03":
+                return "Trung Quốc";
+            case "02":
+                return "Mỹ";
+            case "04":
+                return "Canada";
+            case "05":
+                return "Đức";
+            case "06":
+                return "Singapore";
+        }
+
+        return "N/A";
+    }
+    public string ConvertForDistrict(string status)
+    {
+        switch (status)
+        {
+            case "10":
+                return "Thanh Khê";
+            case "09":
+                return "Cẩm Lệ";
+            case "01":
+                return "Ba Đình";
+            case "03":
+                return "Nam Từ Liêm";
+            case "08":
+                return "Tân Phú";
+            case "02":
+                return "Cầu Giấy";
+            case "04":
+                return "Hai Bà Trưng";
+            case "06":
+                return "Trường Ninh";
+            case "05":
+                return "Manhattan";
+            case "11":
+                return "Tân Uyên";
+            case "12":
+                return "Thuận An";
+            case "07":
+                return "Bình Tân";
+        }
+        return "N/A";
+    }
+
+    public string ConvertForCity(string status)
+    {
+        switch (status)
+        {
+            case "01":
+                return "Hà Nội";
+            case "13":
+                return "NewYork";
+            case "09":
+                return "Quảng Bình";
+            case "07":
+                return "Bắc Ninh";
+            case "10":
+                return "Bình Dương";
+            case "12":
+                return "Thẩm Quyến";
+            case "14":
+                return "Vancouver";
+            case "06":
+                return "Tuyên Quang";
+            case "03":
+                return "Thanh Hóa";
+            case "02":
+                return "Hồ Chí Minh";
+            case "04":
+                return "Đà Nẵng";
+            case "19":
+                return "Hà Giang";
+            case "08":
+                return "Quảng Ngãi";
+            case "05":
+                return "Bắc Kạn";
+            case "16":
+                return "Lai Châu";
+            case "17":
+                return "Sơn La";
+            case "11":
+                return "Thượng Hải";
+            case "15":
+                return "Berlin";
+            case "18":
+                return "Cao Bằng";
+        }
+        return "N/A";
+    }
+}

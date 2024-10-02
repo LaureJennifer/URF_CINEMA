@@ -1,0 +1,287 @@
+﻿@using URF_Cinema.Application.DataTransferObjects.Department
+@using URF_Cinema.Application.DataTransferObjects.Department.Request
+@using URF_Cinema.Application.DataTransferObjects.DepartmentFilm.Request
+@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Application.DataTransferObjects.Film.Request
+@using URF_Cinema.Application.DataTransferObjects.FilmDetail
+@using URF_Cinema.Application.DataTransferObjects.FilmDetail.Request
+@using URF_Cinema.Application.DataTransferObjects.FilmSchedule
+@using URF_Cinema.Application.DataTransferObjects.FilmSchedule.Request
+@using URF_Cinema.Application.DataTransferObjects.FilmScheduleRoom.Request
+@using URF_Cinema.Application.DataTransferObjects.Room
+@using URF_Cinema.Application.DataTransferObjects.Room.Request
+@using URF_Cinema.Manage.Components.Dialog.Filmschedule;
+@using URF_Cinema.Manage.Repositories.Interfaces
+@using URF_Cinema.Domain.Entities;
+
+@page "/filmschedule/list"
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
+@inject NavigationManager _navigate;
+@if (_lstDepartment != null)
+{
+
+    <MudGrid Class="mb-3">
+        <MudItem xs="6" md="6">
+            <MudButton OnClick="@(async()=> await CreateDialog(Guid.Parse(selectedFilmId),Guid.Parse(selectedDepartmentId)))" Variant="MudBlazor.Variant.Filled" Color="Color.Success"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
+        </MudItem>
+        <MudItem xs="3" md="3">
+            <MudSelect T="string" Label="Rạp" Value="@selectedDepartmentId" ValueChanged="(str)=>OnSelectedDepartment(str)">
+                @foreach (var department in _lstDepartment)
+                {
+                    <MudSelectItem T="string" Value="@(department.Id.ToString())">@department.Name</MudSelectItem>
+                }
+                <MudSelectItem T="string" Value="@(Guid.Empty.ToString())">Tất cả các rạp</MudSelectItem>
+            </MudSelect>
+
+        </MudItem>
+        @if (_lstFilmByDepartment == null)
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            <MudItem xs="3" md="3">
+                <MudSelect T="string" Label="Phim" Value="@selectedFilmId" ValueChanged="(str)=>OnSelectedFilm(str)">
+                    @foreach (var film in _lstFilmByDepartment)
+                    {
+                        <MudSelectItem T="string" Value="@(film.Id.ToString())">@film.Title</MudSelectItem>
+                    }
+                    <MudSelectItem T="string" Value="@(Guid.Empty.ToString())">Tất cả các phim</MudSelectItem>
+                </MudSelect>
+
+            </MudItem>
+        }
+    </MudGrid>
+
+}
+<MudPaper Class="pa-5">
+    <MudGrid>
+        <MudItem xs="8">
+            <MudText Class="mt-3" Typo="Typo.h4">Danh sách Lịch Chiếu</MudText>
+        </MudItem>
+
+    </MudGrid>
+
+
+    @if (_filmBySelect == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        if (filmScheduleDtos != null)
+        {
+            <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+                      Items="@filmScheduleByOrder"
+                      GroupBy="@_groupDefinition"
+                      GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+                      Class="mud-table-background-custom">
+                <ColGroup>
+                    <col style="width: 50px;" />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                </ColGroup>
+                <HeaderContent>
+                    <MudTh></MudTh>
+                    <MudTh></MudTh>
+                    <MudTh Style="text-align: center">Giờ chiếu</MudTh>
+                    <MudTh Style="text-align: center">Phòng chiếu</MudTh>
+                    <MudTh Style="text-align: center">Chức năng</MudTh>
+                </HeaderContent>
+                <GroupHeaderTemplate>
+                    <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{context.GroupName}: {context.Key}") </MudTh>
+                </GroupHeaderTemplate>
+                <RowTemplate>
+                    <MudTd DataLabel=""></MudTd>
+                    <MudTd DataLabel=""></MudTd>
+                    <MudTd DataLabel="Time" Style="text-align: center">@context.ShowTime.ToLocalTime().ToString("hh:mm tt")</MudTd>
+                    <MudTd DataLabel="Rooms" Style="text-align: center">
+                        @foreach (var room in @context.Rooms.DistinctBy(x=> x.Id))
+                        {
+                            @if (room.DepartmentId.ToString() == selectedDepartmentId)
+                            {
+                                @($"{room.Code}  ")
+
+                            }
+
+                        }
+                    </MudTd>
+
+                    <MudTd DataLabel="Function" Style="text-align: center">
+                        <MudIconButton OnClick="@(async()=> await UpdateDialog(Guid.Parse(selectedFilmId),Guid.Parse(selectedDepartmentId),context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Warning" Icon="@Icons.Material.Filled.BorderColor"></MudIconButton>
+                        <MudIconButton OnClick="@(async()=> await OnDeleteClicked(context.Id))" Variant="MudBlazor.Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+
+                    </MudTd>
+                </RowTemplate>
+
+            </MudTable>
+        }
+        else
+        {
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+
+    }
+</MudPaper>
+<MudMessageBox @ref="_mbox" Title="Xác nhận" CancelText="Hủy">
+    <MessageContent>
+        Xác nhận xóa lịch chiếu!
+    </MessageContent>
+    <YesButton>
+        <MudButton Color="Color.Primary" OnClick="OnConfirmDelete">
+            Xác nhận
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code {
+
+    [Inject] public IDepartmentRepo _departmentRepo { get; set; }
+    [Inject] public IFilmScheduleRepo _filmScheduleRepo { get; set; }
+    ViewDepartmentWithPaginationRequest _request = new() { PageSize = 50 };
+    List<DepartmentDto>? _lstDepartment { get; set; }
+    string? selectedDepartmentId { get; set; }
+    string? selectedFilmId { get; set; }
+    [Inject] public IFilmRepo _filmRepo { get; set; }
+    public List<Guid>? _lstFilmId { get; set; } = new();
+    [Inject] public IDepartmentFilmRepo _departmentFilmRepo { get; set; }
+    public ViewDepartmentFilmWithPaginationRequest _viewDepartmentFilmWithPaginationRequest = new() { PageSize = int.MaxValue - 1 };
+    public List<FilmDto>? _lstFilmByDepartment { get; set; } = new();
+    public FilmDto? _filmBySelect { get; set; } = new();
+    List<Guid>? _lstRoomId { get; set; } = new();
+    FilmScheduleDeleteRequest _filmScheduleDeleteRequest = new();
+    List<FilmScheduleDto> filmScheduleDtos { get; set; } = new();
+    List<FilmScheduleDto>? filmScheduleByOrder { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDepartmentForSelect();
+        filmScheduleByOrder = filmScheduleDtos.OrderBy(x => x.ShowDate).ToList();
+    }
+
+    private async Task LoadDepartmentForSelect()
+    {
+        var result = await _departmentRepo.GetAllActive(_request);
+        _lstDepartment = result.Data!.Data!.ToList();
+        selectedDepartmentId = _lstDepartment.First().Id.ToString();
+        await LoadDepartmentFilm(_lstDepartment.First().Id.ToString());
+    }
+
+    async Task OnSelectedDepartment(string idDepartment)
+    {
+        selectedDepartmentId = idDepartment;
+
+        await LoadDepartmentFilm(selectedDepartmentId);
+        StateHasChanged();
+    }
+
+    private async Task LoadDepartmentFilm(string idDepartment)
+    {
+        _viewDepartmentFilmWithPaginationRequest.DepartmentId = Guid.Parse(idDepartment);
+        var result = await _departmentFilmRepo.GetAllActive(_viewDepartmentFilmWithPaginationRequest);
+        _lstFilmId = result.Data!.Data!.Select(x => x.FilmId).ToList();
+        await LoadListFilmForSelectByDepartment(_lstFilmId);
+    }
+
+    private async Task LoadListFilmForSelectByDepartment(List<Guid> lstFilmId)
+    {
+        _lstFilmByDepartment = new();
+        foreach (var filmID in lstFilmId)
+        {
+            var result = await _filmRepo.GetByIdAsync(filmID);
+            var film = result.Data;
+            if (film != null)
+                _lstFilmByDepartment.Add(film);
+        }
+        if (_lstFilmByDepartment != null && selectedFilmId == null)
+        {
+            selectedFilmId = _lstFilmByDepartment.First().Id.ToString();
+            _filmBySelect = _lstFilmByDepartment.First(x => x.Id.ToString() == selectedFilmId);
+            filmScheduleDtos = _filmBySelect.FilmSchedules.Where(x => x.Status != Domain.Enums.EntityStatus.Deleted).ToList();
+            filmScheduleByOrder = filmScheduleDtos.OrderBy(x => x.ShowDate).ToList();
+        }
+    }
+    async Task OnSelectedFilm(string idFilm)
+    {
+        selectedFilmId = idFilm;
+        if (_lstFilmByDepartment != null)
+        {
+            _filmBySelect = _lstFilmByDepartment.First(x => x.Id.ToString() == idFilm);
+            filmScheduleDtos = _filmBySelect.FilmSchedules.Where(x => x.Status != Domain.Enums.EntityStatus.Deleted).ToList();
+            StateHasChanged();
+        }
+        filmScheduleByOrder = filmScheduleDtos.OrderBy(x => x.ShowDate).ToList();
+        await Task.Delay(100);
+    }
+    // add list room -> lịch chiếu -> phim -> cơ sở
+    async Task AddListRoom(Guid idRoom)
+    {
+        _lstRoomId!.Add(idRoom);
+        await Task.Delay(100);
+    }
+
+    private TableGroupDefinition<FilmScheduleDto> _groupDefinition = new()
+        {
+            GroupName = "Ngày chiếu",
+            Indentation = false,
+            Expandable = true,
+            IsInitiallyExpanded = false,
+            Selector = (e) => e.ShowDate.ToLocalTime().ToString("dd/MM/yyyy")
+        };
+
+    MudMessageBox _mbox { get; set; }
+
+    private async Task CreateDialog(Guid? filmId, Guid? departmentId)
+    {
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters();
+        parameters.Add(nameof(Create.idFilm), filmId);
+        parameters.Add(nameof(Create.idDepartment), departmentId);
+        _dialogService.Show<Create>("Thêm mới lịch chiếu", parameters, closeOnEscapeKey);
+        await Task.Delay(200);
+        StateHasChanged();
+    }
+    private async Task UpdateDialog(Guid? filmId, Guid? departmentId, Guid? filmScheduleId)
+    {
+        var parameters = new DialogParameters<Update>();
+        parameters.Add(nameof(Update.idFilm), filmId);
+        parameters.Add(nameof(Update.idDepartment), departmentId);
+        parameters.Add(nameof(Update.idFilmSchedule), filmScheduleId);
+        var dialog = await _dialogService.ShowAsync<Update>("Sửa thông tin phim", parameters);
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            _navigate.NavigateTo("/filmschedule/list", forceLoad: true);
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnDeleteClicked(Guid idFilmSchedule)
+    {
+
+        _filmScheduleDeleteRequest.Id = idFilmSchedule;        
+        bool? result = await _mbox.ShowAsync();
+        
+    }
+
+    public async Task OnConfirmDelete()
+    {
+        
+        var removeConfirm = await _filmScheduleRepo.DeleteAsync(_filmScheduleDeleteRequest);
+        if (removeConfirm)
+        {
+            _snackbar.Add("Xóa thành công", Severity.Success);
+            _navigate.NavigateTo("/filmschedule/list", forceLoad: true);
+        }
+        else
+        {
+            _snackbar.Add("Xóa thất bại", Severity.Error);
+        }
+        await Task.Delay(1000);
+        
+    }
+
+
+}
