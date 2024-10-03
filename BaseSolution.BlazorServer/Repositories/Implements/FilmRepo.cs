@@ -1,4 +1,5 @@
-﻿using BaseSolution.Application.DataTransferObjects.Customer;
+﻿using Azure;
+using BaseSolution.Application.DataTransferObjects.Customer;
 using BaseSolution.Application.DataTransferObjects.Customer.Request;
 using BaseSolution.Application.DataTransferObjects.Film;
 using BaseSolution.Application.DataTransferObjects.Film.Request;
@@ -6,20 +7,45 @@ using BaseSolution.Application.ValueObjects.Response;
 using BaseSolution.BlazorServer.Data;
 using BaseSolution.BlazorServer.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using static Google.Apis.Requests.BatchRequest;
 
 namespace BaseSolution.BlazorServer.Repositories.Implements
 {
     public class FilmRepo : IFilmRepo
     {
-        public async Task<bool> AddAsync(FilmCreateRequest request)
+        public async Task<string> AddAsync(FilmCreateRequest request)
         {
-            var client = new HttpClient
+            //var client = new HttpClient
+            //{
+            //    BaseAddress = new Uri("https://localhost:7005")
+            //};
+            //var obj = await client.PostAsJsonAsync("api/Films", request); ;
+            //return obj.IsSuccessStatusCode;
+
+            try
             {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var obj = await client.PostAsJsonAsync("api/Films", request); ;
-            return obj.IsSuccessStatusCode;
+                var client = new HttpClient
+                {
+                    BaseAddress = new Uri("https://localhost:7005")
+                };
+                var obj = await client.PostAsJsonAsync("api/films", request); ;
+                if(obj.IsSuccessStatusCode)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    var errorDetails = await obj.Content.ReadAsStringAsync();
+                    return $"API trả về lỗi: {errorDetails}";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Trả về thông báo lỗi
+                return ex.Message; // Hoặc một thông điệp chi tiết hơn
+            }
         }
 
         public async Task<FilmListWithPaginationViewModel> GetAll()
@@ -85,6 +111,24 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             };
             var obj = await client.PutAsJsonAsync("api/Films", request);
             return obj.IsSuccessStatusCode;
+            #region
+            //var client = new HttpClient
+            //{
+            //    BaseAddress = new Uri("https://localhost:7005")
+            //};
+
+            //var obj = await client.PutAsJsonAsync("api/Films", request);
+            //if(obj.IsSuccessStatusCode)
+            //{
+            //    return string.Empty;
+            //}
+            //else
+            //{
+            //    var errorDetails = await obj.Content.ReadAsStringAsync();
+            //    Console.WriteLine(errorDetails);
+            //    return $"Cập nhật thất bại: {errorDetails}";
+            //}
+            #endregion
         }
     }
 }

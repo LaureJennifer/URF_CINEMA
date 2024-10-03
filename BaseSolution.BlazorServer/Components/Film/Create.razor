@@ -117,20 +117,76 @@
 
     private async Task UploadFiles(IBrowserFile file)
     {
-        imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
-        files.Add(file);
+        // imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
+        // Console.WriteLine(imageUrl); // Test
+        // files.Add(file);
+
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        imageUrl = $"/image/Film/{fileName}"; 
+        Console.WriteLine(imageUrl); // Test
+        files.Add(file); 
     }
 
     private async Task UploadPosterFiles(IBrowserFile file)
     {
-        posterUrl = @"\poster\Film\" + await imageHandle.AddImage(file, "Film");
-        files.Add(file);
+        var posterFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "poster");
+
+        if (!Directory.Exists(posterFolderPath))
+        {
+            Directory.CreateDirectory(posterFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(posterFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        posterUrl = $"/poster/{fileName}"; 
+        Console.WriteLine(posterUrl); // Test
+        files.Add(file); 
     }
 
     private async Task UploadTrailerFiles(IBrowserFile file)
     {
-        posterUrl = @"\trailer\Film\" + await imageHandle.AddImage(file, "Film");
-        files.Add(file);
+        // trailerUrl = @"\trailer\" + await imageHandle.AddImage(file, "Film");
+        // Console.WriteLine(trailerUrl); //Test
+        // files.Add(file);
+
+
+        var trailerFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "trailer");
+
+        if (!Directory.Exists(trailerFolderPath))
+        {
+            Directory.CreateDirectory(trailerFolderPath);
+        }
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(trailerFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        trailerUrl = $"/trailer/{fileName}"; 
+        Console.WriteLine(trailerUrl); 
+        files.Add(file); 
     }
 
     private async Task OnButtonClicked()
@@ -144,33 +200,48 @@
         obj.PosterURL = posterUrl;
         obj.TrailerURL = trailerUrl;
         obj.Genres = _filmDto.Genres;
-        obj.Duration = _filmDto.Duration;
+        obj.Duration = _filmDto.Duration + "min";
         DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
         obj.ReleaseDate = releaseDATE;
+        obj.Description = "Day la mot bo phim moi";
         obj.Script = _filmDto.Script;
         obj.AgeRating = _filmDto.AgeRating;
 
         bool? confirm = await DialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc thêm mới?",
-     yesText: "Xác nhận", cancelText: "Hủy");
+            "Xác nhận",
+            "Bạn có chắc thêm mới?",
+            yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
         {
-            var result = await _filmRepo.AddAsync(obj);
-            if (result == true)
+            // var result = await _filmRepo.AddAsync(obj);
+            // if (result == true)
+            // {
+            //     _mudDialog.Close(DialogResult.Ok(true));
+            //     _snackbar.Add("Thêm thành công", Severity.Success);
+            //     _navigate.NavigateTo("/film/list");
+            //     StateHasChanged();
+            // }
+            // else
+            // {
+            //     _snackbar.Add
+            //     (
+            //         "Thêm thất bại",
+            //             Severity.Error
+            //     );
+            // }
+
+            // Minh: Cap nhat code phan them , do code cu khong the them duoc
+            var resultMessage = await _filmRepo.AddAsync(obj);
+            if (string.IsNullOrEmpty(resultMessage))
             {
                 _mudDialog.Close(DialogResult.Ok(true));
                 _snackbar.Add("Thêm thành công", Severity.Success);
                 _navigate.NavigateTo("/film/list");
                 StateHasChanged();
             }
-            else
+            else 
             {
-                _snackbar.Add
-                (
-                    "Thêm thất bại",
-                        Severity.Error
-                );
+                _snackbar.Add(resultMessage, Severity.Error); 
             }
         }
     }

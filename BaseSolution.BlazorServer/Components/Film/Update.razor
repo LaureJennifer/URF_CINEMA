@@ -59,7 +59,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="Placeholder" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -74,7 +74,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadPosterFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="Placeholder" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh Bìa</MudButton>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Ảnh Bìa</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
@@ -89,10 +89,11 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudFileUpload T="IBrowserFile" FilesChanged="UploadTrailerFiles">
                     <ButtonTemplate>
-                        <MudButton HtmlTag="Placeholder" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Trailer</MudButton>
+                        <MudButton HtmlTag="label" Variant="MudBlazor.Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" for="@context">Trailer</MudButton>
                     </ButtonTemplate>
                 </MudFileUpload>
             </MudItem>
+
             @if (trailerUrl != null)
             {
                 <MudItem xs="6" sm="6" md="6">
@@ -122,6 +123,8 @@
     public string posterUrl { get; set; } = "";
     public string trailerUrl { get; set; } = "";
 
+
+
     [Parameter]
     public Guid idFilm { set; get; }
 
@@ -132,7 +135,25 @@
 
     private async Task UploadFiles(IBrowserFile file)
     {
-        imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
+        // imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
+        // files.Add(file);
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        imageUrl = $"/image/Film/{fileName}";
+        Console.WriteLine(imageUrl); // Test
         files.Add(file);
     }
 
@@ -150,14 +171,15 @@
 
     private async Task OnButtonClicked()
     {
+        obj.Id = _filmDto.Id;
         obj.Code = _filmDto.Code;
         obj.Title = _filmDto.Title;
         obj.DirectedBy = _filmDto.DirectedBy;
         obj.Actor = _filmDto.Actor;
         obj.Language = _filmDto.Language;
-        obj.UrlImage = imageUrl;
-        obj.PosterURL = posterUrl;
-        obj.TrailerURL = trailerUrl;
+        obj.UrlImage = _filmDto.UrlImage;
+        obj.PosterURL = _filmDto.PosterURL;
+        obj.TrailerURL = _filmDto.TrailerURL;
         obj.Genres = _filmDto.Genres;
         obj.Duration = _filmDto.Duration;
         DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
@@ -165,6 +187,15 @@
         obj.Script = _filmDto.Script;
         obj.AgeRating = _filmDto.AgeRating;
         obj.Status = _filmDto.Status;
+        obj.ShowDates = new List<DateTimeOffset>
+            {
+                DateTimeOffset.Now 
+            };
+        obj.ShowTimes = new List<DateTimeOffset>
+            {
+                DateTimeOffset.Now.Date
+            };
+        obj.Description = _filmDto.Description;
         bool? confirm = await _dialogService.ShowMessageBox(
      "Xác nhận",
      "Bạn có chắc chắn sửa?",
@@ -201,6 +232,8 @@
 
         var result = await _filmRepo.GetByIdAsync(idFilm);
         _filmDto = result.Data!;
+
+        _releaseDate = _filmDto.ReleaseDate.DateTime;
     }
 
     void Cancel() => _mudDialog.Cancel();
@@ -220,8 +253,6 @@
         {
             return "Vui lòng nhập giá trị.";
         }
-
-        // Kiểm tra các điều kiện khác (nếu cần)
 
         return null;
     }

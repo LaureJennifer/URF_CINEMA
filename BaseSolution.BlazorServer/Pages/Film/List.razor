@@ -16,7 +16,8 @@
             <MudButton @onclick="CreateDialog" Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mt-3"><MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Thêm mới</MudButton>
         </MudItem>
         <MudItem xs="3" md="3" lg="3">
-            <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo tên" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+            @* <MudTextField DebounceInterval="100" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" Placeholder="Tìm kiếm theo tên" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" /> *@
+            <MudTextField DebounceInterval="300" OnDebounceIntervalElapsed="OnSearch" @bind-Value="@searchString" @bind-Value:event="oninput" Placeholder="Tìm kiếm theo tên" Variant="MudBlazor.Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
         </MudItem>
     </MudGrid>
     @if (_lst == null)
@@ -159,7 +160,6 @@
         if (!string.IsNullOrEmpty(name))
         {
             obj.Title = name;
-
         }
         else obj.Title = string.Empty;
 
@@ -168,6 +168,7 @@
         StateHasChanged();
     }
 
+    // Minh : Chua chay duoc ????
     async Task OnSearch(string debouncedText)
     {
         await LoadData(debouncedText);
