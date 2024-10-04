@@ -35,7 +35,7 @@
                     <MudGrid>
                         @foreach (var room in _lstRoomByDepartment)
                         {
-                            <MudCheckBox T="bool" CheckedChanged="@((bool e) => HandleCheckBoxCheckedChanged(room.Id, e))">@room.Code</MudCheckBox>
+                            <MudCheckBox T="bool" ValueChanged="@((bool e) => HandleCheckBoxCheckedChanged(room.Id, e))">@room.Code</MudCheckBox>
                         }
                     </MudGrid>
                 </MudItem>
@@ -101,7 +101,7 @@
                 await Task.Delay(60);
                 MudDialog.Close(DialogResult.Ok(true));
                 StateHasChanged();
-                //_navigate.NavigateTo("/filmschedule/list",forceLoad:true);
+                _navigate.NavigateTo("/filmschedule/list",forceLoad:true);
             }
             else
             {
