@@ -1,0 +1,65 @@
+﻿@page "/filmdetails/index/{id:guid}"
+
+@using BaseSolution.Application.DataTransferObjects.Film
+@using BaseSolution.BlazorServer.Repositories.Interfaces
+@inject IFilmRepo _filmRepo
+@inject NavigationManager NavigationManager
+
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Style="text-align:center; font-weight:600" Typo="Typo.h3">THÔNG TIN CHI TIẾT</MudText>
+
+    @if (filmDetail == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        <MudGrid Class="mt-4" >
+            <MudItem xs="12" md="6">
+                <MudImage Src="@filmDetail.UrlImage" Alt="Poster" Style="width:100%;height:100%"/>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudText Typo="Typo.h3">@filmDetail.Title</MudText>
+                <MudText Typo="Typo.body1">@filmDetail.Description</MudText>
+                <MudText Typo="Typo.subtitle1">Đạo diễn: @filmDetail.DirectedBy</MudText>
+                <MudText Typo="Typo.subtitle1">Ngôn ngữ: @filmDetail.Language</MudText>
+                <MudText Typo="Typo.subtitle1">Diễn viên: @filmDetail.Actor</MudText>
+                <MudText Typo="Typo.subtitle1">Thể loại: @filmDetail.Genres</MudText>
+                <MudText Typo="Typo.subtitle1">Độ tuổi: @filmDetail.AgeRating</MudText>
+                <MudText Typo="Typo.subtitle1">Thời lượng: @filmDetail.Duration</MudText>
+                <MudText Typo="Typo.subtitle1">Ngày khởi chiếu: @filmDetail.ReleaseDate.ToString("dd/MM/yyyy")</MudText>
+                <MudButton OnClick="GoBack" Color="Color.Primary">Trở về</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public Guid id { get; set; }
+
+    private FilmDto filmDetail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFilmDetail();
+    }
+
+    private async Task LoadFilmDetail()
+    {
+        var result = await _filmRepo.GetByIdAsync(id);
+        if (result.Success)
+        {
+            filmDetail = result.Data;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/film/list");
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/film/list");
+    }
+}

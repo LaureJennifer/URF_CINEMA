@@ -69,7 +69,7 @@ namespace BaseSolution.BlazorServer.Repositories.Implements
             string url = $"api/Films?PageSize={request.PageSize}";
             if (!string.IsNullOrEmpty(request.Title))
             {
-                url = $"api/Films?Name={request.Title}&PageSize={request.PageSize}";
+                url = $"api/Films?Title={request.Title}&PageSize={request.PageSize}";
             }
             var obj = await client.GetFromJsonAsync<FilmListWithPaginationViewModel>(url);
 
