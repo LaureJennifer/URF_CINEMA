@@ -44,11 +44,11 @@
                         {
                             if (!lstRoomId.Contains(room.Id))
                             {
-                                <MudCheckBox T="bool" CheckedChanged="@((bool e) => HandleCheckBoxCheckedChanged(room.Id, e))">@room.Code</MudCheckBox>
+                                <MudCheckBox T="bool" ValueChanged="@((bool e) => HandleCheckBoxCheckedChanged(room.Id, e))">@room.Code</MudCheckBox>
                             }
                             else
                             {
-                                <MudCheckBox T="bool" Checked="lstRoomId.Contains(room.Id)" CheckedChanged="@((bool e)  => HandleCheckBoxCheckedChanged(room.Id, e))">@room.Code</MudCheckBox>
+                                <MudCheckBox T="bool" Value="@lstRoomId.Contains(room.Id)" ValueChanged="@((bool e)  => HandleCheckBoxCheckedChanged(room.Id, e))">@room.Code</MudCheckBox>
                             }
                            
                             
