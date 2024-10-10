@@ -88,6 +88,9 @@ namespace URF_Cinema.Infrastructure.Implements.Repositories.ReadWrite
                 film_.Status = entity.Status;
                 film_.ModifiedBy = entity.ModifiedBy;
                 film_.ModifiedTime = DateTimeOffset.UtcNow;
+                film_.Actor = string.IsNullOrWhiteSpace(entity.Actor) ? film_.Actor : entity.Actor;
+                film_.ReleaseDate = entity.ReleaseDate;
+                film_.Description = string.IsNullOrWhiteSpace(entity.Description) ? film_.Description : entity.Description;
 
                 _dbContext.FilmEntities.Update(film_);
                 await _dbContext.SaveChangesAsync();

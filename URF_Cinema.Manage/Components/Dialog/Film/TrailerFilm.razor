@@ -1,15 +1,68 @@
-﻿@using URF_Cinema.Domain.Entities
+﻿@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Application.DataTransferObjects.Film.Request
+@using URF_Cinema.Domain.Entities
+@using URF_Cinema.Manage.Repositories.Interfaces
+
 <MudDialog>
     <DialogContent>
-        @foreach(var item in _lst){
-            <MudText>@item.Title</MudText>
-            <MudPaper>@item.TrailerURL</MudPaper>
+        @if (_filmDto.TrailerURL != null &&
+        (_filmDto.TrailerURL.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+        _filmDto.TrailerURL.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+        _filmDto.TrailerURL.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)))
+        {
+            <img src="@_filmDto.TrailerURL" alt="Trailer" style="width: 100%; height: auto;" />
         }
+
+        @if (_filmDto.TrailerURL != null && (_filmDto.TrailerURL.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) || 
+                                                   _filmDto.TrailerURL.EndsWith(".webm", StringComparison.OrdinalIgnoreCase)))
+        {
+            <video controls style="width: 100%; height: auto;">
+                <source src="@_filmDto.TrailerURL" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>
+        }
+
+@*         <iframe width="100" height="400"
+                src="https://www.youtube.com/embed/rcctLyl8YKM"
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+        </iframe> *@
     </DialogContent>
 </MudDialog>
+
 @code {
-    public List<FilmEntity> _lst = new List<FilmEntity>()
+    [CascadingParameter] MudDialogInstance _mudDialog { get; set; }
+
+    [Inject]
+    public IFilmRepo _filmRepo { get; set; }
+
+    public FilmDto _filmDto = new();
+    public FilmUpdateRequest obj = new();
+
+    [Parameter]
+    public Guid idFilm1 { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-        new FilmEntity(){Title="AAA",TrailerURL="file:///D:/watch.htm"},
-    };
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        var result = await _filmRepo.GetByIdAsync(idFilm1);
+        Console.WriteLine(idFilm1);
+        if (result.Success)
+        {
+            _filmDto = result.Data!;
+        }
+        else
+        {
+            _filmDto = new FilmDto();
+        }
+    }
+
+    private void CloseDialog()
+    {
+        _mudDialog.Cancel();
+    }
 }

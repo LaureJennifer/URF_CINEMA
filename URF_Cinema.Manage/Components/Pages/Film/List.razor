@@ -1,4 +1,5 @@
-﻿@using URF_Cinema.Application.DataTransferObjects.Film
+﻿@using OfficeOpenXml
+@using URF_Cinema.Application.DataTransferObjects.Film
 @using URF_Cinema.Application.DataTransferObjects.Film.Request
 @using URF_Cinema.Application.ValueObjects.Common
 @using URF_Cinema.Manage.Components.Dialog.Film;
@@ -8,6 +9,8 @@
 @page "/film/list"
 @inject IDialogService _dialogService
 @inject ISnackbar _snackbar
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 @* @attribute [Authorize(Roles = $"{Roles.Admin},{Roles.Staff}")] *@
 <MudPaper Class="pa-5">
     <MudText Class="mt-3" Typo="Typo.h4">Danh sách Phim</MudText>
@@ -31,7 +34,7 @@
         }
         else
         {
-            <MudTable Items="@_lst" Class="mt-4 ">
+            <MudTable Items="@_lst" Class="mt-4 " OnRowClick="EventCallback.Factory.Create<TableRowClickEventArgs<FilmDto>>(this, NavigateToDetail)">
                 <HeaderContent>
                     <MudTh>STT</MudTh>
 @*                     <MudTh>Mã Phim</MudTh> *@
@@ -172,4 +175,11 @@
     {
         await LoadData(debouncedText);
     }
+
+    private void NavigateToDetail(TableRowClickEventArgs<FilmDto> args)
+    {
+        NavigationManager.NavigateTo($"/filmdetails/index/{args.Item.Id}");
+    }
+
+    // Minh : Excel
 }

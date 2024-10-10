@@ -1,0 +1,128 @@
+﻿@page "/filmdetails/index/{id:guid}"
+
+@using Microsoft.EntityFrameworkCore
+@using URF_Cinema.Application.DataTransferObjects.Film
+@using URF_Cinema.Manage.Components.Dialog.Film
+@using URF_Cinema.Manage.Repositories.Interfaces
+@inject IFilmRepo _filmRepo
+@inject NavigationManager NavigationManager
+@inject IDialogService _dialogService
+
+<MudPaper Class="pa-5">
+    <MudText Class="mt-3" Style="text-align:center; font-weight:600" Typo="Typo.h3">THÔNG TIN CHI TIẾT</MudText>
+    <MudButton @onclick="() => CreateDialog(id)" Variant="MudBlazor.Variant.Filled" Color="Color.Success" Class="mt-3">
+        <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline"></MudIcon>Trailer
+    </MudButton>
+
+    @if (filmDetail == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        <MudGrid Class="mt-4" >
+            <MudItem xs="12" md="6" Style="width:584px;height:409px">
+                <MudImage Src="@filmDetail.UrlImage" Alt="Poster" Style="width:100%;height:100%"/>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudText Typo="Typo.h3" Style="text-transform: uppercase;font-weight: 500;text-align:center" OnClick="@(async()=> await CreateDialog(id))">@filmDetail.Title</MudText>
+                @if (filmDetail.Description.Length > 300 && !isExpanded)
+                {
+                    <MudText Typo="Typo.body1">@filmDetail.Description.Substring(0, 300)...<MudButton Color="Color.Primary" OnClick="ToggleExpand">Đọc thêm</MudButton></MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body1">@filmDetail.Description</MudText>
+                    @if (filmDetail.Description.Length > 300)
+                    {
+                        <MudButton Color="Color.Primary" OnClick="ToggleExpand">Thu gọn</MudButton>
+                    }
+                }
+                <MudText Typo="Typo.subtitle1">Đạo diễn       : @filmDetail.DirectedBy</MudText>
+                <MudText Typo="Typo.subtitle1">Ngôn ngữ       : @filmDetail.Language</MudText>
+                <MudText Typo="Typo.subtitle1">Diễn viên      : @filmDetail.Actor</MudText>
+                <MudText Typo="Typo.subtitle1">Thể loại       : @filmDetail.Genres</MudText>
+                <MudText Typo="Typo.subtitle1">Độ tuổi        : @filmDetail.AgeRating</MudText>
+                <MudText Typo="Typo.subtitle1">Thời lượng     : @filmDetail.Duration</MudText>
+                <MudText Typo="Typo.subtitle1">Ngày khởi chiếu: @filmDetail.ReleaseDate.ToString("dd/MM/yyyy")</MudText>
+                <MudText Typo="Typo.subtitle1">Tình trạng     : @filmDetail.Status</MudText>
+                <MudButton OnClick="GoBack" Color="Color.Primary">Trở về</MudButton>
+            </MudItem>
+        </MudGrid>
+    }
+</MudPaper>
+
+
+<MudPaper Class="pa-5" Style="margin-top:50px;text-align:center">
+    @if (filmDetail == null)
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else
+    {
+        <MudText Class="mt-3" Style="text-align:center; font-weight:600" Typo="Typo.h3">LỊCH CHIẾU</MudText>
+        @if(filmDetail.ReleaseDate.Year < DateTime.Now.Year)
+        {
+            <MudText Typo="Typo.subtitle1" Style="text-align:center">Phim đã ngừng chiếu</MudText>
+            <MudIcon Icon="@Icons.Material.Filled.Block" Color="Color.Error" Size="Size.Large" Style="text-align:center" />
+        }
+        else
+        {
+            <h1>Lịch chiếu</h1>
+        }
+    }
+</MudPaper>
+
+@code {
+    [Parameter]
+    public Guid id { get; set; }
+
+    private FilmDto filmDetail;
+
+    private bool isTrailerVisible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFilmDetail();
+    }
+
+    private async Task LoadFilmDetail()
+    {
+        var result = await _filmRepo.GetByIdAsync(id);
+        if (result.Success)
+        {
+            filmDetail = result.Data;
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/film/list");
+        }
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/film/list");
+    }
+
+    private bool isExpanded = false; 
+
+    private void ToggleExpand()
+    {
+        isExpanded = !isExpanded; 
+    }
+
+    private async Task CreateDialog(Guid idFilm)
+    {
+        MudBlazor.DialogOptions closeOnEscapeKey = new MudBlazor.DialogOptions() { CloseOnEscapeKey = true };
+
+        var parameters = new DialogParameters
+        {
+        { "idFilm1", idFilm }
+        };
+
+        var dialog = _dialogService.Show<TrailerFilm>("Trailer", parameters, closeOnEscapeKey);
+
+        await LoadFilmDetail();
+        StateHasChanged();
+    }
+}

@@ -10,14 +10,30 @@ namespace URF_Cinema.Manage.Repositories.Implements
 {
     public class FilmRepo : IFilmRepo
     {
-        public async Task<bool> AddAsync(FilmCreateRequest request)
+        public async Task<string> AddAsync(FilmCreateRequest request)
         {
-            var client = new HttpClient
+            try
             {
-                BaseAddress = new Uri("https://localhost:7005")
-            };
-            var obj = await client.PostAsJsonAsync("api/Films", request); ;
-            return obj.IsSuccessStatusCode;
+                var client = new HttpClient
+                {
+                    BaseAddress = new Uri("https://localhost:7005")
+                };
+                var obj = await client.PostAsJsonAsync("api/films", request); ;
+                if (obj.IsSuccessStatusCode)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    var errorDetails = await obj.Content.ReadAsStringAsync();
+                    return $"API trả về lỗi: {errorDetails}";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Trả về thông báo lỗi
+                return ex.Message; // Hoặc một thông điệp chi tiết hơn
+            }
         }
 
         public async Task<FilmListWithPaginationViewModel> GetAll()
@@ -41,7 +57,7 @@ namespace URF_Cinema.Manage.Repositories.Implements
             string url = $"api/Films?PageSize={request.PageSize}";
             if (!string.IsNullOrEmpty(request.Title))
             {
-                url = $"api/Films?Name={request.Title}&PageSize={request.PageSize}";
+                url = $"api/Films?Title={request.Title}&PageSize={request.PageSize}";
             }
             var obj = await client.GetFromJsonAsync<FilmListWithPaginationViewModel>(url);
 

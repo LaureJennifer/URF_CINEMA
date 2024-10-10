@@ -45,7 +45,7 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_filmDto.AgeRating" Required="true" ErrorText="@GetErrorText(_filmDto.AgeRating)" Placeholder="Độ tuổi*" />
             </MudItem>
-            <MudItem xs="12" sm="6">
+            <MudItem xs="12" sm="12">
                 <MudSelect Placeholder="Trạng thái*" T="EntityStatus" AnchorOrigin="Origin.BottomCenter" @bind-Value="_filmDto.Status" For="@(() => _filmDto.Status)">
                     <MudSelectItem Value="EntityStatus.Active">Hoạt động</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.InActive">Không hoạt động</MudSelectItem>
@@ -55,6 +55,9 @@
                     <MudSelectItem Value="EntityStatus.PendingForApproval">Chờ chấp thuận</MudSelectItem>
                     <MudSelectItem Value="EntityStatus.Locked">Khóa</MudSelectItem>
                 </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="12">
+                <MudTextField @bind-Value="_filmDto.Description" Required="true" ErrorText="@GetErrorText(_filmDto.Description)" Placeholder="Mô tả" Lines="5" />
             </MudItem>
         </MudGrid>
         <MudGrid Class="mt-3">
@@ -134,62 +137,132 @@
 
     private async Task UploadFiles(IBrowserFile file)
     {
-        imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        imageUrl = $"/image/Film/{fileName}";
+        _filmDto.UrlImage = imageUrl;
+
         files.Add(file);
     }
 
     private async Task UploadPosterFiles(IBrowserFile file)
     {
-        posterUrl = @"\poster\Film\" + await imageHandle.AddImage(file, "Film");
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        posterUrl = $"/image/Film/{fileName}";
+        _filmDto.PosterURL = posterUrl;
+
         files.Add(file);
     }
 
     private async Task UploadTrailerFiles(IBrowserFile file)
     {
-        posterUrl = @"\trailer\Film\" + await imageHandle.AddImage(file, "Film");
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        trailerUrl = $"/image/Film/{fileName}";
+
+        _filmDto.TrailerURL = trailerUrl;
+
         files.Add(file);
     }
 
     private async Task OnButtonClicked()
     {
-        obj.Code = _filmDto.Code;
-        obj.Title = _filmDto.Title;
-        obj.DirectedBy = _filmDto.DirectedBy;
-        obj.Actor = _filmDto.Actor;
-        obj.Language = _filmDto.Language;
-        obj.UrlImage = imageUrl;
-        obj.PosterURL = posterUrl;
-        obj.TrailerURL = trailerUrl;
-        obj.Genres = _filmDto.Genres;
-        obj.Duration = _filmDto.Duration;
-        DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
-        obj.ReleaseDate = releaseDATE;
-        obj.Script = _filmDto.Script;
-        obj.AgeRating = _filmDto.AgeRating;
-        obj.Status = _filmDto.Status;
-        bool? confirm = await _dialogService.ShowMessageBox(
-     "Xác nhận",
-     "Bạn có chắc chắn sửa?",
-     yesText: "Xác nhận", cancelText: "Hủy");
-        if (confirm == true)
+        try
         {
-            var result = await _filmRepo.UpdateAsync(obj);
-            if (result == true)
+            obj.Id = _filmDto.Id;
+            obj.Code = _filmDto.Code;
+            obj.Title = _filmDto.Title;
+            obj.DirectedBy = _filmDto.DirectedBy;
+            obj.Actor = _filmDto.Actor;
+            obj.Language = _filmDto.Language;
+            obj.UrlImage = _filmDto.UrlImage;
+            obj.PosterURL = _filmDto.PosterURL;
+            obj.TrailerURL = _filmDto.TrailerURL;
+            obj.Genres = _filmDto.Genres;
+            obj.Duration = _filmDto.Duration;
+            DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
+            obj.ReleaseDate = releaseDATE;
+            obj.Script = _filmDto.Script;
+            obj.AgeRating = _filmDto.AgeRating;
+            obj.Status = _filmDto.Status;
+            obj.ShowDates = new List<DateTimeOffset>
             {
-                await Task.Delay(1000);
-                _mudDialog.Close(DialogResult.Ok(true));
-                _snackbar.Add("Sửa thành công", Severity.Success);
-                _navigate.NavigateTo("/film/list");
-                StateHasChanged();
-            }
-            else
+                DateTimeOffset.Now
+            };
+            obj.ShowTimes = new List<DateTimeOffset>
             {
-                _snackbar.Add
-                (
-                    "Sửa thất bại",
-                        Severity.Error
-                );
+                DateTimeOffset.Now.Date
+            };
+            obj.Description = _filmDto.Description;
+            bool? confirm = await _dialogService.ShowMessageBox(
+         "Xác nhận",
+         "Bạn có chắc chắn sửa?",
+         yesText: "Xác nhận", cancelText: "Hủy");
+            if (confirm == true)
+            {
+                var result = await _filmRepo.UpdateAsync(obj);
+                if (result == true)
+                {
+                    await Task.Delay(1000);
+                    _mudDialog.Close(DialogResult.Ok(true));
+                    _snackbar.Add("Sửa thành công", Severity.Success);
+                    _navigate.NavigateTo("/film/list");
+                    StateHasChanged();
+                }
+                else
+                {
+                    _snackbar.Add
+                    (
+                        "Sửa thất bại",
+                            Severity.Error
+                    );
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            await Task.Delay(500);
+            _navigate.NavigateTo(_navigate.Uri, forceLoad: true);
         }
     }
 
@@ -200,9 +273,9 @@
 
     private async Task LoadData()
     {
-
         var result = await _filmRepo.GetByIdAsync(idFilm);
         _filmDto = result.Data!;
+        _releaseDate = _filmDto.ReleaseDate.DateTime;
     }
 
     void Cancel() => _mudDialog.Cancel();

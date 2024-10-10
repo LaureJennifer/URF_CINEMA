@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using URF_Cinema.Infrastructure.Database.AppDbContext;
 
@@ -11,9 +12,11 @@ using URF_Cinema.Infrastructure.Database.AppDbContext;
 namespace URF_Cinema.Infrastructure.Migrations
 {
     [DbContext(typeof(AppReadOnlyDbContext))]
-    partial class AppReadOnlyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241006080223_nog")]
+    partial class nog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

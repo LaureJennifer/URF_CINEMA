@@ -45,6 +45,9 @@
             <MudItem xs="6" sm="6" md="6">
                 <MudTextField @bind-Value="_filmDto.AgeRating" Required="true" ErrorText="@GetErrorText(_filmDto.AgeRating)" Placeholder="Độ tuổi*" />
             </MudItem>
+            <MudItem xs="12" sm="12" md="12">
+                <MudTextField @bind-Value="_filmDto.Description" Required="true" ErrorText="@GetErrorText(_filmDto.Description)" Placeholder="Mô tả" Lines="5" />
+            </MudItem>
         </MudGrid>
         <MudGrid Class="mt-3">
             <MudItem xs="6" sm="6" md="6">
@@ -119,19 +122,65 @@
 
     private async Task UploadFiles(IBrowserFile file)
     {
-        imageUrl = @"\image\Film\" + await imageHandle.AddImage(file, "Film");
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        imageUrl = $"/image/Film/{fileName}";
         files.Add(file);
     }
 
     private async Task UploadPosterFiles(IBrowserFile file)
     {
-        posterUrl = @"\poster\Film\" + await imageHandle.AddImage(file, "Film");
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        posterUrl = $"/image/Film/{fileName}";
         files.Add(file);
     }
 
     private async Task UploadTrailerFiles(IBrowserFile file)
     {
-        posterUrl = @"\trailer\Film\" + await imageHandle.AddImage(file, "Film");
+        var filmFolderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Image", "Film");
+
+        if (!Directory.Exists(filmFolderPath))
+        {
+            Directory.CreateDirectory(filmFolderPath);
+        }
+
+        var fileName = Path.GetFileName(file.Name);
+        var filePath = Path.Combine(filmFolderPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.OpenReadStream().CopyToAsync(stream);
+        }
+
+        trailerUrl = $"/image/Film/{fileName}";
+
         files.Add(file);
     }
 
@@ -146,9 +195,17 @@
         obj.PosterURL = posterUrl;
         obj.TrailerURL = trailerUrl;
         obj.Genres = _filmDto.Genres;
-        obj.Duration = _filmDto.Duration;
+        obj.Duration = _filmDto.Duration + "min";
         DateTimeOffset releaseDATE = new DateTimeOffset((DateTime)_releaseDate!, TimeSpan.Zero);
         obj.ReleaseDate = releaseDATE;
+        if(!string.IsNullOrEmpty(_filmDto.Description))
+        {
+            obj.Description = _filmDto.Description;
+        }
+        else
+        {
+            obj.Description = "Chưa có mô tả chi tiết";
+        }
         obj.Script = _filmDto.Script;
         obj.AgeRating = _filmDto.AgeRating;
 
@@ -158,8 +215,8 @@
      yesText: "Xác nhận", cancelText: "Hủy");
         if (confirm == true)
         {
-            var result = await _filmRepo.AddAsync(obj);
-            if (result == true)
+            var resultMessage = await _filmRepo.AddAsync(obj);
+            if (string.IsNullOrEmpty(resultMessage))
             {
                 _mudDialog.Close(DialogResult.Ok(true));
                 _snackbar.Add("Thêm thành công", Severity.Success);
@@ -168,11 +225,7 @@
             }
             else
             {
-                _snackbar.Add
-                (
-                    "Thêm thất bại",
-                        Severity.Error
-                );
+                _snackbar.Add(resultMessage, Severity.Error);
             }
         }
     }

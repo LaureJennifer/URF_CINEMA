@@ -1760,7 +1760,7 @@ namespace URF_Cinema.Infrastructure.Database.AppDbContext
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=TRANG\\SQLEXPRESS;Initial Catalog=DA1_Cinema410;Integrated Security=True;TrustServerCertificate=true");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-RTLBH4I\\SQLEXPRESS;Initial Catalog=DA1_Cinema410;Integrated Security=True;TrustServerCertificate=true");
             }
         }
         #region DBSet
