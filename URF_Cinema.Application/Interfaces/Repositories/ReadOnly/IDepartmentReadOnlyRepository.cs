@@ -2,6 +2,7 @@
 using URF_Cinema.Application.ValueObjects.Response;
 using URF_Cinema.Application.DataTransferObjects.Department;
 using URF_Cinema.Application.DataTransferObjects.Department.Request;
+using URF_Cinema.Application.DataTransferObjects.Film;
 
 namespace URF_Cinema.Application.Interfaces.Repositories.ReadOnly
 {

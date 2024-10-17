@@ -5,6 +5,7 @@ using URF_Cinema.Application.Interfaces.Repositories.ReadWrite;
 using URF_Cinema.Application.Interfaces.Services;
 using URF_Cinema.Infrastructure.ViewModels.Film;
 using Microsoft.AspNetCore.Mvc;
+using URF_Cinema.Application.DataTransferObjects.Department.Request;
 
 namespace URF_Cinema.API.Controllers
 {
@@ -24,9 +25,9 @@ namespace URF_Cinema.API.Controllers
             _localizationService = localizationService;
             _mapper = mapper;
         }
-        
+
         [HttpGet]
-        public async Task<IActionResult> GetListFilmByAdmin([FromQuery]ViewFilmWithPaginationRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetListFilmByAdmin([FromQuery] ViewFilmWithPaginationRequest request, CancellationToken cancellationToken)
         {
             FilmListWithPaginationViewModel vm = new(_filmReadOnlyRepository, _localizationService);
 
@@ -35,7 +36,16 @@ namespace URF_Cinema.API.Controllers
             return Ok(vm);
         }
 
-        
+        [HttpGet("Name")]
+        public async Task<IActionResult> GetFilmsWithDepartment([FromQuery]ViewDepartmentWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            FilmsWithDepartmentViewModel vm = new(_filmReadOnlyRepository, _localizationService);
+
+            await vm.HandleAsync(request, cancellationToken);
+
+            return Ok(vm);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFilmById(Guid id, CancellationToken cancellationToken)
         {

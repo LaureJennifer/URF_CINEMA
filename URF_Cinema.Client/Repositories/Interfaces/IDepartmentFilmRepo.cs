@@ -9,6 +9,5 @@ namespace URF_Cinema.Client.Repositories.Interfaces
     {
         public Task<DepartmentFilmWithPaginationViewModel> GetAllActive(ViewDepartmentFilmWithPaginationRequest request);
         Task<PaginationResponse<DepartmentFilmDto>> GetAllDepartmentFilmByDepartment(ViewDepartmentFilmWithPaginationRequest request);
-
     }
 }

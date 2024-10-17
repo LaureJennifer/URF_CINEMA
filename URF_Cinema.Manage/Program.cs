@@ -22,10 +22,10 @@ builder.Services.AddRadzenComponents();
 builder.Services.AddMudServices();
 //builder.Configuration.AddJsonFile("appsettings.json");
 
-//builder.Services.AddMudServices(config =>
-//{
-//    config.PopoverOptions.ThrowOnDuplicateProvider = false;
-//});
+builder.Services.AddMudServices(config =>
+{
+    config.PopoverOptions.ThrowOnDuplicateProvider = false;
+});
 builder.Services.AddAutoMapper();
 builder.Services.AddLocalization(builder.Configuration);
 builder.Services.AddBlazoredLocalStorage();
