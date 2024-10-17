@@ -2,6 +2,7 @@
 using URF_Cinema.Application.ValueObjects.Response;
 using URF_Cinema.Application.DataTransferObjects.Film;
 using URF_Cinema.Client.Data;
+using URF_Cinema.Application.DataTransferObjects.Department.Request;
 
 namespace URF_Cinema.Client.Repositories.Interfaces
 {
@@ -13,5 +14,6 @@ namespace URF_Cinema.Client.Repositories.Interfaces
         public Task<bool> UpdateAsync(FilmUpdateRequest request);
         public Task<RequestResult<FilmDto>> GetByIdAsync(Guid id);
         public Task<FilmListWithPaginationViewModel> GetAllActive(ViewFilmWithPaginationRequest request);
+        public Task<FilmListWithPaginationViewModel> GetFilmsByDepartmentName(ViewDepartmentWithPaginationRequest request);
     }
 }

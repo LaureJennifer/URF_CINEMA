@@ -1,4 +1,5 @@
-﻿@page "/home/{departmentId}"
+﻿@page "/"
+@using URF_Cinema.Application.DataTransferObjects.Department.Request
 @using URF_Cinema.Application.DataTransferObjects.DepartmentFilm
 @using URF_Cinema.Application.DataTransferObjects.DepartmentFilm.Request
 @using URF_Cinema.Application.DataTransferObjects.Film
@@ -10,7 +11,7 @@
 @inject NavigationManager NavigationManager
 @inject ISnackbar _snackbar
 @* @attribute [Authorize(Roles = "ADMIN,Nhân viên,Customer")] *@
-@if (departmentId == null)
+@if (string.IsNullOrEmpty(SelectedDepartmentName))
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
@@ -100,14 +101,17 @@ else
 
 @code {
     public string Search { get; set; }
+    [CascadingParameter]
+    public string SelectedDepartmentName { get; set; }
 
-    [Parameter] public string departmentId { get; set; }
     [Parameter] public string customerId { get; set; }
     [Inject] public IFilmRepo _filmRepo { get; set; }
     public ViewFilmWithPaginationRequest obj = new();
     public List<Guid>? _lstFilmId { get; set; } = new();
     [Inject] public IDepartmentFilmRepo _departmentFilmRepo { get; set; }
     public ViewDepartmentFilmWithPaginationRequest _viewDepartmentFilmWithPaginationRequest = new() { PageSize = 50 };
+
+    public ViewDepartmentWithPaginationRequest _viewDepartmentWithPaginationRequest = new() { PageSize = 50 };
     public List<FilmDto>? _lst { get; set; } = new();
     private void Order(Guid IdFilm)
     {
@@ -136,14 +140,17 @@ else
     private Transition transition = Transition.Slide;
     protected override async Task OnInitializedAsync()
     {
-        await LoadDepartmentFilm();
+        await LoadFilmsByDepartment();
         await LoadListFilmByDepartment();
     }
-    private async Task LoadDepartmentFilm()
+    private async Task LoadFilmsByDepartment()
     {
-        _viewDepartmentFilmWithPaginationRequest.DepartmentId = Guid.Parse(departmentId);
-        var result = await _departmentFilmRepo.GetAllActive(_viewDepartmentFilmWithPaginationRequest);
-        _lstFilmId = result.Data.Data.Select(x => x.FilmId).ToList();
+        _viewDepartmentWithPaginationRequest.Name = SelectedDepartmentName;
+        var result = await _filmRepo.GetFilmsByDepartmentName(_viewDepartmentWithPaginationRequest);
+        _lstFilmId = result.Data.Data.Select(x => x.Id).ToList();
+        // _viewDepartmentFilmWithPaginationRequest.DepartmentName = SelectedDepartmentName;
+        // var result = await _departmentFilmRepo.GetAllActive(_viewDepartmentFilmWithPaginationRequest);
+        // _lstFilmId = result.Data.Data.Select(x => x.FilmId).ToList();
     }
     private async Task LoadListFilmByDepartment()
     {

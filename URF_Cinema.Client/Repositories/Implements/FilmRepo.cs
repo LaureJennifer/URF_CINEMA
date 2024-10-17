@@ -5,6 +5,8 @@ using URF_Cinema.Client.Data;
 using URF_Cinema.Client.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using URF_Cinema.Application.DataTransferObjects.Department.Request;
+using System;
 
 namespace URF_Cinema.Client.Repositories.Implements
 {
@@ -61,6 +63,24 @@ namespace URF_Cinema.Client.Repositories.Implements
             if (obj != null)
                 return obj;
             return null;
+        }
+
+        public async Task<FilmListWithPaginationViewModel> GetFilmsByDepartmentName(ViewDepartmentWithPaginationRequest request)
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7005")
+            };
+            string url = $"api/Films?PageSize={request.PageSize}";
+            if (!string.IsNullOrEmpty(request.Name))
+            {
+                url = $"api/Films?Name={request.Name}&PageSize={request.PageSize}";
+            }
+            var obj = await client.GetFromJsonAsync<FilmListWithPaginationViewModel>(url);
+
+            if (obj != null)
+                return obj;
+            return new();
         }
 
         public async Task<RequestResult<FilmDeleteRequest>> RemoveAsync([FromQuery]FilmDeleteRequest request)

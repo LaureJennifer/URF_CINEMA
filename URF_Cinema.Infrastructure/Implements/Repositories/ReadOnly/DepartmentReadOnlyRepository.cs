@@ -11,6 +11,7 @@ using URF_Cinema.Domain.Enums;
 using URF_Cinema.Infrastructure.Database.AppDbContext;
 using URF_Cinema.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using URF_Cinema.Application.DataTransferObjects.Film;
 
 namespace URF_Cinema.Infrastructure.Implements.Repositories.ReadOnly
 {

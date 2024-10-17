@@ -11,7 +11,7 @@ public class DepartmentFilmRepo : IDepartmentFilmRepo
         {
             BaseAddress = new Uri("https://localhost:7005")
         };
-        var obj = await client.GetFromJsonAsync<DepartmentFilmWithPaginationViewModel>($"api/DepartmentFilms?DepartmentId={request.DepartmentId}&PageSize={request.PageSize}");
+        var obj = await client.GetFromJsonAsync<DepartmentFilmWithPaginationViewModel>($"api/DepartmentFilms?DepartmentName={request.DepartmentName}&PageSize={request.PageSize}");
         if (obj != null)
             return obj;
         return new();

@@ -7,6 +7,5 @@ namespace URF_Cinema.Application.DataTransferObjects.Department.Request
         public string? Code { get; set; }
         public string? Name { get; set; }
         public string? Address { get; set; }
-
     }
 }
