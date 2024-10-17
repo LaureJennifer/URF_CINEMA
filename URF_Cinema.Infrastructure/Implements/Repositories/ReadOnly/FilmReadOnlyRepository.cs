@@ -11,6 +11,8 @@ using URF_Cinema.Domain.Enums;
 using URF_Cinema.Infrastructure.Database.AppDbContext;
 using URF_Cinema.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
+using URF_Cinema.Application.DataTransferObjects.Department.Request;
+using URF_Cinema.Application.DataTransferObjects.Department;
 
 namespace URF_Cinema.Infrastructure.Implements.Repositories.ReadOnly
 {
@@ -61,6 +63,36 @@ namespace URF_Cinema.Infrastructure.Implements.Repositories.ReadOnly
                 {
                     films = films.Where(x => x.Code == request.Code);
                 }
+                var result = await films.PaginateAsync(request, cancellationToken);
+                return RequestResult<PaginationResponse<FilmDto>>.Succeed(new PaginationResponse<FilmDto>
+                {
+                    PageNumber = request.PageNumber,
+                    PageSize = request.PageSize,
+                    HasNext = result.HasNext,
+                    Data = result.Data
+                });
+            }
+            catch (Exception e)
+            {
+
+                return RequestResult<PaginationResponse<FilmDto>>.Fail(_localizationService["List of film are not found"], new[]
+                {
+                    new ErrorItem
+                    {
+                        Error= e.Message,
+                        FieldName = LocalizationString.Common.FailedToGet + "list of film"
+                    }
+                });
+            }
+        }
+        public async Task<RequestResult<PaginationResponse<FilmDto>>> GetFilmsWithDepartmentPaginationAsync(ViewDepartmentWithPaginationRequest request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var films = _appReadOnlyDbContext.DepartmentEntities.AsNoTracking()
+                .Where(x => x.Name.ToLower() == request.Name!.ToLower()).SelectMany(x=>x.DepartmentFilms).Select(x=>x.Film)
+                .ProjectTo<FilmDto>(_mapper.ConfigurationProvider);
+
                 var result = await films.PaginateAsync(request, cancellationToken);
                 return RequestResult<PaginationResponse<FilmDto>>.Succeed(new PaginationResponse<FilmDto>
                 {
